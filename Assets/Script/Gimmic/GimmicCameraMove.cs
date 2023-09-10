@@ -42,7 +42,7 @@ public class GimmicCameraMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("9")) // ここはフラグになる
+        if(Input.GetKeyDown("9")) // ここはフラグになる
         {
             cameraMove = true;
             targetPosition = this.transform.position;

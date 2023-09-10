@@ -275,3 +275,80 @@ public class Test : MonoBehaviour
 // ここの行で、現在のフレームの残りの距離のノーマライズしたもの（つまり方向のみの働き）を係数倍、ここではどんどん小さくなるdistanceCoveredを毎フレームかけているので、どんどん遅くなる。
 // つまりlerpは内分の計算を用いて、毎フレームの軌道を計算（毎フレームの座標がその直線を表すのは媒介変数表示みたいな感覚。ちょっとちがうか。）して、
 // どんどん小さくなる値を毎回かけているから、目的地手前でおそくなるということ。
+
+
+
+
+
+
+
+
+
+
+
+//  Vector3.MoveTowardsの説明
+//  割とそのまんまで、目的地から現在位置を引いて方向ベクトル取得→正規化
+//  それにスピードをかけたものを毎フレーム足していく。元の方向ベクトルは毎フレーム正規化されるのそれに毎フレーム一定のスピードをかけているので、
+//  だんだん早くなることはない。
+//上のはAI出力だけど、下のコードでもやってる子と同じなのでいける。
+
+// public Transform target; // 移動の目標位置
+// public float speed = 5.0f; // 移動速度
+
+// void Update()
+// {
+//     // 現在位置から目標位置へのベクトルを計算
+//     Vector3 direction = target.position - transform.position;
+
+//     // ベクトルの長さが1以上の場合に移動を行う
+//     if (direction.magnitude > 1e-5)
+//     {
+//         // ベクトルを正規化して移動方向を取得
+//         Vector3 moveDirection = direction.normalized;
+
+//         // 移動方向に速度を掛けて新しい位置を計算
+//         Vector3 newPosition = transform.position + moveDirection * speed * Time.deltaTime;
+
+//         // 新しい位置に移動
+//         transform.position = newPosition;
+//     }
+// }
+
+
+
+// public class TestEnemyMove : MonoBehaviour
+// {
+//     public Transform startPoint;  // 開始位置
+//     public Transform endPoint;    // 終了位置
+//     public float speed = 2.0f;    // 移動速度
+
+//     private Vector3 nextPosition;
+
+
+//     void Start()
+//     {
+//         transform.position = startPoint.position;
+//         nextPosition = endPoint.position;
+//     }
+
+//     void Update()
+//     {
+//         float step = speed * Time.deltaTime;
+
+
+//             Vector3 progressVec = (nextPosition-transform.position).normalized;
+
+//             transform.position += progressVec*step;
+            
+
+//     }
+// }
+
+
+
+
+
+
+
+// Vector3.Distanceは２点間のベクトル成分を引き算して求めて、それを２乗（マグニチュード）で求めてるだけ
+
