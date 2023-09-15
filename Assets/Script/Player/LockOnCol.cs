@@ -35,36 +35,10 @@ public class LockOnCol : MonoBehaviour
                 enemyList.Add(other.gameObject);  // リストに追加
             }
 
-
-
-
-
-            // Vector3 enemydistance = other.transform.position - Player.transform.position;
-            // enemydistance = enemydistance.normalized;
-            // float dot = Vector3.Dot( Player.transform.forward,enemydistance);
-            // Vector3 lockOnDirection = 
-
-
-
         }
-        // else if (other.gameObject.tag != "Enemy")
-        // {
-        //     isLockOn = false;
-        //      enemyList.Remove(other.gameObject);
-        // }
+
     }
 
-    //     private void OnTriggerEnter(Collider other)
-    // {
-    //     if (other.gameObject.tag == "Enemy" && !isLockOn)
-    //     {
-    //         isLockOn = true;
-    //         if (!enemyList.Contains(other.gameObject))
-    //         {
-    //             enemyList.Add(other.gameObject);  // リストに追加
-    //         }
-    //     }
-    // }
 
     private void OnTriggerExit(Collider other)
     {
