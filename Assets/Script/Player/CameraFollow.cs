@@ -17,15 +17,15 @@ public class CameraFollow : MonoBehaviour
     private Vector3 playerForward;
     [SerializeField] float rotateSpeed;
 
-    
+
     public float angleInDegrees;
     [SerializeField] float verticalAngleLimit = 70;
 
     // １人称
     public bool isFirstPerson = false;
     public Vector3 firstPlayerForward;
-    [SerializeField]  float smoothnessFactor = 0.5f;
-    public bool cameraMove; 
+    [SerializeField] float smoothnessFactor = 0.5f;
+    public bool cameraMove;
     public bool isCameraMoveEnd = false;
     CharacterController _characterController;
     Vector3 cameraForward;
@@ -53,7 +53,7 @@ public class CameraFollow : MonoBehaviour
         if (Input.GetKeyDown("1") || Input.GetButtonDown("First"))
         {
             isFirstPerson = !isFirstPerson;
-            if(isFirstPerson) //カメラの移動開始フラグ
+            if (isFirstPerson) //カメラの移動開始フラグ
             {
                 cameraMove = true;
                 isCameraMoveEnd = false;
@@ -66,27 +66,27 @@ public class CameraFollow : MonoBehaviour
 
             // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
             firstPlayerForward = transform.forward;
-            firstPlayerForward.y =0;
+            firstPlayerForward.y = 0;
             Player.transform.forward = firstPlayerForward;
 
         }
 
 
-        if(cameraMove && isCameraMoveEnd==false)
+        if (cameraMove && isCameraMoveEnd == false)
         {
 
             Vector3 targetPosition = Player.transform.position + Player.transform.forward + new Vector3(0, 0.5f, 0);
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * smoothnessFactor);
-            
+
             //_characterController.enabled = false; //これも悪くはないが、これだと、落下が止まったりいろいろ不都合が起きる。
             //なのでプレイヤーコントローラーの方でスティック入力を受け付けないようにする
 
 
 
-            if(Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
+            if (Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
             {
                 isCameraMoveEnd = true;
-                cameraMove =  false;
+                cameraMove = false;
                 beforeTargetPosiFirst = Player.transform.position;
 
             }
@@ -95,13 +95,13 @@ public class CameraFollow : MonoBehaviour
         {
             _characterController.enabled = true;
         }
-        
 
-        if(!isFirstPerson)
+
+        if (!isFirstPerson)
         {
-        // カメラの追尾　実際はリープを使ってもうすこし滑らかにできるかも
-        transform.position += Player.transform.position -beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
-        beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
+            // カメラの追尾　実際はリープを使ってもうすこし滑らかにできるかも
+            transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
+            beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
         }
 
 
@@ -109,14 +109,14 @@ public class CameraFollow : MonoBehaviour
 
 
 
-        if(isFirstPerson)
+        if (isFirstPerson)
         {
 
             //kokodesu
             //kokodesu
             //kokodesu
 
-            if(isCameraMoveEnd) //カメラの移動が終わったら
+            if (isCameraMoveEnd) //カメラの移動が終わったら
             {
                 //常にプレイヤーの前に、プレイヤーの正面方向をむいたカメラが存在　その上で角度を書き換える。
                 // カメラの向きをプレイヤーの正面にそろえる
@@ -124,47 +124,47 @@ public class CameraFollow : MonoBehaviour
                 //firstPlayerForward.y = 0;//カメラが上向きの時にプレイヤーもそれにつられて回転しないように
                 transform.forward = firstPlayerForward;
                 //カメラをプレイヤーの前に移動させる
-                transform.position = Player.transform.position + Player.transform.forward  + new Vector3(0, 0.5f, 0);
+                transform.position = Player.transform.position + Player.transform.forward + new Vector3(0, 0.5f, 0);
 
                 // カメラの垂直回転
                 verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
                 verticalAngle = Mathf.Clamp(verticalAngle, -80, 80); // 垂直回転の角度を制限
                 transform.Rotate(Vector3.right, verticalAngle);
             }
-            
+
         }
         else
         {
-        // 2つのベクトルの内積を計算
-        playerForward = Player.transform.forward.normalized;
-        float dotProduct = Vector3.Dot(playerForward,transform.forward.normalized);
+            // 2つのベクトルの内積を計算
+            playerForward = Player.transform.forward.normalized;
+            float dotProduct = Vector3.Dot(playerForward, transform.forward.normalized);
 
-        // 内積の値から角度を計算（ラジアンから度に変換）
-        angleInDegrees = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
-
-
-
-        if (playerForward == null)
-        {
-            return;
-        }
+            // 内積の値から角度を計算（ラジアンから度に変換）
+            angleInDegrees = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
 
 
 
+            if (playerForward == null)
+            {
+                return;
+            }
 
-        // カメラの水平回転
-        horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
-        
-        // カメラの垂直回転
-        verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-        verticalAngle = Mathf.Clamp(verticalAngle, -5, verticalAngleLimit); // 垂直回転の角度を制限
 
-        // カメラの位置をプレイヤーの周囲に回転させる
-        Vector3 offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
-        transform.position = Player.transform.position + offset;
 
-        // カメラがプレイヤーを常に向くようにする
-        transform.LookAt(Player.transform.position);
+
+            // カメラの水平回転
+            horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
+
+            // カメラの垂直回転
+            verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
+            verticalAngle = Mathf.Clamp(verticalAngle, -5, verticalAngleLimit); // 垂直回転の角度を制限
+
+            // カメラの位置をプレイヤーの周囲に回転させる
+            Vector3 offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
+            transform.position = Player.transform.position + offset;
+
+            // カメラがプレイヤーを常に向くようにする
+            transform.LookAt(Player.transform.position);
         }
 
     }

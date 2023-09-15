@@ -5,7 +5,11 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
 
-     Vector3 positoion = new Vector3(4, 4, 4);
+
+    // enum 文字型リテラル敵なのの型をつくる。
+    // list　は後から追加できる配列　ロックオンの時の敵の取得とか動的に変わりうるものにたいしてGOOD
+
+    Vector3 positoion = new Vector3(4, 4, 4);
     // 数字だけでは型がベクターではないので、当然不可能
     // new　Vector3　で初期化すひつようがあるぽい・
 
@@ -16,7 +20,7 @@ public class Test : MonoBehaviour
     //    Debug.Log("I is :"+i);
     //}
 
-   
+
 
 
     //// Mathf.Clampの自作
@@ -201,27 +205,27 @@ public class Test : MonoBehaviour
 
 // Lerpは多分内分、t,1-tに分けてる。tの範囲を０～１にしてる。
 
-    // void Update()
-    // {
-    //     // 補間変数を更新
-    //     t += lerpSpeed * Time.deltaTime;
-    //     t = Mathf.Clamp01(t); // 0から1の範囲にクランプ
+// void Update()
+// {
+//     // 補間変数を更新
+//     t += lerpSpeed * Time.deltaTime;
+//     t = Mathf.Clamp01(t); // 0から1の範囲にクランプ
 
-    //     // 開始位置から終了位置への補間を計算
-    //     Vector3 lerpedPosition = startTransform.position * (1f - t) + endTransform.position * t;
+//     // 開始位置から終了位置への補間を計算
+//     Vector3 lerpedPosition = startTransform.position * (1f - t) + endTransform.position * t;
 
-    //     // オブジェクトの位置を更新
-    //     transform.position = lerpedPosition;
+//     // オブジェクトの位置を更新
+//     transform.position = lerpedPosition;
 
-    //     // 補間が終了したかどうかを確認
-    //     if (t >= 1f)
-    //     {
-    //         Debug.Log("補間終了");
-    //         enabled = false; // 補間が終了したらこのスクリプトを無効化
-    //     }
-    // }
+//     // 補間が終了したかどうかを確認
+//     if (t >= 1f)
+//     {
+//         Debug.Log("補間終了");
+//         enabled = false; // 補間が終了したらこのスクリプトを無効化
+//     }
+// }
 
-    //AI説明
+//AI説明
 //  位置ベクトル: 通常、3D空間内で物体の位置は位置ベクトルとして表現されます。これらのベクトルは、通常、3つの成分（x、y、z座標）で構成されます。
 
 // 初期位置と最終位置: 線形補間では、物体の初期位置（始点）と最終位置（終点）が与えられます。これらは2つのベクトルとして表現されます。
@@ -339,7 +343,7 @@ public class Test : MonoBehaviour
 //             Vector3 progressVec = (nextPosition-transform.position).normalized;
 
 //             transform.position += progressVec*step;
-            
+
 
 //     }
 // }
@@ -352,3 +356,81 @@ public class Test : MonoBehaviour
 
 // Vector3.Distanceは２点間のベクトル成分を引き算して求めて、それを２乗（マグニチュード）で求めてるだけ
 
+
+
+
+// たまたまみつけたカメラに映った特定タグのものを消す処理
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using System.Linq;
+
+// public class TestCameraIsExited : MonoBehaviour
+// {
+//     public string enemyTag = "Enemy"; // Enemyタグを指定
+//     private GameObject[] enemyObjects;
+
+//     void Start()
+//     {
+//         enemyObjects = GameObject.FindGameObjectsWithTag(enemyTag);
+//     }
+
+//     void Update()
+//     {
+//         Camera mainCamera = Camera.main;
+
+//         if (mainCamera == null)
+//         {
+//             Debug.LogError("Main Cameraが見つかりません。");
+//             return;
+//         }
+
+//         foreach (GameObject enemyObject in enemyObjects)
+//         {
+//             // カメラのビューポート座標を取得
+//             Vector3 viewportPosition = mainCamera.WorldToViewportPoint(enemyObject.transform.position);
+
+//             // カメラの視錘台内にいない場合、enemyObjectsから削除
+//             if (!(viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
+//                   viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
+//                   viewportPosition.z >= 0))
+//             {
+//                 // enemyObjectをenemyObjectsから削除
+//                 RemoveEnemy(enemyObject);
+//             }
+//         }
+//     }
+
+//     // enemyObjectsからオブジェクトを削除する関数
+//     void RemoveEnemy(GameObject enemyToRemove)
+//     {
+//         for (int i = 0; i < enemyObjects.Length; i++)
+//         {
+//             if (enemyObjects[i] == enemyToRemove)
+//             {
+//                 // オブジェクトを削除
+//                 Destroy(enemyObjects[i]);
+
+//                 // enemyObjectsからも削除
+//                 enemyObjects[i] = null;
+//                 enemyObjects = RemoveNullObjects(enemyObjects);
+//                 break;
+//             }
+//         }
+//     }
+
+//     // null要素を削除した配列を返す関数
+//     GameObject[] RemoveNullObjects(GameObject[] array)
+//     {
+//         return array.Where(x => x != null).ToArray();
+//     }
+// }
+
+
+
+
+
+
+// ワールド座標をビューポート値に変換している
+// Vector3 viewportPosition = mainCamera.WorldToViewportPoint(transform.position);
