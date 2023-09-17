@@ -32,10 +32,10 @@ public class PlayerController : MonoBehaviour
     public float beforeJumpInputVertical;
     public Vector3 jumpDirection;
     [SerializeField] private float jumpFoarwardPower;
-    [SerializeField]private bool isDash;
+    [SerializeField] private bool isDash;
 
-        [SerializeField] float apex;
-    [SerializeField]float apexTime;
+    [SerializeField] float apex;
+    [SerializeField] float apexTime;
     public double jumpPower;
     public float virtualGra;
 
@@ -52,25 +52,31 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         // 取得
-        
+
         characterController = GetComponent<CharacterController>();
         initialMoveSpeed = moveSpeed;
 
         _cameraFollow = Camera.GetComponent<CameraFollow>();
 
-       
+
         //jumpPower = apex/apexTime + 0.5*9.81*apexTime;
         //jumpPower = jumpPower*apexTime/(jumpPower/9.81);
         // virtualGra = (float)(jumpPower/apexTime)*-1;
 
 
         // 任意の高さとその高さに達するまでの任意の秒数をインスペクター上から入力し、それによって加速度（ここでは重力加速度9.81とは違い変わりうる変数）と初速度を求める
-        // 重力の計算　h = 1/2at^2 を変形　（等加速運動の公式）
-        virtualGra= 2*apex / Mathf.Pow(apexTime, 2)*-1;
+        // 考えたとしては、まず鉛直上投げであっても、自由落下であっても下向きに重力が働いている。鉛直上の場合はそこに、上向きの初速がはっせいする。
+        //なのでプログラム上では、地面についていないときは全部自由落下を組み込み、ジャンプするときだけ初速を上向きに加える。
 
-        // 初速度の計算　vo = at
-        jumpPower = virtualGra * apexTime*-1;
-        
+        // プレイヤー用の重力加速度の計算　h = 1/2at^2 を変形　　y=1/2gt^2ともいう。　自由落下公式
+        // また、鉛直上投げの場合、上に上がる時間と落下する時間は同じなので、apexTimeは本来頂点までの到達時間だが、自由落下式に使える
+        virtualGra = 2 * apex / Mathf.Pow(apexTime, 2) * -1;
+
+        // 初速度の計算　vo = at　←過去の俺がvo = atと書いているが、これは違う気がする。
+
+        //上のはあっているが、厳密にはv=vo+atで頂点での速度は０になるはずなので、vo = atということがいいたかったのだと思う
+        jumpPower = virtualGra * apexTime * -1;
+
 
     }
 
@@ -79,10 +85,10 @@ public class PlayerController : MonoBehaviour
     {
 
 
-           // moveDirection =  new Vector3(0f, virtualGra * time * jumpAdjust * Time.deltaTime,0f);
-            // timeは地面から離れたらスタートする、なので実際は空中にいるときに重力がかかる でもこれもおかしい気がする
+        // moveDirection =  new Vector3(0f, virtualGra * time * jumpAdjust * Time.deltaTime,0f);
+        // timeは地面から離れたらスタートする、なので実際は空中にいるときに重力がかかる でもこれもおかしい気がする
 
-         //characterController.Move(moveDirection);
+        //characterController.Move(moveDirection);
 
         //カメラ正面のベクトルのｘｚ成分を取得して、単位ベクトル化し、地面に平行なベクトルを取得
         cameraForward = Camera.transform.forward;
@@ -95,24 +101,24 @@ public class PlayerController : MonoBehaviour
 
 
 
-                    if(_cameraFollow.cameraMove && _cameraFollow.isCameraMoveEnd==false)
-            {
-                inputHorizontal = 0;
-                inputVertical = 0;
-            }
-
-
-        //方向の入力に応じて動く方向を決める
-        moveDirection = cameraForward * inputVertical + Camera.transform.right * inputHorizontal  ;
-
-        // 斜め移動時はベクトルの長さで成分を割って、単位ベクトル化
-        if(moveDirection.magnitude >=1)
+        if (_cameraFollow.cameraMove && _cameraFollow.isCameraMoveEnd == false)
         {
-            moveDirection/=moveDirection.magnitude ;
+            inputHorizontal = 0;
+            inputVertical = 0;
         }
 
 
-    
+        //方向の入力に応じて動く方向を決める
+        moveDirection = cameraForward * inputVertical + Camera.transform.right * inputHorizontal;
+
+        // 斜め移動時はベクトルの長さで成分を割って、単位ベクトル化
+        if (moveDirection.magnitude >= 1)
+        {
+            moveDirection /= moveDirection.magnitude;
+        }
+
+
+
 
 
 
@@ -134,7 +140,7 @@ public class PlayerController : MonoBehaviour
             if (groundtime >= 0.3f)
             { isGrounded = false; }
             else
-            {isGrounded = true;}
+            { isGrounded = true; }
         }
 
 
@@ -148,13 +154,13 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey("4") || Input.GetButton("Dash"))
             {
 
-                isDash=true;
+                isDash = true;
                 moveDirection.x *= 2;
                 moveDirection.z *= 2;
                 // animator.SetTrigger("Run");
 
-                if ( Input.GetButtonDown("Jump") && jumpCount < 1)
-                {                 
+                if (Input.GetButtonDown("Jump") && jumpCount < 1)
+                {
 
                     isJump = true;
                     isDashJump = true;
@@ -164,56 +170,56 @@ public class PlayerController : MonoBehaviour
 
 
                     jumpDirection = transform.forward.normalized;
-                    moveDirection = new Vector3(0,0,0);
+                    moveDirection = new Vector3(0, 0, 0);
 
 
                 }
             }
             else //ダッシュしてないときの処理
             {
-                    isDash=false;
+                isDash = false;
 
-                if ( Input.GetButtonDown("Jump") && jumpCount < 1)
+                if (Input.GetButtonDown("Jump") && jumpCount < 1)
                 {
-                    
+
                     isJump = true;
                     // startPosition = transform.position;    // 2段 防がなければ
                     jumpCount++;
-                    
+
                     // ジャンプ時の方向入力の大きさ、向きを取得、大きさはスティックの段階判定に使用
 
-                    beforeJumpInputHorizontal=inputHorizontal;
-                    beforeJumpInputVertical=inputVertical;
+                    beforeJumpInputHorizontal = inputHorizontal;
+                    beforeJumpInputVertical = inputVertical;
 
                     jumpDirection = transform.forward.normalized;
-                    jumpDirection.y=0;                  
-                    
+                    jumpDirection.y = 0;
+
 
                 }
             }
 
-            
 
 
 
-            if(!_cameraFollow.isFirstPerson) //1人称視点の際に、カニ歩きになるように、isFirstPersonを監視
+
+            if (!_cameraFollow.isFirstPerson) //1人称視点の際に、カニ歩きになるように、isFirstPersonを監視
             {
-            //動く方向を向く transform.LookAtは引数に指定した位置をむく
-            transform.LookAt(transform.position + new Vector3(moveDirection.x,0,moveDirection.z));
+                //動く方向を向く transform.LookAtは引数に指定した位置をむく
+                transform.LookAt(transform.position + new Vector3(moveDirection.x, 0, moveDirection.z));
             }
-            
-            if(_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
+
+            if (_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
             {
                 horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
                 //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + horizontalAngle, 0);
-                transform.Rotate(transform.up,horizontalAngle);
+                transform.Rotate(transform.up, horizontalAngle);
 
             }
-            
 
-            characterController.Move(moveDirection * Time.deltaTime * moveSpeed );
 
-                    
+            characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
+
+
         }
         else
         {
@@ -224,9 +230,10 @@ public class PlayerController : MonoBehaviour
 
             time += Time.deltaTime;
 
-             moveDirection=new Vector3(0,virtualGra * time,0) ; // ジャンプではない自由落下　ジャンプの時は方向が毎フレーム加算される
+            moveDirection = new Vector3(0, virtualGra * time, 0); // ジャンプではない自由落下? って過去の俺が書いてるけど、地面ついていないときこれがおこってるので、普通に自由落下では？
+            // ジャンプの時は方向が毎フレーム加算される　V=gt
             //moveDirection.y = virtualGra * time;
-            characterController.Move(moveDirection * Time.deltaTime );
+            characterController.Move(moveDirection * Time.deltaTime);
 
 
 
@@ -241,7 +248,7 @@ public class PlayerController : MonoBehaviour
         // 多分接地判定ががばいから、端っこに行くと重力がめちゃかかる
         // if(isGrounded==false&& isJump==false)
         // {
-            
+
         //     moveDirection.y += Physics.gravity.y;// 1フレーム当たりの重力加速度を加える 最終的にMOVE関数でデルタタイムを
         //     moveSpeed = 1;
 
@@ -258,7 +265,7 @@ public class PlayerController : MonoBehaviour
         {
 
             moveDirection.x = 0;
-            moveDirection.z = 0 ;
+            moveDirection.z = 0;
 
 
 
@@ -267,7 +274,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-                //  後で下にレイをうってある程度の高さだったらトゥルーを返す用にしておく
+            //  後で下にレイをうってある程度の高さだったらトゥルーを返す用にしておく
 
             // if ( Input.GetButtonDown("Jump") && jumpCount == 1 && time >= 0.2) // timeは同じフレーム内で処理されてしまうので。
             // {
@@ -289,60 +296,63 @@ public class PlayerController : MonoBehaviour
 
 
             // ダッシュ中にジャンプしたとき
-            if(isDashJump)
+            if (isDashJump)
             {
-                moveDirection += jumpDirection*jumpFoarwardPower*2;
+                moveDirection += jumpDirection * jumpFoarwardPower * 2;
                 moveDirection *= Time.deltaTime;
-                                    
+
             }
             else
             {
                 // スティックを少し倒している時
-                if( Mathf.Abs(beforeJumpInputHorizontal) <= 0.5 && beforeJumpInputHorizontal !=0 
-                || Mathf.Abs(beforeJumpInputVertical) <= 0.5 &&  beforeJumpInputVertical !=0)
+                if (Mathf.Abs(beforeJumpInputHorizontal) <= 0.5 && beforeJumpInputHorizontal != 0
+                || Mathf.Abs(beforeJumpInputVertical) <= 0.5 && beforeJumpInputVertical != 0)
                 {
-                    moveDirection += jumpDirection*jumpFoarwardPower*0.7f;
-                     moveDirection *= Time.deltaTime;
+                    moveDirection += jumpDirection * jumpFoarwardPower * 0.7f;
+                    moveDirection *= Time.deltaTime;
                 }
                 // スティックを上記より倒している時
-                if(Mathf.Abs(beforeJumpInputHorizontal) >= 0.5 || Mathf.Abs(beforeJumpInputVertical) >= 0.5 )
+                if (Mathf.Abs(beforeJumpInputHorizontal) >= 0.5 || Mathf.Abs(beforeJumpInputVertical) >= 0.5)
                 {
-                    moveDirection += jumpDirection*jumpFoarwardPower*1.4f;
-                     moveDirection *= Time.deltaTime;
+                    moveDirection += jumpDirection * jumpFoarwardPower * 1.4f;
+                    moveDirection *= Time.deltaTime;
 
                     // 距離の調整
                     // if(moveDirection.magnitude >=1)
                     //     {
                     //         moveDirection/=moveDirection.magnitude ;
                     //     }
-    
-                } 
+
+                }
 
             }
 
 
             // moveDirection.y = jumpForce *Time.deltaTime;
-            moveDirection.y = (float)jumpPower *Time.deltaTime;
+            moveDirection.y = (float)jumpPower * Time.deltaTime;
 
-            // 速さ＝初速＋加速×時間　の速さの公式を使っている。常に重力をかけてジャンプの時だけ初速加える
-            
-           // moveDirection.y = jumpForce + 0.5f * Physics.gravity.y * time;
-           //  本来はmoveDirection.y = startPosition.y + jumpForce * time  + 0.5f * Physics.gravity.y  * time* time;になるが、
-           //  最後にデルタタイムかけるので２，３項目のTIMEはなくしている。（）でくくっているイメージ
-           // スタートポジションを足さない理由はムーブ関数に入れているから。普通にトランスフォームに代入するんだったら必要
+            // 速さ＝初速＋加速×時間　の速さの公式を使っている。接地していあにときは、常に重力（加速×時間）をかけているので、ジャンプの時だけ初速加える
+
+
+
+            //  多分このへんは間違い　ムーブ関数に速さではなくて座標をいれようとしてていろいろ解釈を頑張っていた
+            // moveDirection.y = jumpForce + 0.5f * Physics.gravity.y * time;
+            //  本来はmoveDirection.y = startPosition.y + jumpForce * time  + 0.5f * Physics.gravity.y  * time* time;になるが、
+            //  最後にデルタタイムかけるので２，３項目のTIMEはなくしている。（）でくくっているイメージ
+            // スタートポジションを足さない理由はムーブ関数に入れているから。普通にトランスフォームに代入するんだったら必要
 
 
 
 
             // ダッシュしながらジャンプすると正面方向の力を強くしたい
 
-                // ジャンプ中は地上よりも動けなくするイメージ
-                // moveDirection.x *=0.5f;
-                // moveDirection.z *=0.5f;
+            // ジャンプ中は地上よりも動けなくするイメージ
+            // moveDirection.x *=0.5f;
+            // moveDirection.z *=0.5f;
 
-           
 
-        characterController.Move(moveDirection );
+
+            characterController.Move(moveDirection);
         }
 
         // if(isGlide) //スコープは落下より後ろ
@@ -351,10 +361,10 @@ public class PlayerController : MonoBehaviour
         //     moveDirection.y = 0;
 
         // }
-//         else
-//         {
-// moveDirection.y += Physics.gravity.y;
-//         }
+        //         else
+        //         {
+        // moveDirection.y += Physics.gravity.y;
+        //         }
 
 
 
@@ -372,7 +382,7 @@ public class PlayerController : MonoBehaviour
         if (hit.gameObject.tag == "ground")
         {
             isJump = false;
-            isDashJump=false;
+            isDashJump = false;
             time = 0;
             jumpCount = 0;
             isGrounded = true;

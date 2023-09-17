@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
+
+/// <summary>
+///カメラの挙動
+/// </summary>
 public class CameraFollow : MonoBehaviour
 {
     // フレーム更新型
@@ -19,7 +23,8 @@ public class CameraFollow : MonoBehaviour
 
 
     public float angleInDegrees;
-    [SerializeField] float verticalAngleLimit = 70;
+    [SerializeField] float verticalUpAngleLimit = 70;
+    [SerializeField] float verticalDownAngleLimit = -30;
 
     // １人称
     public bool isFirstPerson = false;
@@ -31,6 +36,11 @@ public class CameraFollow : MonoBehaviour
     Vector3 cameraForward;
     Vector3 beforeTargetPosiFirst;
     PlayerController _playerController;
+    public float cameraDistance;
+    Vector3 offset;// 回転時のプレイヤーからの離れ具合、
+    [SerializeField] float upDistanceCorrection = 20f; //上方向のカメラの回転時の、距離の補正
+    [SerializeField] float downDistanceCorrection = 4f; //下方向のカメラの回転時の、距離の補正
+    [SerializeField] float verticalAngleUnderZeroGazePoint = 20f; // /下方向のカメラの回転時の注視点の高さの補正
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +58,14 @@ public class CameraFollow : MonoBehaviour
     {
 
 
+        //確認用でcameraDistanceは無くてもいい。
+        cameraDistance = (Player.transform.position - this.transform.position).magnitude;
 
+
+
+        /// <summary>
+        ///一人称視点
+        /// </summary>
 
         if (Input.GetKeyDown("1") || Input.GetButtonDown("First"))
         {
@@ -112,9 +129,7 @@ public class CameraFollow : MonoBehaviour
         if (isFirstPerson)
         {
 
-            //kokodesu
-            //kokodesu
-            //kokodesu
+
 
             if (isCameraMoveEnd) //カメラの移動が終わったら
             {
@@ -135,6 +150,11 @@ public class CameraFollow : MonoBehaviour
         }
         else
         {
+            /// <summary>
+            ///３人称視点
+            /// </summary>
+
+
             // 2つのベクトルの内積を計算
             playerForward = Player.transform.forward.normalized;
             float dotProduct = Vector3.Dot(playerForward, transform.forward.normalized);
@@ -152,19 +172,54 @@ public class CameraFollow : MonoBehaviour
 
 
 
-            // カメラの水平回転
+            // カメラの水平回転入力
             horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
 
-            // カメラの垂直回転
+            // カメラの垂直回転入力
             verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-            verticalAngle = Mathf.Clamp(verticalAngle, -5, verticalAngleLimit); // 垂直回転の角度を制限
+            verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit); // 垂直回転の角度を制限
 
-            // カメラの位置をプレイヤーの周囲に回転させる
-            Vector3 offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
+
+
+            if (verticalAngle >= 30)
+            {
+
+                // verticalAngleが上がるほど、カメラのとの距離を離す
+                float distance = 9 + (verticalAngle - 30) / upDistanceCorrection;
+                offset = new Vector3(0, 0, -distance); // カメラを適切な距離に配置
+
+                // カメラをプレイヤーの周りに回転させる
+                offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset;
+                // カメラがプレイヤーを常に向くようにする
+                transform.LookAt(Player.transform.position);
+            }
+            else if (verticalAngle < 0)
+            {
+
+                //  verticalAngleが下がるほど、カメラを近づける
+                float distance = 9 + (verticalAngle) / downDistanceCorrection;
+                offset = Quaternion.Euler(0, horizontalAngle, 0) * new Vector3(0, 0, -distance) + new Vector3(0, 1f, 0); //new Vector3は床下が見えないように高さ調整
+
+                // カメラをプレイヤーに向ける
+                //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
+                transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
+
+
+                // transform.LookAt(dowwnZero.transform.position);
+
+
+            }
+            else
+            {
+                // カメラの位置をプレイヤーの周囲に回転させる
+                offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
+                // カメラがプレイヤーを常に向くようにする
+                transform.LookAt(Player.transform.position);
+            }
+
             transform.position = Player.transform.position + offset;
 
-            // カメラがプレイヤーを常に向くようにする
-            transform.LookAt(Player.transform.position);
+
         }
 
     }
@@ -173,57 +228,5 @@ public class CameraFollow : MonoBehaviour
 
 
 
-    // 頭いいベクトル逆方向型
-    //public Transform target; // 追尾対象のプレイヤーのTransform
-    //public float followDistance = 5f; // カメラの追尾距離
-
-    //void LateUpdate()
-    //{
-    //    if (target == null)
-    //    {
-    //        Debug.LogWarning("カメラの追尾対象が設定されていません。");
-    //        return;
-    //    }
-
-    //    // 追尾対象の後ろに追従する位置を計算
-    //    // target.forwardの逆をベクトル計算することで、常にカメラを後ろにすることに成功
-    //    Vector3 behindPosition = target.position - target.forward * followDistance;
-    //    behindPosition.y = 1;
-
-    //    // カメラの位置を更新
-    //    transform.position = behindPosition;
-    //   // transform.LookAt(target); // カメラがプレイヤーを常に見つめるようにする
-    //}
-
-
-
-
-    // 初期位置から距離を計算して、カメラの現在のポジションにその距離を足して一定の距離を守るタイプ
-
-    //public Transform target; // 追尾対象のプレイヤーのTransform
-    //public float distanceFromPlayer = 5f; // カメラの初期位置からの距離
-    //public float followSpeed = 5f; // カメラの追尾速度
-
-    //private Vector3 initialOffset; // カメラの初期位置とプレイヤーの位置のオフセット
-
-    //void Start()
-    //{
-
-
-    //    // カメラの初期位置とプレイヤーの位置のオフセットを計算
-    //    initialOffset = transform.position - target.position;
-    //}
-
-    //void LateUpdate()
-    //{
-
-
-    //    // カメラの追尾対象の位置を計算
-    //    Vector3 targetPosition = target.position + initialOffset.normalized * distanceFromPlayer;
-
-    //    // 追尾速度を考慮してカメラの位置を更新
-    //    Vector3 newPosition = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followSpeed);
-    //    transform.position = newPosition;
-    //}
 }
 

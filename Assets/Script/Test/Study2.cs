@@ -44,3 +44,61 @@ using UnityEngine;
 //     }
 // }
 
+
+
+
+
+// カメラ追従２
+
+// 頭いいベクトル逆方向型
+//public Transform target; // 追尾対象のプレイヤーのTransform
+//public float followDistance = 5f; // カメラの追尾距離
+
+//void LateUpdate()
+//{
+//    if (target == null)
+//    {
+//        Debug.LogWarning("カメラの追尾対象が設定されていません。");
+//        return;
+//    }
+
+//    // 追尾対象の後ろに追従する位置を計算
+//    // target.forwardの逆をベクトル計算することで、常にカメラを後ろにすることに成功
+//    Vector3 behindPosition = target.position - target.forward * followDistance;
+//    behindPosition.y = 1;
+
+//    // カメラの位置を更新
+//    transform.position = behindPosition;
+//   // transform.LookAt(target); // カメラがプレイヤーを常に見つめるようにする
+//}
+
+
+
+
+// 初期位置から距離を計算して、カメラの現在のポジションにその距離を足して一定の距離を守るタイプ
+
+//public Transform target; // 追尾対象のプレイヤーのTransform
+//public float distanceFromPlayer = 5f; // カメラの初期位置からの距離
+//public float followSpeed = 5f; // カメラの追尾速度
+
+//private Vector3 initialOffset; // カメラの初期位置とプレイヤーの位置のオフセット
+
+//void Start()
+//{
+
+
+//    // カメラの初期位置とプレイヤーの位置のオフセットを計算
+//    initialOffset = transform.position - target.position;
+//}
+
+//void LateUpdate()
+//{
+
+
+//    // カメラの追尾対象の位置を計算
+//    Vector3 targetPosition = target.position + initialOffset.normalized * distanceFromPlayer;
+
+//    // 追尾速度を考慮してカメラの位置を更新
+//    Vector3 newPosition = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followSpeed);
+//    transform.position = newPosition;
+//}
