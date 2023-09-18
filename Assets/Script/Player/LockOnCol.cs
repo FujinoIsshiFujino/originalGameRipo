@@ -35,35 +35,38 @@ public class LockOnCol : MonoBehaviour
             return;
         }
 
-        // enemyタグのオブジェクトの取得
-        GameObject[] visibleEnemies = GameObject.FindGameObjectsWithTag(enemyTag);
-        // これはシーン上の敵を全部読みこんでしまうので、かなりメモリを食う？
-        // しかし、そうじゃないとWorldToViewportPointでビューポイントで変換する対象が見つからない
 
-        enemyList.Clear(); //クリアーをしないとlistに増え続ける
+        //カメラ内にうつっている条件も加えるとき
 
-        foreach (GameObject enemyObject in visibleEnemies)
-        {
-            // 対象（エネミータグ）のカメラのビューポート座標を取得
-            viewportPosition = mainCamera.WorldToViewportPoint(enemyObject.transform.position);
+        // // enemyタグのオブジェクトの取得
+        // GameObject[] visibleEnemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        // // これはシーン上の敵を全部読みこんでしまうので、かなりメモリを食う？
+        // // しかし、そうじゃないとWorldToViewportPointでビューポイントで変換する対象が見つからない
 
-            // カメラの視錘台内にいるかどうかをチェック
-            if (viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
-                viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
-                viewportPosition.z >= 0)
-            {
+        // enemyList.Clear(); //クリアーをしないとlistに増え続ける
 
-                enemyList.Add(enemyObject);
-            }
-            else
-            {
-                // カメラに映っていない場合、enemyListから取り除く
-                enemyList.Remove(enemyObject);
-            }
-        }
+        // foreach (GameObject enemyObject in visibleEnemies)
+        // {
+        //     // 対象（エネミータグ）のカメラのビューポート座標を取得
+        //     viewportPosition = mainCamera.WorldToViewportPoint(enemyObject.transform.position);
 
-        // 更新時に一致する要素を更新
-        UpdateEnemyListResult();
+        //     // カメラの視錘台内にいるかどうかをチェック
+        //     if (viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
+        //         viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
+        //         viewportPosition.z >= 0)
+        //     {
+
+        //         enemyList.Add(enemyObject);
+        //     }
+        //     else
+        //     {
+        //         // カメラに映っていない場合、enemyListから取り除く
+        //         enemyList.Remove(enemyObject);
+        //     }
+        // }
+
+        // // 更新時に一致する要素を更新
+        // UpdateEnemyListResult();
 
 
 
@@ -80,11 +83,17 @@ public class LockOnCol : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy")
         {
-            // isLockOn = true;
-            // enemyList = other.gameObject;
-            if (!enemyListTrigger.Contains(other.gameObject))
+
+            //カメラ内の時の処理
+            // if (!enemyListTrigger.Contains(other.gameObject))
+            // {
+
+            //      enemyListTrigger.Add(other.gameObject);  // リストに追加
+            // }
+
+            if (!enemyListResult.Contains(other.gameObject))
             {
-                enemyListTrigger.Add(other.gameObject);  // リストに追加
+                enemyListResult.Add(other.gameObject);
             }
 
         }
@@ -96,8 +105,9 @@ public class LockOnCol : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy")
         {
-            // isLockOn = false;
-            enemyListTrigger.Remove(other.gameObject);  // リストから削除
+            //カメラ内の時の処理
+            // enemyListTrigger.Remove(other.gameObject);  // リストから削除
+            enemyListResult.Remove(other.gameObject);
         }
     }
 

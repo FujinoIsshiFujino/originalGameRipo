@@ -19,6 +19,9 @@ public class LockOn : MonoBehaviour
     public bool isButtonLock;
     public List<GameObject> enemyListDistance = new List<GameObject>(); // エネミーのリスト
     Vector3 playerPosition;
+    public List<GameObject> previousList = new List<GameObject>();
+    //ロックオンを押したときの敵の距離準のlist　enemyListDistanceをそのまま使ってしまうと勝手にロックオン対象が距離に応じて切り替わるために仕様
+
 
 
 
@@ -35,7 +38,7 @@ public class LockOn : MonoBehaviour
     void Update()
     {
 
-        enemyListDistance = new List<GameObject>(_lockOnCol.enemyListResult); //参照したlistを並び変えたいのでコピーを作成
+        enemyListDistance = new List<GameObject>(_lockOnCol.enemyListResult);
 
 
 
@@ -82,17 +85,25 @@ public class LockOn : MonoBehaviour
         if (Input.GetButtonDown("Lock"))
         {
             isButtonLock = !isButtonLock;
-
+            previousList = new List<GameObject>(enemyListDistance);
         }
 
         if (isButtonLock)
         {
-            _CameraFollow.enabled = false;
-            Camera.transform.forward = (enemyListDistance[0].transform.position - Camera.transform.position).normalized;
+            // _CameraFollow.enabled = false;
+            // Camera.transform.forward = (enemyListDistance[0].transform.position - Camera.transform.position).normalized;
         }
         else
         {
             _CameraFollow.enabled = true;
+            previousList.Clear();
+        }
+
+        // listから敵がいなくなった場合（プレイヤーの離脱、敵の撃破）
+        if (enemyListDistance.Count == 0)
+        {
+            isButtonLock = false;
+            previousList.Clear();
         }
     }
 

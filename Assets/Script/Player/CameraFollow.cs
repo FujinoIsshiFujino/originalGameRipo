@@ -42,6 +42,25 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] float downDistanceCorrection = 4f; //下方向のカメラの回転時の、距離の補正
     [SerializeField] float verticalAngleUnderZeroGazePoint = 20f; // /下方向のカメラの回転時の注視点の高さの補正
 
+
+
+    LockOn _lockOn;
+    private Vector3 lockOnGazePoint;
+    int i;
+    public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 前回フレームのリスト
+    public List<GameObject> GazeEnemyList = new List<GameObject>(); // 今回フレームのリスト
+    public bool listHasChanged = false; // リストに変更があったかどうかを示すフラグ
+
+
+
+
+    [SerializeField] private float rotationSpeed = 5.0f; // 回転の速度
+
+
+    private Quaternion targetRotation; // 目標の回転
+    public bool isRotateLockOn;
+    public bool isSwitching = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -60,6 +79,8 @@ public class CameraFollow : MonoBehaviour
 
         //確認用でcameraDistanceは無くてもいい。
         cameraDistance = (Player.transform.position - this.transform.position).magnitude;
+
+        _lockOn = GetComponent<LockOn>();
 
 
 
@@ -189,9 +210,25 @@ public class CameraFollow : MonoBehaviour
                 offset = new Vector3(0, 0, -distance); // カメラを適切な距離に配置
 
                 // カメラをプレイヤーの周りに回転させる
+                // ベクトルをクォータニオンの行列で１次変換している
                 offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset;
-                // カメラがプレイヤーを常に向くようにする
-                transform.LookAt(Player.transform.position);
+
+
+
+                if (_lockOn.isButtonLock)
+                {
+
+                    lockOnStart();
+                }
+                else
+                {
+                    lockOnEnd(verticalAngle);
+                    isSwitching = false;
+                    GazeEnemyList.Clear();
+                    i = 0;
+                }
+
+
             }
             else if (verticalAngle < 0)
             {
@@ -200,12 +237,26 @@ public class CameraFollow : MonoBehaviour
                 float distance = 9 + (verticalAngle) / downDistanceCorrection;
                 offset = Quaternion.Euler(0, horizontalAngle, 0) * new Vector3(0, 0, -distance) + new Vector3(0, 1f, 0); //new Vector3は床下が見えないように高さ調整
 
-                // カメラをプレイヤーに向ける
-                //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
-                transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
+
+                if (_lockOn.isButtonLock)
+                {
+
+                    lockOnStart();
+
+                }
+                else
+                {
+                    // // カメラをプレイヤーに向ける
+                    // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
+                    transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
+                    // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
+
+                    isSwitching = false;
+                    GazeEnemyList.Clear();
+                    i = 0;
+                }
 
 
-                // transform.LookAt(dowwnZero.transform.position);
 
 
             }
@@ -213,8 +264,21 @@ public class CameraFollow : MonoBehaviour
             {
                 // カメラの位置をプレイヤーの周囲に回転させる
                 offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
-                // カメラがプレイヤーを常に向くようにする
-                transform.LookAt(Player.transform.position);
+
+                if (_lockOn.isButtonLock)
+                {
+
+                    lockOnStart();
+                }
+                else
+                {
+                    // カメラがプレイヤーを常に向くようにする
+                    // transform.LookAt(Player.transform.position);
+                    lockOnEnd(verticalAngle);
+                    isSwitching = false;
+                    i = 0;
+                }
+
             }
 
             transform.position = Player.transform.position + offset;
@@ -222,11 +286,157 @@ public class CameraFollow : MonoBehaviour
 
         }
 
+
     }
 
 
 
+    void lockOnStart()
+    {
+        // _lockOn.enemyListDistanceを注視すると、カメラはプレイヤーとの距離に応じて勝手にロックオン対象を切り替えてしまう。なのでカメラは別のGazeEnemyListを注視しづける。
+        // GazeEnemyListは初回ロックオフ→オン時に代入され、ロックオン対象の切り替えをして、ロックオン範囲内の敵情報が変わったフレームorロックオンが終わるor敵の撃破（これはまだ未処理）によって更新される
+        //更新されたかどうかはListsAreEqualdメソッドで判断
+        //ロックオン範囲内の敵情報が変わっていない状態で、ロックオン対象を切り替えてもlistは更新されず、切り替えるごとにそのままlistのインデックスをあげていって遠い敵をロックオンする
+        //更新された状態においても、更新前にロックオンしていた敵が更新後に一番近い（index０）の場合と、そうでない場合にわけた。
 
+
+        //ロックオフ→オン時にの処理
+        if (isSwitching == false)
+        {
+            GazeEnemyList = _lockOn.previousList;
+        }
+
+        //プレイヤーとの距離が一番近い敵のlistを常に保持
+        realTimeEnemyList = _lockOn.enemyListDistance;
+
+
+
+        // ロックオン対象切り替え
+        if (Input.GetButtonDown("L1"))
+        {
+            // リストがL1前後と異なるかをチェック
+            if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
+            {
+                listHasChanged = true;
+
+                if (realTimeEnemyList[0] == GazeEnemyList[i])
+                {
+                    //一番近い敵がL1前後で同じ場合。
+                    i = 1;
+                }
+                else
+                {
+                    i = 0;
+                }
+
+                GazeEnemyList = new List<GameObject>(realTimeEnemyList);
+
+            }
+            else
+            {
+                listHasChanged = false;
+                i++;
+            }
+
+            if (GazeEnemyList.Count - i <= 0)
+            {
+                i = 0;
+            }
+
+            isSwitching = true;
+
+        }
+
+
+        // 旧
+        // if (Input.GetButtonDown("L1"))
+        // {
+
+        //     i++;
+        //     if (_lockOn.enemyListDistance.Count - i <= 0)
+        //     {
+        //         i = 0;
+        //     }
+
+        // }
+
+        //  ロックオンオン時はプレイヤーと敵の中心を回転の軸にする
+        // lockOnGazePoint = (_lockOn.enemyListDistance[i].transform.position - Player.transform.position) / 2;
+
+        lockOnGazePoint = (GazeEnemyList[i].transform.position - Player.transform.position) / 2;
+
+        Vector3 directionToTarget = (Player.transform.position + lockOnGazePoint) - transform.position;
+        // directionToTarget.y = 0;
+        // ベクトルから、回転先のクォータニオンを取得
+        Quaternion rotationWithoutZ = Quaternion.LookRotation(directionToTarget);
+
+        // Z軸の回転を0度に固定
+        targetRotation = Quaternion.Euler(rotationWithoutZ.eulerAngles.x, rotationWithoutZ.eulerAngles.y, 0);
+        // transform.rotation = targetRotation;
+
+
+        // 回転を補間して滑らかに行う
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        // 一定の角度以下になったら補完をやめ、注視する
+        float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
+        if (angleDifference < 5.0f)
+        {
+            transform.LookAt(Player.transform.position + lockOnGazePoint);
+        }
+    }
+    void lockOnEnd(float verticalAngle)
+    {
+        Vector3 directionToTarget = Player.transform.position - transform.position;
+        Quaternion rotationWithoutZ = Quaternion.LookRotation(directionToTarget);
+
+        // Z軸の回転を0度に固定
+        targetRotation = Quaternion.Euler(rotationWithoutZ.eulerAngles.x, rotationWithoutZ.eulerAngles.y, 0);
+
+        if (isRotateLockOn == false)
+        {
+            // 回転を補間して滑らかに行う
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+
+
+        float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
+
+        // 一定の角度以下になったら補完をやめ、注視する
+        if (angleDifference < 5.0f)
+        {
+            if (verticalAngle >= 0)
+            {
+                transform.LookAt(Player.transform.position);
+            }
+
+
+            isRotateLockOn = true;
+        }
+        else
+        {
+            isRotateLockOn = false;
+        }
+    }
+
+    // 2つのリストが等しいかどうかをチェックするメソッド
+    private bool ListsAreEqual(List<GameObject> list1, List<GameObject> list2)
+    {
+        if (list1.Count != list2.Count)
+        {
+            return false; // リストの要素数が異なる場合、異なるリストとみなす
+        }
+
+        for (int i = 0; i < list1.Count; i++)
+        {
+            if (list1[i] != list2[i])
+            {
+                return false; // 要素が異なる場合、異なるリストとみなす
+            }
+        }
+
+        return true; // リストが等しい場合、同じリストとみなす
+    }
 
 }
 
