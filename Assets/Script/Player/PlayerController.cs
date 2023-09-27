@@ -151,7 +151,7 @@ public class PlayerController : MonoBehaviour
 
 
             //ダッシュ処理
-            if (Input.GetKey("4") || Input.GetButton("Dash"))
+            if (Input.GetKey("x") || Input.GetButton("Dash"))
             {
 
                 isDash = true;

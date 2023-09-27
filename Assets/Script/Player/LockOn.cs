@@ -82,7 +82,7 @@ public class LockOn : MonoBehaviour
             return scoreA.CompareTo(scoreB);
         });
 
-        if (Input.GetButtonDown("Lock"))
+        if (Input.GetButtonDown("Lock") || Input.GetKeyDown("r"))
         {
             isButtonLock = !isButtonLock;
             previousList = new List<GameObject>(enemyListDistance);

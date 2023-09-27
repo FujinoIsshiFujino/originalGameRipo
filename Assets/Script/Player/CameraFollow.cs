@@ -312,7 +312,7 @@ public class CameraFollow : MonoBehaviour
 
 
         // ロックオン対象切り替え
-        if (Input.GetButtonDown("L1"))
+        if (Input.GetButtonDown("L1") || Input.GetKeyDown("e"))
         {
             // リストがL1前後と異なるかをチェック
             if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
