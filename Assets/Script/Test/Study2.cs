@@ -102,3 +102,22 @@ using UnityEngine;
 //    Vector3 newPosition = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followSpeed);
 //    transform.position = newPosition;
 //}
+
+
+
+
+
+
+
+//ラムダ式:　匿名関数　リアクトのノリでアロー演算子使えはする。ただし、関数の時のみで、変数の場合は引数がいらないので（）の記述もなくなる。
+//右辺を評価して左辺に格納するっていう根本思想は同じ
+
+// Func<bool> IsMovableJudge = () => StateEnum.Normal == _state; は、ラムダ式を変数 IsMovableJudge に代入しています。
+// これは、条件を評価するための関数を変数に格納する方法です。必要に応じて、IsMovableJudge 関数を呼び出して条件を評価できます。
+// このアプローチは、条件を何度も再利用する必要がある場合に役立ちます。
+
+
+// public bool IsMovable => StateEnum.Normal == _state; は、プロパティとして条件を定義しています。
+// このプロパティは、外部から参照する際に通常のプロパティとしてアクセスできます。
+// プロパティのゲッターとしてラムダ式を使用しているため、IsMovable プロパティの値は _state の値に基づいて動的に変化します。
+// プロパティの主な目的は、外部コードから内部状態にアクセスする際にカプセル化と制御を提供することです。
