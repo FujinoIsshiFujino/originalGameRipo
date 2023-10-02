@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(EnemyStatus))]
 public class EnemyMove : MonoBehaviour
 {
 
@@ -12,10 +13,12 @@ public class EnemyMove : MonoBehaviour
     private RaycastHit raycasthit;
 
     private NavMeshAgent _agent;
+    private EnemyStatus _status;
     // Start is called before the first frame update
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _status = GetComponent<EnemyStatus>();
 
     }
 
@@ -99,6 +102,11 @@ public class EnemyMove : MonoBehaviour
 
         if (collider.gameObject.tag == "Player")
         {
+            if (!_status.IsMovable)
+            {
+                _agent.isStopped = true;
+                return;
+            }
 
             var diff = collider.gameObject.transform.position - transform.position;
             var distance = diff.magnitude;
@@ -109,7 +117,7 @@ public class EnemyMove : MonoBehaviour
                 // Debug.Log("Target" + collider.gameObject);
                 // Debug.Log("raycasthit" + raycasthit.transform.gameObject);
                 // Debug.DrawRay(transform.position + new Vector3(0, 0.5f, 0), direction, Color.red, 1, false);
-                if (raycasthit.transform.gameObject.tag == "Player")
+                if (raycasthit.collider.gameObject.tag == "Player")
                 {
 
                     _agent.isStopped = false;

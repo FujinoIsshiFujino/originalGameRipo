@@ -131,7 +131,6 @@ public class PlayerController : MonoBehaviour
             //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
             groundtime = 0.0f;
             isGrounded = true;
-            //Debug.Log(999999);
 
         }
         else
