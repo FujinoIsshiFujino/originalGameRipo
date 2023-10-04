@@ -434,3 +434,8 @@ public class Test : MonoBehaviour
 
 // ワールド座標をビューポート値に変換している
 // Vector3 viewportPosition = mainCamera.WorldToViewportPoint(transform.position);
+
+
+
+
+//tetst
