@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
 
 
+    Animator _animator;
+
     private void Start()
     {
         // 取得
@@ -57,6 +59,8 @@ public class PlayerController : MonoBehaviour
         initialMoveSpeed = moveSpeed;
 
         _cameraFollow = Camera.GetComponent<CameraFollow>();
+
+        _animator = GetComponent<Animator>();
 
 
         //jumpPower = apex/apexTime + 0.5*9.81*apexTime;
@@ -172,6 +176,8 @@ public class PlayerController : MonoBehaviour
                     moveDirection = new Vector3(0, 0, 0);
 
 
+                    // _animator.SetBool("Jump", true);
+                    _animator.SetTrigger("Jump");
                 }
             }
             else //ダッシュしてないときの処理
@@ -193,7 +199,8 @@ public class PlayerController : MonoBehaviour
                     jumpDirection = transform.forward.normalized;
                     jumpDirection.y = 0;
 
-
+                    // _animator.SetBool("Jump", true);
+                    _animator.SetTrigger("Jump");
                 }
             }
 
@@ -218,6 +225,7 @@ public class PlayerController : MonoBehaviour
 
             characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
 
+            _animator.SetFloat("Speed", moveDirection.magnitude);
 
         }
         else
@@ -385,6 +393,7 @@ public class PlayerController : MonoBehaviour
             time = 0;
             jumpCount = 0;
             isGrounded = true;
+            // _animator.SetBool("Jump", false);
         }
     }
 
