@@ -227,7 +227,7 @@ public class PlayerController : MonoBehaviour
 
             _animator.SetFloat("Speed", moveDirection.magnitude);
 
-            if (Input.GetKey("c"))
+            if (Input.GetKeyDown("c"))
             {
                 _animator.SetTrigger("Attack");
             }
