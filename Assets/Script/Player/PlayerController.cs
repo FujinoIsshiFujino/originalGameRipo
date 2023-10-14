@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         _animator = GetComponent<Animator>();
         _status = GetComponent<PlayerStatus>();
-        _attack=GetComponent<MobAttack>();
+        _attack = GetComponent<MobAttack>();
 
 
         //jumpPower = apex/apexTime + 0.5*9.81*apexTime;
@@ -155,10 +155,11 @@ public class PlayerController : MonoBehaviour
         }
 
 
-//　ダッシュの速度upとジャンプのベクトル決め
+        //　ダッシュの速度upとジャンプのベクトル決め
         if (isGrounded)
         {
-            if(_status.IsMovable){
+            if (_status.IsMovable)
+            {
                 //ダッシュ処理
                 if (Input.GetKey("x") || Input.GetButton("Dash"))
                 {
@@ -208,8 +209,8 @@ public class PlayerController : MonoBehaviour
                         // _animator.SetBool("Jump", true);
                         _animator.SetTrigger("Jump");
                     }
-                
-                }               
+
+                }
 
 
 
@@ -233,7 +234,7 @@ public class PlayerController : MonoBehaviour
 
                 _animator.SetFloat("Speed", moveDirection.magnitude);
 
-                if (Input.GetKeyDown("c"))
+                if (Input.GetButtonDown("Attack"))
                 {
                     _attack.AttackIfPossible();
                 }
