@@ -49,7 +49,7 @@ public class TestQ : MonoBehaviour
             resetTimeIs = true;
         }
 
-        Debug.Log("１がおされました" + resetTimeIs);
+        // Debug.Log("１がおされました" + resetTimeIs);
 
         if (resetTimeIs)
         {

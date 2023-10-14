@@ -5,6 +5,10 @@ using UnityEngine.UIElements;
 
 
 [RequireComponent(typeof(CharacterController))]
+
+[RequireComponent(typeof(PlayerStatus))]
+
+[RequireComponent(typeof(MobAttack))]
 public class PlayerController : MonoBehaviour
 {
 
@@ -50,6 +54,8 @@ public class PlayerController : MonoBehaviour
 
 
     Animator _animator;
+    private PlayerStatus _status;
+    private MobAttack _attack;
 
     private void Start()
     {
@@ -61,6 +67,8 @@ public class PlayerController : MonoBehaviour
         _cameraFollow = Camera.GetComponent<CameraFollow>();
 
         _animator = GetComponent<Animator>();
+        _status = GetComponent<PlayerStatus>();
+        _attack=GetComponent<MobAttack>();
 
 
         //jumpPower = apex/apexTime + 0.5*9.81*apexTime;
@@ -147,89 +155,88 @@ public class PlayerController : MonoBehaviour
         }
 
 
+//　ダッシュの速度upとジャンプのベクトル決め
         if (isGrounded)
         {
-
-
-
-
-            //ダッシュ処理
-            if (Input.GetKey("x") || Input.GetButton("Dash"))
-            {
-
-                isDash = true;
-                moveDirection.x *= 2;
-                moveDirection.z *= 2;
-                // animator.SetTrigger("Run");
-
-                if (Input.GetButtonDown("Jump") && jumpCount < 1)
+            if(_status.IsMovable){
+                //ダッシュ処理
+                if (Input.GetKey("x") || Input.GetButton("Dash"))
                 {
 
-                    isJump = true;
-                    isDashJump = true;
-                    jumpCount++;
+                    isDash = true;
+                    moveDirection.x *= 2;
+                    moveDirection.z *= 2;
+                    // animator.SetTrigger("Run");
 
-                    // ジャンプ時向きを取得
+                    if (Input.GetButtonDown("Jump") && jumpCount < 1)
+                    {
+
+                        isJump = true;
+                        isDashJump = true;
+                        jumpCount++;
+
+                        // ジャンプ時向きを取得
 
 
-                    jumpDirection = transform.forward.normalized;
-                    moveDirection = new Vector3(0, 0, 0);
+                        jumpDirection = transform.forward.normalized;
+                        moveDirection = new Vector3(0, 0, 0);
 
 
-                    // _animator.SetBool("Jump", true);
-                    _animator.SetTrigger("Jump");
+                        // _animator.SetBool("Jump", true);
+                        _animator.SetTrigger("Jump");
+                    }
                 }
-            }
-            else //ダッシュしてないときの処理
-            {
-                isDash = false;
-
-                if (Input.GetButtonDown("Jump") && jumpCount < 1)
+                else //ダッシュしてないときの処理
                 {
+                    isDash = false;
 
-                    isJump = true;
-                    // startPosition = transform.position;    // 2段 防がなければ
-                    jumpCount++;
+                    if (Input.GetButtonDown("Jump") && jumpCount < 1)
+                    {
 
-                    // ジャンプ時の方向入力の大きさ、向きを取得、大きさはスティックの段階判定に使用
+                        isJump = true;
+                        // startPosition = transform.position;    // 2段 防がなければ
+                        jumpCount++;
 
-                    beforeJumpInputHorizontal = inputHorizontal;
-                    beforeJumpInputVertical = inputVertical;
+                        // ジャンプ時の方向入力の大きさ、向きを取得、大きさはスティックの段階判定に使用
 
-                    jumpDirection = transform.forward.normalized;
-                    jumpDirection.y = 0;
+                        beforeJumpInputHorizontal = inputHorizontal;
+                        beforeJumpInputVertical = inputVertical;
 
-                    // _animator.SetBool("Jump", true);
-                    _animator.SetTrigger("Jump");
+                        jumpDirection = transform.forward.normalized;
+                        jumpDirection.y = 0;
+
+                        // _animator.SetBool("Jump", true);
+                        _animator.SetTrigger("Jump");
+                    }
+                
+                }               
+
+
+
+
+                if (!_cameraFollow.isFirstPerson) //1人称視点の際に、カニ歩きになるように、isFirstPersonを監視
+                {
+                    //動く方向を向く transform.LookAtは引数に指定した位置をむく
+                    transform.LookAt(transform.position + new Vector3(moveDirection.x, 0, moveDirection.z));
                 }
-            }
+
+                if (_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
+                {
+                    horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
+                    //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + horizontalAngle, 0);
+                    transform.Rotate(transform.up, horizontalAngle);
+
+                }
 
 
+                characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
 
+                _animator.SetFloat("Speed", moveDirection.magnitude);
 
-
-            if (!_cameraFollow.isFirstPerson) //1人称視点の際に、カニ歩きになるように、isFirstPersonを監視
-            {
-                //動く方向を向く transform.LookAtは引数に指定した位置をむく
-                transform.LookAt(transform.position + new Vector3(moveDirection.x, 0, moveDirection.z));
-            }
-
-            if (_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
-            {
-                horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
-                //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + horizontalAngle, 0);
-                transform.Rotate(transform.up, horizontalAngle);
-
-            }
-
-
-            characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
-
-            _animator.SetFloat("Speed", moveDirection.magnitude);
-
-            if (Input.GetKeyDown("c"))
-            {
-                _animator.SetTrigger("Attack");
+                if (Input.GetKeyDown("c"))
+                {
+                    _attack.AttackIfPossible();
+                }
             }
 
         }

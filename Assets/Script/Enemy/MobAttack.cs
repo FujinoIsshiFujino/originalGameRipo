@@ -24,7 +24,6 @@ public class MobAttack : MonoBehaviour
 
     public void OnAttackRangeEnter(Collider collider)
     {
-        Debug.Log("ggggggggggggg");
         AttackIfPossible();
     }
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1316,6 +1316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29bb34edf003b64283a58d6316d6ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lifeMax: 10
 --- !u!114 &759743460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1421,6 +1422,33 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &862836036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862836019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbb641c57e6bc89459b7465b74059256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCoolDown: 0.5
+  attackCollider: {fileID: 0}
+--- !u!114 &862836037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862836019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29bb34edf003b64283a58d6316d6ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeMax: 10
 --- !u!1 &892925726
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,7 +1610,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 8d5a0e0d58f4e4176a844a1a03976c19, type: 2}
     - target: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400040, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_Enabled
@@ -2918,7 +2946,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c845081e686a2b4bbb0d4e7ec84f035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeMax: 10
+  lifeMax: 1
 --- !u!1 &1545777270
 GameObject:
   m_ObjectHideFlags: 0
@@ -3455,7 +3483,7 @@ GameObject:
   - component: {fileID: 1764699490}
   - component: {fileID: 1764699488}
   - component: {fileID: 1764699489}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: AttackHitDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
