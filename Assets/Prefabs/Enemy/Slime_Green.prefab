@@ -306,6 +306,7 @@ GameObject:
   - component: {fileID: 5654492716322965392}
   - component: {fileID: 5654492716322965397}
   - component: {fileID: 5654492716322965402}
+  - component: {fileID: -574433527315342534}
   m_Layer: 8
   m_Name: Slime_Green
   m_TagString: Enemy
@@ -431,6 +432,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeMax: 1
+--- !u!114 &-574433527315342534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5655191457405595428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06bd5091c0565ff4595ad361b1bf1ce5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropRate: 1
+  itemPrefab: {fileID: 7739588796025597517, guid: e3627e7985702cf4ea21e46e7dc892c8, type: 3}
+  number: 1
 --- !u!1 &5655191457571185092
 GameObject:
   m_ObjectHideFlags: 0
