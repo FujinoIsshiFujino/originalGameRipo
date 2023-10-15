@@ -36,13 +36,6 @@ public class MobStatus : MonoBehaviour
 
     }
 
-    // void Update()
-    // {
-    //     if(_state==StateEnum.Normal){
-    //         Debug.Log("aaas");
-    //     }
-    // }
-
     protected virtual void OnDie()
     {
 
@@ -63,7 +56,7 @@ public class MobStatus : MonoBehaviour
     public void GoToAttackStateIfPossible()
     {
         if (!IsAttackable) return;
-    
+
         _state = StateEnum.Attack;
         _animator.SetTrigger("Attack");
     }

@@ -13,6 +13,7 @@ public class MobAttack : MonoBehaviour
     void Start()
     {
         _status = GetComponent<MobStatus>();
+        attackCollider.enabled = false;
     }
 
 
