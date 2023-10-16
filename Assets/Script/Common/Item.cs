@@ -41,6 +41,14 @@ public class Item : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
+        OwnedItemsData.Instance.Add(type);
+        OwnedItemsData.Instance.Save();
+
+        foreach (var item in OwnedItemsData.Instance.OwnedItems)
+        {
+            Debug.Log(item.Type + "を" + item.Number + "個所持");
+        }
+
         Destroy(gameObject);
     }
 }
