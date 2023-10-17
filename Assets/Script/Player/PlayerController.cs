@@ -57,6 +57,10 @@ public class PlayerController : MonoBehaviour
     private PlayerStatus _status;
     private MobAttack _attack;
 
+
+
+    float waitTime;
+
     private void Start()
     {
         // 取得
@@ -237,6 +241,7 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetButtonDown("Attack"))
                 {
                     _attack.AttackIfPossible();
+                    waitTime = 0;//攻撃が完了したことが後に実装されれば、 bool作って、あとのwai関数で時間んを０に戻したほうがきれい
                 }
             }
 
@@ -375,6 +380,8 @@ public class PlayerController : MonoBehaviour
             characterController.Move(moveDirection);
         }
 
+        WaitPose(inputHorizontal, inputVertical);
+
         // if(isGlide) //スコープは落下より後ろ
         // {
         //     glideTime += Time.deltaTime;
@@ -407,6 +414,29 @@ public class PlayerController : MonoBehaviour
             jumpCount = 0;
             isGrounded = true;
             // _animator.SetBool("Jump", false);
+        }
+    }
+
+    private void WaitPose(float inputHorizontal, float inputVertical)
+    {
+        if (isJump) waitTime = 0;
+
+        if (inputHorizontal == 0 && inputVertical == 0)
+        {
+            waitTime += Time.deltaTime;
+        }
+        else
+        {
+            waitTime = 0;
+        }
+
+        if (waitTime >= 3f)
+        {
+            _animator.SetBool("Rest", true);
+        }
+        else
+        {
+            _animator.SetBool("Rest", false);
         }
     }
 
