@@ -121,3 +121,57 @@ using UnityEngine;
 // このプロパティは、外部から参照する際に通常のプロパティとしてアクセスできます。
 // プロパティのゲッターとしてラムダ式を使用しているため、IsMovable プロパティの値は _state の値に基づいて動的に変化します。
 // プロパティの主な目的は、外部コードから内部状態にアクセスする際にカプセル化と制御を提供することです。
+
+
+
+// get setについて
+// public class Player
+// {
+//     private string _name;
+
+//     public string Name
+//     {
+//         get { return _name; }
+//         set
+//         {
+//             _name = value; // value は新しい値を指す
+//         }
+//     }
+
+//     public Player(string initialName)
+//     {
+//         _name = initialName;
+//     }
+// }
+
+
+// Player player = new Player("Alice");
+// Console.WriteLine(player.Name); // "Alice"
+//コンストラクタてきな関数をつかっているので、そりゃそうなる。
+
+// player.Name = "Bob"; // `set` アクセサ内で `value` を使用
+// Console.WriteLine(player.Name); // "Bob"
+//こっちはnewでコンストラクタつかわなくてもPlayer クラスのインスタンスを作成し、Name プロパティに値を設定すると変えることができる
+//set アクセサを使うことで、新しい値に対して独自の検証ロジックや条件を設けることができます。
+//たとえば、値が特定の条件を満たしている場合のみ設定を許可するなど、値を制御できます。
+//例えば以下のコード
+
+// private int _score;
+
+// public int Score
+// {
+//     get { return _score; }
+//     set
+//     {
+//         if (value >= 0 && value <= 100) // 0から100の間に制約を設ける
+//         {
+//             _score = value;
+//         }
+//         else
+//         {
+//             throw new ArgumentOutOfRangeException("Score must be between 0 and 100.");
+//         }
+//     }
+// }
+
+

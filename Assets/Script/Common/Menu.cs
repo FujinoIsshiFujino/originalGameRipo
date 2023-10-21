@@ -12,6 +12,8 @@ public class Menu : MonoBehaviour
     [SerializeField] private Button itemButton;
     [SerializeField] private Button recipeButton;
 
+    [SerializeField] private ItemDialog itemsDialog;
+
 
     void Start()
     {
@@ -37,7 +39,7 @@ public class Menu : MonoBehaviour
 
     private void ToggleItemDialog()
     {
-
+        itemsDialog.Toggle();
     }
 
     private void ToggleRecipeDialog()
