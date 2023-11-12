@@ -54,10 +54,16 @@ public class PlayerController : MonoBehaviour
 
 
     Animator _animator;
-    private PlayerStatus _status;
+    public PlayerStatus _status;
     private MobAttack _attack;
 
 
+    [SerializeField] public GameObject prefabToInstantiate;
+    public bool isMake;
+    public bool makeEnd;
+    public float verticalAngle;
+
+    GameObject newObject;
 
     float waitTime;
 
@@ -234,15 +240,41 @@ public class PlayerController : MonoBehaviour
                 }
 
 
-                characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
+                if (isMake)  // カメラの向きとプレイヤーの向きをそろえる　上のも１人称視点の時に、カメラの回転オンにしたらこれにまとめられる気がするけど、しない理由はあったっけ？
+                {
+                    transform.forward = cameraForward;
+                }
 
-                _animator.SetFloat("Speed", moveDirection.magnitude);
 
                 if (Input.GetButtonDown("Attack"))
                 {
                     _attack.AttackIfPossible();
                     waitTime = 0;//攻撃が完了したことが後に実装されれば、 bool作って、あとのwai関数で時間んを０に戻したほうがきれい
                 }
+
+                if (isMake == false)
+                {
+                    if (Input.GetButtonDown("Make"))
+                    {
+                        isMake = true;
+                        makeEnd = false;
+                        Quaternion playerRotation = transform.rotation;
+
+                        // プレハブからクローンを生成
+                        newObject = Instantiate(prefabToInstantiate, this.transform.position + transform.forward * 8 + new Vector3(0, 1, 0), playerRotation);
+                    }
+                }
+
+                if (isMake)
+                {
+                    if (Input.GetButton("First"))
+                    {
+                        moveDirection = new Vector3(0, 0, 0);
+                    }
+                }
+
+                characterController.Move(moveDirection * Time.deltaTime * moveSpeed);
+                _animator.SetFloat("Speed", moveDirection.magnitude);
             }
 
         }

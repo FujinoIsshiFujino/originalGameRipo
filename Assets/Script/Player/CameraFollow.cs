@@ -16,7 +16,7 @@ public class CameraFollow : MonoBehaviour
     Vector3 beforeTargetPosi;
 
     // 回転
-    private float horizontalAngle;
+    public float horizontalAngle;
     public float verticalAngle;
     private Vector3 playerForward;
     [SerializeField] float rotateSpeed;
@@ -88,25 +88,30 @@ public class CameraFollow : MonoBehaviour
         ///一人称視点
         /// </summary>
 
-        if (Input.GetKeyDown("1") || Input.GetButtonDown("First"))
+
+        if (!_playerController.isMake)
         {
-            isFirstPerson = !isFirstPerson;
-            if (isFirstPerson) //カメラの移動開始フラグ
+            //どのボタンかは決定していないけど、多分物体を回転させるときに、一度使われているボタンを押すはずなので、状況に合わせて個々の処理を変える
+            if (Input.GetButtonDown("First"))
             {
-                cameraMove = true;
-                isCameraMoveEnd = false;
-            }
-            else
-            {
-                // isFirstPersonとcameraMoveをそろえる
-                cameraMove = false;
-            }
+                isFirstPerson = !isFirstPerson;
+                if (isFirstPerson) //カメラの移動開始フラグ
+                {
+                    cameraMove = true;
+                    isCameraMoveEnd = false;
+                }
+                else
+                {
+                    // isFirstPersonとcameraMoveをそろえる
+                    cameraMove = false;
+                }
 
-            // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
-            firstPlayerForward = transform.forward;
-            firstPlayerForward.y = 0;
-            Player.transform.forward = firstPlayerForward;
+                // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
+                firstPlayerForward = transform.forward;
+                firstPlayerForward.y = 0;
+                Player.transform.forward = firstPlayerForward;
 
+            }
         }
 
 
@@ -141,11 +146,6 @@ public class CameraFollow : MonoBehaviour
             transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
             beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
         }
-
-
-
-
-
 
         if (isFirstPerson)
         {
@@ -190,16 +190,16 @@ public class CameraFollow : MonoBehaviour
                 return;
             }
 
-
-
-
             // カメラの水平回転入力
             horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
 
-            // カメラの垂直回転入力
-            verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-            verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit); // 垂直回転の角度を制限
+            if (!_playerController.isMake)
+            {
+                // カメラの垂直回転入力
+                verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
+                verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit); // 垂直回転の角度を制限
 
+            }
 
 
             if (verticalAngle >= 30)
@@ -246,14 +246,17 @@ public class CameraFollow : MonoBehaviour
                 }
                 else
                 {
-                    // // カメラをプレイヤーに向ける
-                    // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
-                    transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
-                    // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
+                    if (!_playerController.isMake)
+                    {
+                        // // カメラをプレイヤーに向ける
+                        // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
+                        transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
+                        // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
 
-                    isSwitching = false;
-                    GazeEnemyList.Clear();
-                    i = 0;
+                        isSwitching = false;
+                        GazeEnemyList.Clear();
+                        i = 0;
+                    }
                 }
 
 
@@ -284,9 +287,32 @@ public class CameraFollow : MonoBehaviour
             transform.position = Player.transform.position + offset;
 
 
+            if (_playerController.isMake)
+            {
+                // 作成後のオブジェを検知してしまわないようにプレイヤーの子オブジェクトの中から特定のタグを持つオブジェクトを探す 
+                Transform makeObj = null;
+
+                foreach (Transform child in Player.GetComponentInChildren<Transform>())
+                {
+                    if (child.tag == "Make")
+                    {
+                        makeObj = child;
+                    }
+                }
+
+
+                //暫定的なカメラのずれの対応。offsetとisMake時の注視点でガタガタしていたので、isMake時には全部が終わった最後に角度調整するようにこのファイル内のこの位置に記述
+                if (makeObj != null)
+                {
+                    verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
+                    transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
+
+                    Vector3 objPlayerDistance = (makeObj.position - Player.transform.position) / 2;
+                    //transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
+                    transform.LookAt(Player.transform.position + objPlayerDistance);
+                }
+            }
         }
-
-
     }
 
 
