@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,6 +61,8 @@ public class CameraFollow : MonoBehaviour
     private Quaternion targetRotation; // 目標の回転
     public bool isRotateLockOn;
     public bool isSwitching = false;
+    public float horizontalAngleSum;
+    public float verticalAngleSum;
 
     // Start is called before the first frame update
     void Start()
@@ -95,15 +98,29 @@ public class CameraFollow : MonoBehaviour
             if (Input.GetButtonDown("First"))
             {
                 isFirstPerson = !isFirstPerson;
+
                 if (isFirstPerson) //カメラの移動開始フラグ
                 {
                     cameraMove = true;
                     isCameraMoveEnd = false;
+
+                    horizontalAngleSum = horizontalAngle;//角度をあわせるために代入
+                    verticalAngleSum = 0;
+
+                    // カメラを１人称にした時の座標やrotationに関係なく正面方向に向かせる
+                    Vector3 direction = transform.forward;
+                    direction.y = 0f; // y軸の回転を無視する場合はこの行を追加
+                    transform.rotation = Quaternion.LookRotation(direction);
+
                 }
-                else
+                else //１人称辞視点やめる時
                 {
                     // isFirstPersonとcameraMoveをそろえる
                     cameraMove = false;
+                    verticalAngle = 10;// 少し角度をつけた状態で、１人称解除
+
+                    //１人称視点の時の回転角度を代入して帳尻をあわせる
+                    horizontalAngle = horizontalAngleSum;
                 }
 
                 // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
@@ -123,8 +140,6 @@ public class CameraFollow : MonoBehaviour
 
             //_characterController.enabled = false; //これも悪くはないが、これだと、落下が止まったりいろいろ不都合が起きる。
             //なのでプレイヤーコントローラーの方でスティック入力を受け付けないようにする
-
-
 
             if (Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
             {
@@ -149,25 +164,41 @@ public class CameraFollow : MonoBehaviour
 
         if (isFirstPerson)
         {
-
-
-
-            if (isCameraMoveEnd) //カメラの移動が終わったら
+            if (isCameraMoveEnd) //カメラの移動が終わってから
             {
-                //常にプレイヤーの前に、プレイヤーの正面方向をむいたカメラが存在　その上で角度を書き換える。
-                // カメラの向きをプレイヤーの正面にそろえる
-                firstPlayerForward = Player.transform.forward;
-                //firstPlayerForward.y = 0;//カメラが上向きの時にプレイヤーもそれにつられて回転しないように
-                transform.forward = firstPlayerForward;
-                //カメラをプレイヤーの前に移動させる
-                transform.position = Player.transform.position + Player.transform.forward + new Vector3(0, 0.5f, 0);
-
                 // カメラの垂直回転
-                verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-                verticalAngle = Mathf.Clamp(verticalAngle, -80, 80); // 垂直回転の角度を制限
+                verticalAngle = -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
+                verticalAngleSum += Input.GetAxis("VerticalCamera") * rotateSpeed;
+                verticalAngleSum = Mathf.Clamp(verticalAngleSum, -50, 60); // 垂直回転の角度を制限
+
+
+                // 上方向の回転制限
+                if (verticalAngleSum >= 60)
+                {
+                    verticalAngle = 0;
+                }
+
+                // 下方向の回転制限
+                if (verticalAngleSum <= -50)
+                {
+                    verticalAngle = 0;
+                }
                 transform.Rotate(Vector3.right, verticalAngle);
+
+
+                //実際の回転に関わるhorizontalAngleと、１人称視点を解除した時の視点の向きもあわせるようにhorizontalAngleSum
+                horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
+                transform.RotateAround(Player.transform.position, Vector3.up, horizontalAngle);
+                horizontalAngleSum += Input.GetAxis("HorizontalCamera") * rotateSpeed;
+
+                if (Math.Abs(horizontalAngleSum) >= 360f)
+                {
+                    horizontalAngleSum = 0f;
+                }
             }
 
+            transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
+            beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
         }
         else
         {
@@ -192,6 +223,10 @@ public class CameraFollow : MonoBehaviour
 
             // カメラの水平回転入力
             horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
+            if (Math.Abs(horizontalAngle) >= 360f)
+            {
+                horizontalAngle = 0f;
+            }
 
             if (!_playerController.isMake)
             {

@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour
             if (_status.IsMovable)
             {
                 //ダッシュ処理
-                if (Input.GetKey("x") || Input.GetButton("Dash"))
+                if (Input.GetButton("Dash"))
                 {
 
                     isDash = true;
@@ -231,12 +231,13 @@ public class PlayerController : MonoBehaviour
                     transform.LookAt(transform.position + new Vector3(moveDirection.x, 0, moveDirection.z));
                 }
 
-                if (_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
+                //1人称視点時
+                if (_cameraFollow.isFirstPerson)
                 {
-                    horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
-                    //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + horizontalAngle, 0);
-                    transform.Rotate(transform.up, horizontalAngle);
-
+                    if (_cameraFollow.isCameraMoveEnd)// １人称視点の時のカメラは常にプレイヤーの前にあるので、カメラを動かすのではなく、プレイヤーの向きを変える。
+                    {
+                        transform.forward = cameraForward;
+                    }
                 }
 
 

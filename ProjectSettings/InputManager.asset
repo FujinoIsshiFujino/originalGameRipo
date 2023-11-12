@@ -121,7 +121,7 @@ InputManager:
     m_Name: Dash
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: 
+    negativeButton: x
     positiveButton: joystick button 1
     altNegativeButton: 
     altPositiveButton: 
@@ -169,7 +169,7 @@ InputManager:
     m_Name: Make
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: 
+    negativeButton: m
     positiveButton: joystick button 0
     altNegativeButton: 
     altPositiveButton: 
