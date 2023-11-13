@@ -100,7 +100,7 @@ public class TestQ : MonoBehaviour
             }
 
 
-            //クォータ二オン　cosΘ/2 + nsinΘ/2  n=inx+jny+knz　unityはクォータ二オンのxyzwにそれぞれいれて、それを元の姿勢にかけてあげればいい
+            //クォータ二オンによる姿勢の回転　cosΘ/2 + nsinΘ/2  n=inx+jny+knz　unityはクォータ二オンのxyzwにそれぞれいれて、それを元の姿勢にかけてあげればいい
             v3Axis.Normalize();                                         // 軸ベクトル単位化
             qRot.w = Mathf.Cos(fAngle / 2.0f);
             qRot.x = Mathf.Sin(fAngle / 2.0f) * v3Axis.x;
@@ -112,7 +112,13 @@ public class TestQ : MonoBehaviour
                                                                         // 掛け算は回転をあらわす
                                                                         // rend.material.color = colorCube;
 
-            // クォータニオンによる回転
+            //クォータニオンによる座標の回転
+            //             v3Axis.Normalize();                                         // 軸ベクトル単位化
+            // qRot.w = Mathf.Cos(fAngle / 2.0f);
+            // qRot.x = Mathf.Sin(fAngle / 2.0f) * v3Axis.x;
+            // qRot.y = Mathf.Sin(fAngle / 2.0f) * v3Axis.y;
+            // qRot.z = Mathf.Sin(fAngle / 2.0f) * v3Axis.z;
+
             // v3Pos = transform.position;
             // qPos.x = v3Pos.x;
             // qPos.y = v3Pos.y;
@@ -123,7 +129,7 @@ public class TestQ : MonoBehaviour
             // v3Pos.y = qPos.y;
             // v3Pos.z = qPos.z;
             // transform.position = v3Pos;     // 変換　位置（ベクトル）の変換はインバースかけるやつ。
-            //        transform.position = qRot * transform.position;     // 変換
+            //    transform.position = qRot * transform.position;     // 変換
 
         }
     }
