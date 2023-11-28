@@ -74,8 +74,6 @@ public class ObjjRotation : MonoBehaviour
         else
         {
             Quaternion qRot;
-            Quaternion qPos;
-            Vector3 v3Pos;
             // Vector3 v3Axis = new Vector3(1.0f, 1.0f, 1.0f);
 
 

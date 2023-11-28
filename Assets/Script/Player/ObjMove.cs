@@ -6,6 +6,9 @@ public class ObjMove : MonoBehaviour
 {
 
 
+
+    //Makeの基底クラス
+
     [SerializeField] float objUpDownMovingSpeed = 20;
     [SerializeField] float objForwardBackMovingSpeed = 20;
 
@@ -14,13 +17,13 @@ public class ObjMove : MonoBehaviour
     public float distanceToPlayer;
 
 
-    PlayerController _playerController;
+    public PlayerController _playerController;
 
     GameObject Player;
 
     public Vector3 verocity;
 
-    private Rigidbody rb;
+    public Rigidbody rb;
     [SerializeField] float rbAjustSpeed = 30f;
 
 
@@ -28,17 +31,22 @@ public class ObjMove : MonoBehaviour
     [SerializeField] float objForwardLimit = 20;
     [SerializeField] float objBackLimit = 5;
 
-    private RaycastHit raycasthit;
+    public RaycastHit raycasthit;
 
-    //めり込んてしまったときの処理
-    [SerializeField] float distance = 50;
-    Vector3 direction = -Vector3.up;
+    public float distance = 50;
+    public Vector3 direction = -Vector3.up;
     CameraFollow _cameraFollow;
     GameObject Camera;
     float horizontalAngle;
-    ObjManager _objManager;
-    GameObject ObjManager;
+    public ObjManager _objManager;
+    public GameObject ObjManager;
 
+    public ConfilmSet _confilmSetFront;
+    public ConfilmSet _confilmSetBack;
+    public GameObject frontColl;
+    public GameObject backColl;
+    public bool isObjVec;
+    public bool isSetable;
 
     // Start is called before the first frame update
     void Start()
@@ -52,8 +60,6 @@ public class ObjMove : MonoBehaviour
         ObjManager = GameObject.FindGameObjectWithTag("ObjManager");
         //  ObjectContainer objectContainer = FindObjectOfType<ObjectContainer>();
         _objManager = ObjManager.GetComponent<ObjManager>();
-
-
     }
 
     // Update is called once per frame
@@ -63,7 +69,7 @@ public class ObjMove : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Vector3 playerForward = Player.transform.forward.normalized;
 
-        //現段階ではstartで取得してしまってもいいかもしれないが（そもそもこのオブジェせいせいが成功している時点で、isMakeがtrueなので。
+        //現段階ではstartで取得してしまってもいいかもしれないが（そもそもこのオブジェ生成が成功している時点で、isMakeがtrueなので。
         //後々のことを考えてプレイヤーの状態は参照することが多いので、一旦毎フレーム取得
         _playerController = Player.GetComponent<PlayerController>();
 
@@ -79,41 +85,11 @@ public class ObjMove : MonoBehaviour
 
             if (_playerController._status.IsMovable)
             {
-
-
                 if (_playerController.isMake)
                 {
 
-                    if (Input.GetButtonDown("Dash"))
-                    {
-                        transform.parent = null;
 
-                        if (_objManager != null)
-                        {
-                            // 配列に格納する処理
-                            for (int i = 0; i < _objManager.objArray.Length; i++)
-                            {
-                                if (_objManager.objArray[i] == null)
-                                {
-                                    _objManager.objArray[i] = gameObject;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogError("ObjectStorage component not found!");
-                        }
-
-                        this.enabled = false;
-                        _playerController.isMake = false;
-                        _playerController.makeEnd = true;
-                        gameObject.tag = "ground";
-
-                        //固定化
-                        Destroy(rb);
-                        Destroy(this);
-                    }
+                    objSet();
 
                     inputObjVertical = Input.GetAxis("VerticalCamera");
                     // マイナス符号を付けることで上下反転
@@ -270,33 +246,7 @@ public class ObjMove : MonoBehaviour
 
                     }
 
-
-                    // オブジェクトの四隅の座標を計算
-                    // Vector3[] corners = new Vector3[4];
-                    // corners[0] = transform.position + new Vector3(-transform.localScale.x / 2, 0, -transform.localScale.z / 2);
-                    // corners[1] = transform.position + new Vector3(-transform.localScale.x / 2, 0, transform.localScale.z / 2);
-                    // corners[2] = transform.position + new Vector3(transform.localScale.x / 2, 0, -transform.localScale.z / 2);
-                    // corners[3] = transform.position + new Vector3(transform.localScale.x / 2, 0, transform.localScale.z / 2);
-
-                    //橋の場合は端同士
-                    Vector3[] corners = new Vector3[2];
-                    corners[0] = transform.position + new Vector3(0, 0, -transform.localScale.z / 2);
-                    corners[1] = transform.position + new Vector3(0, 0, transform.localScale.z / 2);
-
-
-                    // 各四隅からRayを飛ばしてめり込み時は上昇するように
-                    foreach (Vector3 corner in corners)
-                    {
-                        if (Physics.Raycast(corner, direction, out raycasthit, distance))
-                        {
-
-                        }
-                        else
-                        {
-                            Vector3 newPosition = transform.position + Vector3.up * 100 * Time.deltaTime;
-                            transform.position = newPosition;
-                        }
-                    }
+                    ObjInternal();
 
 
                     //今の座標がプレイヤー正面の延長線上にあるかどうかを判断する。延長線上になければ移動させる　これがないと障害物に引っかかって、オブジェがどんどんずれていく
@@ -320,8 +270,49 @@ public class ObjMove : MonoBehaviour
 
     }
 
+    private void objSet()
+    {
+        isSetable = isSetableDiscrimination();
+
+        if (Input.GetButtonDown("Dash"))
+        {
+            transform.parent = null;
+
+            if (_objManager != null)
+            {
+                // 配列に格納する処理
+                for (int i = 0; i < _objManager.objArray.Length; i++)
+                {
+                    if (_objManager.objArray[i] == null)
+                    {
+                        _objManager.objArray[i] = gameObject;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("ObjectStorage component not found!");
+            }
+
+            ObjjRotate _objjRotate = GetComponent<ObjjRotate>();
+            _objjRotate.enabled = false;
+
+            this.enabled = false;
+            _playerController.isMake = false;
+            _playerController.makeEnd = true;
+            gameObject.tag = "ground";
+
+            //固定化
+            Destroy(rb);
+            Destroy(this);
+        }
+    }
+
     private void OnCollisionStay(Collision collision)
     {
+        isObjVecDiscrimination();
+
         float obstacleHeight = collision.contacts[0].point.y;
 
         // Vector3 distanceToPlayerHeighTransPosi2 = new Vector3(Player.transform.position.x, transform.position.y, Player.transform.position.z);
@@ -335,7 +326,7 @@ public class ObjMove : MonoBehaviour
 
         // 衝突している他のオブジェクトの法線ベクトルを取得
         Vector3 contactNormal = collision.contacts[0].normal.normalized;
-        // Debug.Log("normar" + contactNormal);
+
 
 
         // 衝突した面をチェック
@@ -343,6 +334,7 @@ public class ObjMove : MonoBehaviour
         if (contactNormal == Vector3.up || contactNormal == -Vector3.up)
         {
             // 衝突した側面が上側面の場合、ここで必要な処理を実行
+            Debug.Log("normar" + contactNormal);
         }
         else if (Mathf.Abs(Vector3.Dot(contactNormal, Vector3.up)) < 1 && Mathf.Abs(Vector3.Dot(contactNormal, Vector3.up)) > 0) //斜面判断
         {
@@ -411,4 +403,18 @@ public class ObjMove : MonoBehaviour
         }
         // }
     }
+    protected virtual bool isObjVecDiscrimination()//オブジェによって処理を継承先で変える
+    {
+        return isObjVec;
+    }
+    protected virtual bool isSetableDiscrimination()//オブジェによって処理を継承先で変える
+    {
+        return isSetable;
+    }
+
+    protected virtual void ObjInternal()//オブジェによって処理を継承先で変える
+    {
+
+    }
+
 }

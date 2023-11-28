@@ -1,25 +1,57 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ChangeAlpha : MonoBehaviour
 {
     public Renderer targetRenderer;  // カスタムマテリアルを持つオブジェクトのRenderer
-    [SerializeField] public float alphaValue = 0;  // 設定したいAlpha値
+    ObjMove _objMove;
+    [SerializeField] public float alphaValue = 0.5f;  // 設定したいAlpha値
+    [SerializeField] public float redValie = 1;
+    [SerializeField] public float buleValue = 1;
+    private Material originalMaterial;
+    BridgeMove bridgeMove;
+
+    private void Start()
+    {
+        // オリジナルのマテリアルを保存
+        originalMaterial = new Material(targetRenderer.material);
+
+        // Material はクラスであり、C# ではクラスのインスタンスを変数に代入した場合、その変数はそのクラスのインスタンスへの参照となります。
+        // そのため、originalMaterial = targetRenderer.material;（クラスのインスタンス）とstart関数内で定義しても逐次的に変更されてしまう、なのでnewを使ってインスタンス生成。
+
+    }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Y))  // 任意のキーをトリガーにする
-        {
-            ChangeMaterialAlpha();
-        }
+        ChangeMaterialAlpha();
     }
 
     private void ChangeMaterialAlpha()
     {
-        Material material = targetRenderer.material;
-        Color color = material.color;
-        color.a = alphaValue;  // Alpha値を変更
-        material.color = color;
+        bridgeMove = GetComponent<BridgeMove>();
+        if (targetRenderer != null)
+        {
+            if (bridgeMove.isSetable)
+            {
+                Material material = targetRenderer.material;
+                Color color = new Color(0, 0, buleValue, alphaValue);
+                material.color = color;
+
+                targetRenderer.material = material; // オブジェクトに新しいマテリアルを設定
+
+                if (Input.GetButtonDown("Dash"))
+                {
+                    targetRenderer.material = originalMaterial;
+                    this.enabled = false;
+                }
+            }
+            else
+            {
+                Material material = targetRenderer.material;
+                Color color = new Color(redValie, 0, 0, alphaValue);
+                material.color = color;
+
+                targetRenderer.material = material; // オブジェクトに新しいマテリアルを設定
+            }
+        }
     }
 }

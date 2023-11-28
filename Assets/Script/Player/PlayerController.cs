@@ -272,6 +272,11 @@ public class PlayerController : MonoBehaviour
                     {
                         moveDirection = new Vector3(0, 0, 0);
                     }
+
+                    if (Input.GetButton("Rotate"))
+                    {
+                        moveDirection = new Vector3(0, 0, 0);
+                    }
                 }
 
                 characterController.Move(moveDirection * Time.deltaTime * moveSpeed);

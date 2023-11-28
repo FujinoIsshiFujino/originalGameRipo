@@ -36,7 +36,7 @@ public class TestQu2 : MonoBehaviour
         qRot.x = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.x;
         qRot.y = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.y;
         qRot.z = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.z;
-        Debug.Log("qRot" + qRot + "seki" + qRot);
+        // Debug.Log("qRot" + qRot + "seki" + qRot);
         //Mathf.SinおよびMathf.Cosはラジアンで角度を指定するため、度数をそのまま使うと正確な結果が得られないので Mathf.Deg2Radでラジアンに変換
 
         // transform.position = qRot * transform.position; //公転
