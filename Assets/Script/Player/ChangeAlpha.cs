@@ -41,7 +41,7 @@ public class ChangeAlpha : MonoBehaviour
                 if (Input.GetButtonDown("Dash"))
                 {
                     targetRenderer.material = originalMaterial;
-                    this.enabled = false;
+                    Destroy(this);
                 }
             }
             else
