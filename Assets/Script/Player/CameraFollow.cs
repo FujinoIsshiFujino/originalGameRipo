@@ -36,7 +36,8 @@ public class CameraFollow : MonoBehaviour
     CharacterController _characterController;
     Vector3 cameraForward;
     Vector3 beforeTargetPosiFirst;
-    PlayerController _playerController;
+    // PlayerController _playerController;
+    PlayerControl _playerControl;
     public float cameraDistance;
     Vector3 offset;// 回転時のプレイヤーからの離れ具合、
     [SerializeField] float upDistanceCorrection = 20f; //上方向のカメラの回転時の、距離の補正
@@ -69,7 +70,7 @@ public class CameraFollow : MonoBehaviour
     {
 
         _characterController = Player.GetComponent<CharacterController>();
-        _playerController = Player.GetComponent<PlayerController>();
+        _playerControl = Player.GetComponent<PlayerControl>();
 
         beforeTargetPosi = Player.transform.position;//プレイヤーの位置を記録
         cameraMove = false;
@@ -92,7 +93,7 @@ public class CameraFollow : MonoBehaviour
         /// </summary>
 
 
-        if (!_playerController.isMake)
+        if (!_playerControl.isMake)
         {
             //どのボタンかは決定していないけど、多分物体を回転させるときに、一度使われているボタンを押すはずなので、状況に合わせて個々の処理を変える
             if (Input.GetButtonDown("First"))
@@ -228,7 +229,7 @@ public class CameraFollow : MonoBehaviour
                 horizontalAngle = 0f;
             }
 
-            if (!_playerController.isMake)
+            if (!_playerControl.isMake)
             {
                 // カメラの垂直回転入力
                 verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
@@ -281,7 +282,7 @@ public class CameraFollow : MonoBehaviour
                 }
                 else
                 {
-                    if (!_playerController.isMake)
+                    if (!_playerControl.isMake)
                     {
                         // // カメラをプレイヤーに向ける
                         // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
@@ -322,7 +323,7 @@ public class CameraFollow : MonoBehaviour
             transform.position = Player.transform.position + offset;
 
 
-            if (_playerController.isMake)
+            if (_playerControl.isMake)
             {
                 // 作成後のオブジェを検知してしまわないようにプレイヤーの子オブジェクトの中から特定のタグを持つオブジェクトを探す 
                 Transform makeObj = null;

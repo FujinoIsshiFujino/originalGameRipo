@@ -37,7 +37,7 @@ public class ObjjRotate : MonoBehaviour
         arbitraryAxis
     }
 
-    [SerializeField] rotateType selectedType;
+    public rotateType selectedType;
 
 
     // Start is called before the first frame update

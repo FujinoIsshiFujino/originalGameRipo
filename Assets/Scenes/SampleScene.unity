@@ -2087,7 +2087,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759743447}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b22445688f3fcd94bb81ccc4833de6c2, type: 3}
   m_Name: 
@@ -2121,7 +2121,6 @@ MonoBehaviour:
   isMake: 0
   makeEnd: 0
   verticalAngle: 0
-  isRotate: 0
 --- !u!136 &759743457
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2183,7 +2182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29bb34edf003b64283a58d6316d6ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeMax: 10
+  lifeMax: 1
+  isDead: 0
 --- !u!114 &759743460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2191,7 +2191,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759743447}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cbb641c57e6bc89459b7465b74059256, type: 3}
   m_Name: 
@@ -2205,7 +2205,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759743447}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63400d061eae45948863bf9e203d8957, type: 3}
   m_Name: 
@@ -2227,7 +2227,7 @@ MonoBehaviour:
   objForwardBackMovingSpeed: 20
   inputObjVertical: 0
   distanceToPlayer: 0
-  _playerController: {fileID: 0}
+  _PlayerController: {fileID: 0}
   verocity: {x: 0, y: 0, z: 0}
   rb: {fileID: 0}
   rbAjustSpeed: 30
@@ -2241,8 +2241,41 @@ MonoBehaviour:
   _confilmSetBack: {fileID: 0}
   frontColl: {fileID: 0}
   backColl: {fileID: 0}
-  isObjUpVec: 0
+  isObjVec: 0
   isSetable: 0
+--- !u!114 &759743470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759743447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7a4cb78a974a9c46a3c9286e5d872f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  characterController: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
+  Camera: {fileID: 963194225}
+  initialMoveSpeed: 0
+  isGrounded: 0
+  apex: 3
+  apexTime: 1
+  jumpPower: 0
+  virtualGra: 0
+  cameraForward: {x: 0, y: 0, z: 0}
+  isDash: 0
+  inputHorizontal: 0
+  inputVertical: 0
+  jumpCount: 0
+  _playerStatus: {fileID: 0}
+  attackCollider: {fileID: 1764699488}
+  attackCoolDown: 0.5
+  prefabToInstantiate: {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
+  isMake: 0
+  makeEnd: 0
 --- !u!1 &787631588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2470,7 +2503,6 @@ MonoBehaviour:
   isMake: 0
   makeEnd: 0
   verticalAngle: 0
-  isRotate: 0
 --- !u!143 &862836021
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2552,6 +2584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeMax: 10
+  isDead: 0
 --- !u!1001 &895269067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2700,6 +2733,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100338, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       insertIndex: -1
       addedObject: {fileID: 759743469}
+    - targetCorrespondingSourceObject: {fileID: 100338, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 759743470}
   m_SourcePrefab: {fileID: 100100000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
 --- !u!1 &908718521
 GameObject:
@@ -5278,7 +5314,7 @@ MonoBehaviour:
   objForwardBackMovingSpeed: 20
   inputObjVertical: 0
   distanceToPlayer: 0
-  _playerController: {fileID: 0}
+  _PlayerController: {fileID: 0}
   verocity: {x: 0, y: 0, z: 0}
   rb: {fileID: 0}
   rbAjustSpeed: 30
@@ -5292,7 +5328,7 @@ MonoBehaviour:
   _confilmSetBack: {fileID: 0}
   frontColl: {fileID: 0}
   backColl: {fileID: 0}
-  isObjUpVec: 0
+  isObjVec: 0
   isSetable: 0
 --- !u!143 &1709145989
 CharacterController:
@@ -5698,9 +5734,9 @@ MonoBehaviour:
   onTriggerEnterEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 759743460}
-        m_TargetAssemblyTypeName: MobAttack, Assembly-CSharp
-        m_MethodName: OnHitAttack
+      - m_Target: {fileID: 759743470}
+        m_TargetAssemblyTypeName: PlayerControl, Assembly-CSharp
+        m_MethodName: HitAttack
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

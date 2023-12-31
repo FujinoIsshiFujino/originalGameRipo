@@ -23,6 +23,14 @@ public class MobStatus : MonoBehaviour
     public bool IsMovable => StateEnum.Normal == _state;
     public bool IsAttackable => StateEnum.Normal == _state;
     public float LifeMax => lifeMax;
+    // public float LifeMax
+    // {
+    //     get
+    //     {
+    //         return lifeMax;
+    //     }
+    // }
+    //同じ意味
 
     //float currentLife = mobStatus.Life; // mobStatus は MobStatus クラスのインスタンスのような感じで、
     //Damage メソッドで _life の値が変更された場合、Life プロパティを介して _life の現在の値にアクセスすることができます。

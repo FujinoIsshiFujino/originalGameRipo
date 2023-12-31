@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerStatus : MobStatus
 {
+    public bool isDead;
     protected override void OnDie()
     {
         base.OnDie();
+        isDead = true;
         StartCoroutine(GoToGameOverCoroutine());
     }
 

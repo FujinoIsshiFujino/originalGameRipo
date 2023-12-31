@@ -485,7 +485,7 @@ MonoBehaviour:
   objForwardBackMovingSpeed: 20
   inputObjVertical: 0
   distanceToPlayer: 0
-  _playerController: {fileID: 0}
+  _PlayerController: {fileID: 0}
   verocity: {x: 0, y: 0, z: 0}
   rb: {fileID: 3851989267553300494}
   rbAjustSpeed: 30
@@ -499,8 +499,9 @@ MonoBehaviour:
   _confilmSetBack: {fileID: 4148824701943966573}
   frontColl: {fileID: 5303981573986346489}
   backColl: {fileID: 2301977194470154008}
-  isObjUpVec: 0
+  isObjVec: 0
   isSetable: 0
+  boxSize: {x: 0.1, y: 0.1, z: 0.1}
   raycastLayerMask:
     serializedVersion: 2
     m_Bits: 2039
