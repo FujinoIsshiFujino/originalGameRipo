@@ -138,7 +138,6 @@ public partial class PlayerControl
                         if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
                         {
                             owner.ChangeState(stateJumping);
-                            Debug.Log(222222);
                         }
                     }
 
@@ -147,7 +146,7 @@ public partial class PlayerControl
                         if (Input.GetButtonDown("Make"))
                         {
                             owner.ChangeState(stateMaking);
-                            owner._lockOn.isButtonLock = false;
+                            owner._lockOn.isLockOn = false;
                         }
                     }
 

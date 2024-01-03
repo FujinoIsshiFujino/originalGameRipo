@@ -4,26 +4,21 @@ using UnityEngine;
 
 public class LockOnCol : MonoBehaviour
 {
-
-
     public string enemyTag = "Enemy"; // Enemyタグを指定
-    public List<GameObject> enemyList = new List<GameObject>(); // エネミーのリスト
-    public List<GameObject> enemyListTrigger = new List<GameObject>(); // エネミーのリスト
+
     public List<GameObject> enemyListResult = new List<GameObject>(); // エネミーのリスト
-    Vector3 viewportPosition;
 
+    //カメラ内の時の処理
+    // public List<GameObject> enemyList = new List<GameObject>(); // エネミーのリスト
+    // public List<GameObject> enemyListTrigger = new List<GameObject>(); // エネミーのリスト
+    //  Vector3 viewportPosition;
+    // [SerializeField] GameObject Player;
 
-
-    public bool isLockOn;
-    [SerializeField] GameObject Player;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        isLockOn = false;
-        enemyList = new List<GameObject>();  // リストを初期化
-    }
+    //     //カメラ内の時の処理
+    // void Start()
+    // {
+    //     // enemyList = new List<GameObject>();  // リストを初期化
+    // }
 
     void Update()
     {
@@ -68,15 +63,7 @@ public class LockOnCol : MonoBehaviour
         // // 更新時に一致する要素を更新
         // UpdateEnemyListResult();
 
-
-
     }
-
-
-
-
-
-
 
 
     private void OnTriggerStay(Collider other)
@@ -91,6 +78,7 @@ public class LockOnCol : MonoBehaviour
             //      enemyListTrigger.Add(other.gameObject);  // リストに追加
             // }
 
+            //違うターゲットがコリジョン内に存在すれば配列に追加
             if (!enemyListResult.Contains(other.gameObject))
             {
                 enemyListResult.Add(other.gameObject);
@@ -111,78 +99,21 @@ public class LockOnCol : MonoBehaviour
         }
     }
 
+    //カメラ内の時の処理
     // enemyListとenemyListTriggerの一致する要素をenemyListResultに格納
-    private void UpdateEnemyListResult()
-    {
-        enemyListResult.Clear();
-
-        foreach (GameObject enemy in enemyList)
-        {
-            if (enemyListTrigger.Contains(enemy))
-            {
-                enemyListResult.Add(enemy);
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // public bool isLockOn;
-
-    // //  public GameObject[] enemyList;  //エネミーの配列
-    // public List<GameObject> enemyList;  // エネミーのリスト
-    // [SerializeField] GameObject Player;
-
-
-    // // Start is called before the first frame update
-    // void Start()
+    // private void UpdateEnemyListResult()
     // {
-    //     isLockOn = false;
-    //     enemyList = new List<GameObject>();  // リストを初期化
-    // }
+    //     enemyListResult.Clear();
 
-    // // Update is called once per frame
-    // void Update()
-    // {
-
-    // }
-
-    // private void OnTriggerStay(Collider other)
-    // {
-    //     if (other.gameObject.tag == "Enemy")
+    //     foreach (GameObject enemy in enemyList)
     //     {
-    //         isLockOn = true;
-    //         // enemyList = other.gameObject;
-    //         if (!enemyList.Contains(other.gameObject))
+    //         if (enemyListTrigger.Contains(enemy))
     //         {
-    //             enemyList.Add(other.gameObject);  // リストに追加
+    //             enemyListResult.Add(enemy);
     //         }
-
-    //     }
-
-    // }
-
-
-    // private void OnTriggerExit(Collider other)
-    // {
-    //     if (other.gameObject.tag == "Enemy")
-    //     {
-    //         isLockOn = false;
-    //         enemyList.Remove(other.gameObject);  // リストから削除
     //     }
     // }
+
+
+
 }

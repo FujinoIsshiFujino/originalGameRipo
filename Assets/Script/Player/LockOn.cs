@@ -10,28 +10,18 @@ public class LockOn : MonoBehaviour
     [SerializeField] private GameObject Camera;
     [SerializeField] private GameObject LockOnCol;
 
-    // public GameObject[] enemyList;  //エネミーの配列
-    Vector3 playePposition;  //プレイヤーの座標
-    bool isLockOn = false;
-    Vector3 cameraForward;
     LockOnCol _lockOnCol;
-    CameraFollow _CameraFollow;
-    public bool isButtonLock;
+    public bool isLockOn;
     public List<GameObject> enemyListDistance = new List<GameObject>(); // エネミーのリスト
     Vector3 playerPosition;
-    public List<GameObject> previousList = new List<GameObject>();
+    public List<GameObject> nearEnemyList = new List<GameObject>();
     //ロックオンを押したときの敵の距離準のlist　enemyListDistanceをそのまま使ってしまうと勝手にロックオン対象が距離に応じて切り替わるために仕様
 
 
 
-
-
-
-    // Start is called before the first frame update
     void Start()
     {
         _lockOnCol = LockOnCol.GetComponent<LockOnCol>();
-        _CameraFollow = Camera.GetComponent<CameraFollow>();
     }
 
     // Update is called once per frame
@@ -40,23 +30,18 @@ public class LockOn : MonoBehaviour
 
         enemyListDistance = new List<GameObject>(_lockOnCol.enemyListResult);
 
-
-
         playerPosition = Player.transform.position;
 
-        // if (isButtonLock)
-        // {
-        //     _CameraFollow.enabled = false;
-
-
-        // 距離と角度をかけ合わせたものに基づいてエネミーをソート
+        // 距離と角度をかけ合わせたものに基づいてエネミーをソート　同じ距離ならプレイヤー（厳密にはカメラ）との角度を小さい方を近い方とする
         enemyListDistance.Sort((a, b) =>
         {
+            // 単純に距離だけでソートする場合
             // float distanceA = getDistance(a.transform.position, Player.transform.position);
             // float distanceB = getDistance(b.transform.position, Player.transform.position);
 
-            // // 昇順でソートする場合（近い順）
             // return distanceA.CompareTo(distanceB);
+
+
 
             // プレイヤーとエネミーの位置ベクトルを取得
             Vector3 positionA = a.transform.position;
@@ -84,26 +69,20 @@ public class LockOn : MonoBehaviour
 
         if (Input.GetButtonDown("Lock") || Input.GetKeyDown("r"))
         {
-            isButtonLock = !isButtonLock;
-            previousList = new List<GameObject>(enemyListDistance);
+            isLockOn = !isLockOn;
+            nearEnemyList = new List<GameObject>(enemyListDistance);
         }
 
-        if (isButtonLock)
+        if (!isLockOn)
         {
-            // _CameraFollow.enabled = false;
-            // Camera.transform.forward = (enemyListDistance[0].transform.position - Camera.transform.position).normalized;
-        }
-        else
-        {
-            _CameraFollow.enabled = true;
-            previousList.Clear();
+            nearEnemyList.Clear();
         }
 
         // listから敵がいなくなった場合（プレイヤーの離脱、敵の撃破）
         if (enemyListDistance.Count == 0)
         {
-            isButtonLock = false;
-            previousList.Clear();
+            isLockOn = false;
+            nearEnemyList.Clear();
         }
     }
 

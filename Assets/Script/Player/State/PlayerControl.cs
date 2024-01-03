@@ -119,7 +119,7 @@ public partial class PlayerControl : MonoBehaviour
         cameraForward.y = 0;
         cameraForward = cameraForward.normalized;
 
-        getInputMove();//各ステートで受け付けるべきかも。
+        getInputMove(true);//各ステートで受け付けるべきかも。
 
 
 
@@ -191,11 +191,14 @@ public partial class PlayerControl : MonoBehaviour
     //     ChangeState(stateDead);
     // }
 
-    private void getInputMove()
+    // // 入力を受け付ける
+    public void getInputMove(bool isGetInput)
     {
-        // // 入力を受け付ける
-        inputHorizontal = Input.GetAxis("Horizontal");
-        inputVertical = Input.GetAxis("Vertical");
+        if (isGetInput)
+        {
+            inputHorizontal = Input.GetAxis("Horizontal");
+            inputVertical = Input.GetAxis("Vertical");
+        }
     }
 
     public bool isGroundDiscriminant()

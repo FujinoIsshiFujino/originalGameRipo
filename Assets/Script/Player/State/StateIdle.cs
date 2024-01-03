@@ -30,7 +30,7 @@ public partial class PlayerControl
                     if (Input.GetButtonDown("Make"))
                     {
                         owner.ChangeState(stateMaking);
-                        owner._lockOn.isButtonLock = false;
+                        owner._lockOn.isLockOn = false;
                     }
                 }
 

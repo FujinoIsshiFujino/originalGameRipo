@@ -10,66 +10,51 @@ using static UnityEngine.GraphicsBuffer;
 /// </summary>
 public class CameraFollow : MonoBehaviour
 {
+
+    //基本的にはステートによって分けるのはメイクかそうじゃないかだけ。あとは共通化。
+    //今後ステートが増えれば、ステートごとにパブリックなboolをつくってカメラはそれを監視する。
+
+
     // フレーム更新型
 
-    // 追跡
+    // 移動や回転
     public GameObject Player;
-    Vector3 beforeTargetPosi;
-
-    // 回転
+    Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
     public float horizontalAngle;
     public float verticalAngle;
     private Vector3 playerForward;
     [SerializeField] float rotateSpeed;
-
-
-    public float angleInDegrees;
+    public float angleInDegrees;//検証用
     [SerializeField] float verticalUpAngleLimit = 70;
     [SerializeField] float verticalDownAngleLimit = -30;
-
-    // １人称
     public bool isFirstPerson = false;
     public Vector3 firstPlayerForward;
     [SerializeField] float smoothnessFactor = 0.5f;
     public bool cameraMove;
     public bool isCameraMoveEnd = false;
-    CharacterController _characterController;
-    Vector3 cameraForward;
-    Vector3 beforeTargetPosiFirst;
-    // PlayerController _playerController;
     PlayerControl _playerControl;
-    public float cameraDistance;
     Vector3 offset;// 回転時のプレイヤーからの離れ具合、
     [SerializeField] float upDistanceCorrection = 20f; //上方向のカメラの回転時の、距離の補正
     [SerializeField] float downDistanceCorrection = 4f; //下方向のカメラの回転時の、距離の補正
     [SerializeField] float verticalAngleUnderZeroGazePoint = 20f; // /下方向のカメラの回転時の注視点の高さの補正
 
-
-
+    //ロックオン関連
     LockOn _lockOn;
     private Vector3 lockOnGazePoint;
     int i;
     public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 前回フレームのリスト
     public List<GameObject> GazeEnemyList = new List<GameObject>(); // 今回フレームのリスト
     public bool listHasChanged = false; // リストに変更があったかどうかを示すフラグ
-
-
-
-
     [SerializeField] private float rotationSpeed = 5.0f; // 回転の速度
-
-
     private Quaternion targetRotation; // 目標の回転
     public bool isRotateLockOn;
     public bool isSwitching = false;
-    public float horizontalAngleSum;
-    public float verticalAngleSum;
+    [SerializeField] Vector3 firstPersonDistanceY = new Vector3(0, 1, 0);
 
-    // Start is called before the first frame update
     void Start()
     {
 
-        _characterController = Player.GetComponent<CharacterController>();
+        // _characterController = Player.GetComponent<CharacterController>();
         _playerControl = Player.GetComponent<PlayerControl>();
 
         beforeTargetPosi = Player.transform.position;//プレイヤーの位置を記録
@@ -80,126 +65,70 @@ public class CameraFollow : MonoBehaviour
     void Update()
     {
 
-
-        //確認用でcameraDistanceは無くてもいい。
-        cameraDistance = (Player.transform.position - this.transform.position).magnitude;
-
         _lockOn = GetComponent<LockOn>();
 
-
+        getInputAngle();
 
         /// <summary>
         ///一人称視点
         /// </summary>
-
-
         if (!_playerControl.isMake)
         {
-            //どのボタンかは決定していないけど、多分物体を回転させるときに、一度使われているボタンを押すはずなので、状況に合わせて個々の処理を変える
             if (Input.GetButtonDown("First"))
             {
-                isFirstPerson = !isFirstPerson;
-
-                if (isFirstPerson) //カメラの移動開始フラグ
-                {
-                    cameraMove = true;
-                    isCameraMoveEnd = false;
-
-                    horizontalAngleSum = horizontalAngle;//角度をあわせるために代入
-                    verticalAngleSum = 0;
-
-                    // カメラを１人称にした時の座標やrotationに関係なく正面方向に向かせる
-                    Vector3 direction = transform.forward;
-                    direction.y = 0f; // y軸の回転を無視する場合はこの行を追加
-                    transform.rotation = Quaternion.LookRotation(direction);
-
-                }
-                else //１人称辞視点やめる時
-                {
-                    // isFirstPersonとcameraMoveをそろえる
-                    cameraMove = false;
-                    verticalAngle = 10;// 少し角度をつけた状態で、１人称解除
-
-                    //１人称視点の時の回転角度を代入して帳尻をあわせる
-                    horizontalAngle = horizontalAngleSum;
-                }
-
-                // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
-                firstPlayerForward = transform.forward;
-                firstPlayerForward.y = 0;
-                Player.transform.forward = firstPlayerForward;
-
+                firstPersonCameraSetUp();
             }
         }
 
 
+        //１人称視点へカメラが移動中の処理
         if (cameraMove && isCameraMoveEnd == false)
         {
 
-            Vector3 targetPosition = Player.transform.position + Player.transform.forward + new Vector3(0, 0.5f, 0);
+            Vector3 targetPosition = Player.transform.position + firstPersonDistanceY + Player.transform.forward.normalized;
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * smoothnessFactor);
 
-            //_characterController.enabled = false; //これも悪くはないが、これだと、落下が止まったりいろいろ不都合が起きる。
-            //なのでプレイヤーコントローラーの方でスティック入力を受け付けないようにする
+            _playerControl.getInputMove(false);
 
             if (Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
             {
                 isCameraMoveEnd = true;
                 cameraMove = false;
-                beforeTargetPosiFirst = Player.transform.position;
-
             }
         }
         else
         {
-            _characterController.enabled = true;
+            _playerControl.getInputMove(true);
         }
 
-
-        if (!isFirstPerson)
-        {
-            // カメラの追尾　実際はリープを使ってもうすこし滑らかにできるかも
-            transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
-            beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
-        }
+        // カメラの追尾　カメラの移動に際して　
+        //transform.position = Player.transform.position + offset;
+        //  を使用しているので、この処理は不要
+        // if (!isFirstPerson)
+        // {
+        //     transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
+        //     beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
+        // }
 
         if (isFirstPerson)
         {
-            if (isCameraMoveEnd) //カメラの移動が終わってから
+            _lockOn.isLockOn = false;
+            //カメラの移動が終わってからのカメラの回転と移動処理
+            if (isCameraMoveEnd)
             {
-                // カメラの垂直回転
-                verticalAngle = -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-                verticalAngleSum += Input.GetAxis("VerticalCamera") * rotateSpeed;
-                verticalAngleSum = Mathf.Clamp(verticalAngleSum, -50, 60); // 垂直回転の角度を制限
+                verticalAngle = Mathf.Clamp(verticalAngle, -50, 60); // 垂直回転の角度を制限
 
+                offset = firstPersonDistanceY + new Vector3(0, 0, 1); // １人称にしたときの初期位置を適切な位置に配置
 
-                // 上方向の回転制限
-                if (verticalAngleSum >= 60)
+                offset = Quaternion.Euler(0, horizontalAngle, 0) * offset;//位置回転
+                transform.rotation = Quaternion.Euler(verticalAngle, horizontalAngle, 0); //姿勢回転
+                transform.position = Player.transform.position + offset;
+
+                if (Math.Abs(horizontalAngle) >= 360f)
                 {
-                    verticalAngle = 0;
-                }
-
-                // 下方向の回転制限
-                if (verticalAngleSum <= -50)
-                {
-                    verticalAngle = 0;
-                }
-                transform.Rotate(Vector3.right, verticalAngle);
-
-
-                //実際の回転に関わるhorizontalAngleと、１人称視点を解除した時の視点の向きもあわせるようにhorizontalAngleSum
-                horizontalAngle = Input.GetAxis("HorizontalCamera") * rotateSpeed;
-                transform.RotateAround(Player.transform.position, Vector3.up, horizontalAngle);
-                horizontalAngleSum += Input.GetAxis("HorizontalCamera") * rotateSpeed;
-
-                if (Math.Abs(horizontalAngleSum) >= 360f)
-                {
-                    horizontalAngleSum = 0f;
+                    horizontalAngle = 0f;
                 }
             }
-
-            transform.position += Player.transform.position - beforeTargetPosi; // カメラの位置にプレイヤーの位置の前フレームからの差分を代入して追跡させる
-            beforeTargetPosi = Player.transform.position;//プレイヤー位置の更新
         }
         else
         {
@@ -212,117 +141,46 @@ public class CameraFollow : MonoBehaviour
             playerForward = Player.transform.forward.normalized;
             float dotProduct = Vector3.Dot(playerForward, transform.forward.normalized);
 
-            // 内積の値から角度を計算（ラジアンから度に変換）
+            // 内積の値から角度を計算（ラジアンから度に変換）これは検証用
             angleInDegrees = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
-
-
 
             if (playerForward == null)
             {
                 return;
             }
 
-            // カメラの水平回転入力
-            horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
             if (Math.Abs(horizontalAngle) >= 360f)
             {
                 horizontalAngle = 0f;
             }
 
+            // 垂直回転の角度を制限
             if (!_playerControl.isMake)
             {
-                // カメラの垂直回転入力
-                verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
-                verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit); // 垂直回転の角度を制限
-
+                verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit);
             }
 
 
             if (verticalAngle >= 30)
             {
-
-                // verticalAngleが上がるほど、カメラのとの距離を離す
-                float distance = 9 + (verticalAngle - 30) / upDistanceCorrection;
-                offset = new Vector3(0, 0, -distance); // カメラを適切な距離に配置
-
-                // カメラをプレイヤーの周りに回転させる
-                // ベクトルをクォータニオンの行列で１次変換している
-                offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset;
-
-
-
-                if (_lockOn.isButtonLock)
-                {
-
-                    lockOnStart();
-                }
-                else
-                {
-                    lockOnEnd(verticalAngle);
-                    isSwitching = false;
-                    GazeEnemyList.Clear();
-                    i = 0;
-                }
-
-
+                eachAngleCameraMove();
             }
             else if (verticalAngle < 0)
             {
 
-                //  verticalAngleが下がるほど、カメラを近づける
-                float distance = 9 + (verticalAngle) / downDistanceCorrection;
-                offset = Quaternion.Euler(0, horizontalAngle, 0) * new Vector3(0, 0, -distance) + new Vector3(0, 1f, 0); //new Vector3は床下が見えないように高さ調整
-
-
-                if (_lockOn.isButtonLock)
-                {
-
-                    lockOnStart();
-
-                }
-                else
-                {
-                    if (!_playerControl.isMake)
-                    {
-                        // // カメラをプレイヤーに向ける
-                        // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
-                        transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
-                        // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
-
-                        isSwitching = false;
-                        GazeEnemyList.Clear();
-                        i = 0;
-                    }
-                }
-
-
-
-
+                eachAngleCameraMove();
             }
             else
             {
-                // カメラの位置をプレイヤーの周囲に回転させる
-                offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
-
-                if (_lockOn.isButtonLock)
-                {
-
-                    lockOnStart();
-                }
-                else
-                {
-                    // カメラがプレイヤーを常に向くようにする
-                    // transform.LookAt(Player.transform.position);
-                    lockOnEnd(verticalAngle);
-                    isSwitching = false;
-                    i = 0;
-                }
+                eachAngleCameraMove();
 
             }
 
             transform.position = Player.transform.position + offset;
 
 
+            //make時のカメラ挙動
+            //offsetとisMake時の注視点でガタガタしていたので、isMake時には全部が終わった最後に角度調整するようにこのファイル内のこの位置に記述
             if (_playerControl.isMake)
             {
                 // 作成後のオブジェを検知してしまわないようにプレイヤーの子オブジェクトの中から特定のタグを持つオブジェクトを探す 
@@ -336,8 +194,7 @@ public class CameraFollow : MonoBehaviour
                     }
                 }
 
-
-                //暫定的なカメラのずれの対応。offsetとisMake時の注視点でガタガタしていたので、isMake時には全部が終わった最後に角度調整するようにこのファイル内のこの位置に記述
+                //暫定的なカメラのずれの対応。
                 if (makeObj != null)
                 {
                     verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
@@ -352,6 +209,104 @@ public class CameraFollow : MonoBehaviour
     }
 
 
+    //角度ごとのカメラ挙動の制御
+    private void eachAngleCameraMove()
+    {
+        if (verticalAngle >= 30)
+        {
+            // verticalAngleが上がるほど、カメラのとの距離を離す
+            float distance = 9 + (verticalAngle - 30) / upDistanceCorrection;
+            offset = new Vector3(0, 0, -distance); // カメラを適切な距離に配置
+
+
+            // カメラをプレイヤーの周りに回転させる
+            // ベクトルをクォータニオンの行列で１次変換して位置の回転とベクトルのスカラー倍をしている
+            //これじたいは位置回転なので、姿勢回転はlockOnEnd()
+            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset;
+        }
+        else if (verticalAngle < 0)
+        {
+            //  verticalAngleが下がるほど、カメラを近づける
+            float distance = 9 + verticalAngle / downDistanceCorrection;
+            offset = Quaternion.Euler(0, horizontalAngle, 0) * new Vector3(0, 0, -distance) + new Vector3(0, 1f, 0); //new Vector3は床下が見えないように高さ調整
+
+        }
+        else
+        {
+            // カメラの位置をプレイヤーの周囲に回転させる
+            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
+        }
+
+        if (_lockOn.isLockOn)
+        {
+            lockOnStart();
+        }
+        else
+        {
+            if (verticalAngle >= 0)
+            {
+                lockOnEnd(verticalAngle);
+
+            }
+            else
+            {
+                //make時はカメラの位置が変わるのでそれにともなって処理も変わる
+                if (!_playerControl.isMake)
+                {
+                    // // カメラをプレイヤーに向ける
+                    // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
+                    transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
+                    // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
+
+                }
+            }
+
+            isSwitching = false;
+            GazeEnemyList.Clear();
+            i = 0;
+
+        }
+    }
+
+
+    //入力受付
+    private void getInputAngle()
+    {
+        // カメラの水平回転入力
+        horizontalAngle += Input.GetAxis("HorizontalCamera") * rotateSpeed;
+        // カメラの垂直回転入力
+        verticalAngle += -Input.GetAxis("VerticalCamera") * rotateSpeed; // マイナス符号を付けることで上下反転
+    }
+
+    //１人称視点へカメラの移動開始、フラグ起動、位置や角度のセットアップ・リセット
+    void firstPersonCameraSetUp()
+    {
+        isFirstPerson = !isFirstPerson;
+        if (isFirstPerson)
+        {
+            cameraMove = true;
+            isCameraMoveEnd = false;
+
+            //１人称視点の度に視点はリセット
+            verticalAngle = 0;
+
+            // カメラを１人称にした時の座標やrotationに関係なく正面方向に向かせる
+            Vector3 direction = transform.forward;
+            direction.y = 0f; // y軸の回転を無視する場合はこの行を追加
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
+        else //１人称辞視点やめる時
+        {
+            // isFirstPersonとcameraMoveをそろえてもいいかも
+            cameraMove = false;
+            verticalAngle = 10;// 少し角度をつけた状態で、１人称解除
+        }
+
+        // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
+        firstPlayerForward = transform.forward;
+        firstPlayerForward.y = 0;
+        Player.transform.forward = firstPlayerForward;
+    }
 
     void lockOnStart()
     {
@@ -365,7 +320,7 @@ public class CameraFollow : MonoBehaviour
         //ロックオフ→オン時にの処理
         if (isSwitching == false)
         {
-            GazeEnemyList = _lockOn.previousList;
+            GazeEnemyList = _lockOn.nearEnemyList;
         }
 
         //プレイヤーとの距離が一番近い敵のlistを常に保持
@@ -374,9 +329,9 @@ public class CameraFollow : MonoBehaviour
 
 
         // ロックオン対象切り替え
-        if (Input.GetButtonDown("L1") || Input.GetKeyDown("e"))
+        if (Input.GetButtonDown("L1"))
         {
-            // リストがL1前後と異なるかをチェック
+            // リストがL1をおす前後と異なるかをチェック
             if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
             {
                 listHasChanged = true;
@@ -434,8 +389,6 @@ public class CameraFollow : MonoBehaviour
 
         // Z軸の回転を0度に固定
         targetRotation = Quaternion.Euler(rotationWithoutZ.eulerAngles.x, rotationWithoutZ.eulerAngles.y, 0);
-        // transform.rotation = targetRotation;
-
 
         // 回転を補間して滑らかに行う
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -460,7 +413,6 @@ public class CameraFollow : MonoBehaviour
             // 回転を補間して滑らかに行う
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-
 
         float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
 

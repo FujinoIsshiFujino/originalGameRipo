@@ -11,7 +11,7 @@ public partial class PlayerControl
     {
         public override void OnEnter(PlayerControl owner, PlayerStateBase preState)
         {
-            owner._lockOn.isButtonLock = false;
+            owner._lockOn.isLockOn = false;
         }
 
         public override void OnUpdate(PlayerControl owner)
