@@ -925,6 +925,7 @@ Transform:
   - {fileID: 263033000}
   - {fileID: 617807986}
   - {fileID: 17445297}
+  - {fileID: 1001829654}
   - {fileID: 198417097}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3036,6 +3037,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 204046280}
   m_LocalEulerAnglesHint: {x: 0, y: 20.297, z: 0}
+--- !u!1 &1001829653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1001829654}
+  - component: {fileID: 1001829655}
+  m_Layer: 0
+  m_Name: gimcEmpty
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1001829654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001829653}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 57.001007, y: 3.04, z: 38.34946}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 204046280}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1001829655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001829653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c10ce94d1718144296cf3e81e3d1559, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Camera: {fileID: 963194225}
+  Player: {fileID: 759743447}
+  gimmicStopSecond: 2
+  returnStopSecond: 2
+  elapseTime: 0
+  cameraMove: 0
+  isCameraMoveEnd: 0
+  smoothnessFactor: 0
+  selectedType: 0
 --- !u!1 &1081525452
 GameObject:
   m_ObjectHideFlags: 0

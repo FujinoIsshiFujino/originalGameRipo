@@ -19,7 +19,7 @@ public class ObjjRotate : MonoBehaviour
     float inputVertical;
     float resetTime;
     bool resetTimeIs;
-    PlayerController _playerController;
+    PlayerControl playerControl;
     public enum rotateType
     {
         vertical,
@@ -42,7 +42,7 @@ public class ObjjRotate : MonoBehaviour
 
     private void Update()
     {
-        _playerController = Player.GetComponent<PlayerController>();
+        playerControl = Player.GetComponent<PlayerControl>();
         if (Input.GetButtonDown("L1"))
         {
             transform.forward = Player.transform.forward;//他のものも初期方向はｚがプレイヤーのｚと一致している予定だけど、ものによっては変わるかも

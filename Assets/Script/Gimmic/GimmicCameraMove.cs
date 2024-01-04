@@ -7,34 +7,35 @@ public class GimmicCameraMove : MonoBehaviour
     [SerializeField] GameObject Camera;
     [SerializeField] GameObject Player;
     CameraFollow _cameraFollow;
-    PlayerController _playerController;
+    PlayerControl _playerControl;
     CharacterController _characterController;
-    [SerializeField] float gimmicStopSecond; 
-    [SerializeField] float returnStopSecond; 
+    [SerializeField] float gimmicStopSecond;
+    [SerializeField] float returnStopSecond;//カメラが元の位置に戻ってからの静止時間
     public float elapseTime;
-
     public bool cameraMove;
     public bool isCameraMoveEnd;
     public enum moveType
-        {
-            moment,
-            slowly
-        }
+    {
+        moment,
+        slowly
+    }
 
-    [SerializeField]  float smoothnessFactor;
+    [SerializeField] float smoothnessFactor = 7;
     Vector3 targetPosition;
     Vector3 beforeCameraPosi;
     Vector3 beforeCameraVec;
-    [SerializeField ]moveType selectedType;
+    [SerializeField] moveType selectedType;
+    [SerializeField] float slowlyPositionMatchWidth = 0.5f;
+    [SerializeField] float momentPositionMatchWidth = 0.01f;
 
 
     // Start is called before the first frame update
     void Start()
     {
         // 本当は範囲にはいったら取得するぐらいでいい
-        _cameraFollow= Camera.GetComponent<CameraFollow>();
+        _cameraFollow = Camera.GetComponent<CameraFollow>();
         _characterController = Player.GetComponent<CharacterController>();
-        _playerController = Player.GetComponent<PlayerController>();
+        _playerControl = Player.GetComponent<PlayerControl>();
 
         //isCameraMoveEnd = false; //　これは初期化しなくていいかも
     }
@@ -42,7 +43,7 @@ public class GimmicCameraMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("9")) // ここはフラグになる
+        if (Input.GetKeyDown("9")) // ここはフラグになる
         {
             cameraMove = true;
             targetPosition = this.transform.position;
@@ -51,98 +52,88 @@ public class GimmicCameraMove : MonoBehaviour
             beforeCameraVec = Camera.transform.forward;
         }
 
-
-        if(cameraMove)
+        //カメラが動いている途中
+        if (cameraMove)
         {
-
             _cameraFollow.enabled = false;
             _characterController.enabled = false;
-            _playerController.enabled = false;
+            _playerControl.enabled = false;
 
-            
-           
-
-            if(selectedType == moveType.slowly)
+            if (selectedType == moveType.slowly)
             {
-                 Camera.transform.position = Vector3.Lerp(Camera.transform.position, targetPosition, Time.deltaTime * smoothnessFactor);
-                 Camera.transform.forward = this.transform.forward;
+                Camera.transform.position = Vector3.Lerp(Camera.transform.position, targetPosition, Time.deltaTime * smoothnessFactor);
+                Camera.transform.forward = this.transform.forward;
 
-                if(Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
+                if (Vector3.Distance(Camera.transform.position, targetPosition) < slowlyPositionMatchWidth) // 厳密な座標の一致は難しいため
                 {
-
-                    elapseTime += Time.deltaTime;
-
-                    if(gimmicStopSecond <= elapseTime)
-                    {
-
-                        isCameraMoveEnd = true;
-                        cameraMove =  false;
-                        // _cameraFollow.enabled = true;
-                        // _characterController.enabled = true;
-                        // _playerController.enabled = true;
-                        //transform.position = beforeCameraPosi;
-                        elapseTime = 0; // 試作用にタイムは元に戻しているけど、フラグの一回きりだったらいらないかも
-                    }
-
+                    cameraStopToReturn(false);
                 }
             }
-            else if(selectedType == moveType.moment)
+            else if (selectedType == moveType.moment)
             {
                 Camera.transform.position = this.transform.position;
                 Camera.transform.forward = this.transform.forward;
 
-                if(Vector3.Distance(Camera.transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
+                if (Vector3.Distance(Camera.transform.position, targetPosition) < momentPositionMatchWidth) // 厳密な座標の一致は難しいため
                 {
-                    elapseTime += Time.deltaTime;
-
-                    if(gimmicStopSecond <= elapseTime)
-                    {
-
-                        //isCameraMoveEnd = true;
-                        cameraMove =  false;
-                        _cameraFollow.enabled = true;
-                        _characterController.enabled = true;
-                        _playerController.enabled = true;
-                         // transform.position = beforeCameraPosi;
-                         elapseTime = 0; // 試作用にタイムは元に戻しているけど、フラグの一回きりだったらいらないかも
-
-                    }
-
+                    cameraStopToReturn(false);
                 }
-
             }
-
-
         }
 
-            if(isCameraMoveEnd)
+        //場合によって戻った後に硬直させたくないとき、もしくは場合によって硬直秒数を変えたいときはここに、なにか条件をつけ足す
+        //カメラがプレイヤーに戻った後も止めたい場合
+        if (isCameraMoveEnd)
+        {
+            _cameraFollow.enabled = false;
+            _characterController.enabled = false;
+            _playerControl.enabled = false;
+
+            if (selectedType == moveType.slowly)
             {
-
-                if(selectedType == moveType.slowly)
-                {
-                    Camera.transform.position = Vector3.Lerp(Camera.transform.position, beforeCameraPosi, Time.deltaTime * smoothnessFactor);
-                    Camera.transform.forward =  beforeCameraVec;
-                    if(Vector3.Distance(Camera.transform.position, beforeCameraPosi) < 0.01f) // 厳密な座標の一致は難しいため
-                    {
-
-                         elapseTime += Time.deltaTime;
-
-                        if(returnStopSecond <= elapseTime)
-                        {
-
-                            isCameraMoveEnd = true;
-                            _cameraFollow.enabled = true;
-                            _characterController.enabled = true;
-                            _playerController.enabled = true;
-                            elapseTime = 0; // 試作用にタイムは元に戻しているけど、フラグの一回きりだったらいらないかも
-                            isCameraMoveEnd = false;
-                        }
-
-                    }
-                }
-
+                Camera.transform.position = Vector3.Lerp(Camera.transform.position, beforeCameraPosi, Time.deltaTime * smoothnessFactor);
+                Camera.transform.forward = beforeCameraVec;
+            }
+            else if (selectedType == moveType.moment)
+            {
+                Camera.transform.position = beforeCameraPosi;
+                Camera.transform.forward = beforeCameraVec;
             }
 
+            if (Vector3.Distance(Camera.transform.position, beforeCameraPosi) < 0.01f) // 厳密な座標の一致は難しいため
+            {
+                cameraStopToReturn(true);
+            }
+        }
+    }
+
+    //カメラが定位置に止まってからまた動き出すまでの処理
+    void cameraStopToReturn(bool isReturnOrGo)
+    {
+        elapseTime += Time.deltaTime;
+        if (isReturnOrGo)
+        {
+            if (returnStopSecond <= elapseTime)
+            {
+                _cameraFollow.enabled = true;
+                _characterController.enabled = true;
+                _playerControl.enabled = true;
+                elapseTime = 0; // 試作用にタイムは元に戻しているけど、フラグの一回きりだったらいらないかも
+                isCameraMoveEnd = false;
+            }
+        }
+        else
+        {
+            if (gimmicStopSecond <= elapseTime)
+            {
+                isCameraMoveEnd = true;
+                cameraMove = false;
+                _cameraFollow.enabled = true;
+                _characterController.enabled = true;
+                _playerControl.enabled = true;
+
+                elapseTime = 0; // 試作用にタイムは元に戻しているけど、フラグの一回きりだったらいらないかも
+            }
+        }
     }
 }
-// 
