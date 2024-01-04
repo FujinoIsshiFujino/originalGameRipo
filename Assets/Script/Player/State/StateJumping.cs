@@ -5,19 +5,16 @@ using UnityEngine;
 
 public partial class PlayerControl
 {
-    bool isJump;
+    public bool isJump;
 
     public class StateJumping : PlayerStateBase
     {
 
         float beforeJumpInputHorizontal;
         float beforeJumpInputVertical;
-
         Vector3 jumpDirection;
         float jumpFoarwardPower = 1.5f;
-
         Vector3 moveDirection;
-        float n = 0;
         public override void OnEnter(PlayerControl owner, PlayerStateBase preState)
         {
 

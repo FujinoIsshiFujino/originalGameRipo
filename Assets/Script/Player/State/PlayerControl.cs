@@ -199,6 +199,12 @@ public partial class PlayerControl : MonoBehaviour
             inputHorizontal = Input.GetAxis("Horizontal");
             inputVertical = Input.GetAxis("Vertical");
         }
+        else
+        {
+            inputHorizontal = 0;
+            inputVertical = 0;
+            Debug.Log("aaaa3");
+        }
     }
 
     public bool isGroundDiscriminant()
@@ -266,4 +272,3 @@ public partial class PlayerControl : MonoBehaviour
         }
     }
 }
-// //OnControllerColliderHitがアップデート後によばれてるのか？

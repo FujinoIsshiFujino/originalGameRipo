@@ -24,9 +24,9 @@ public class ObjMove : MonoBehaviour
     [SerializeField] float rbAjustSpeed = 30f;
     [SerializeField] float objForwardLimit = 20;
     [SerializeField] float objBackLimit = 5;
-    CameraFollow _cameraFollow;
+    CameraFollow _cameraFollow;//今後使う可能性
     GameObject Camera;
-    float horizontalAngle;
+    float horizontalAngle;//今後使う可能性
     ObjManager _objManager;
     GameObject ObjManager;
     Vector3 playerUpVec;

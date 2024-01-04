@@ -18,46 +18,49 @@ public class CameraFollow : MonoBehaviour
     // フレーム更新型
 
     // 移動や回転
-    public GameObject Player;
-    Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
+    [SerializeField] GameObject Player;
     public float horizontalAngle;
     public float verticalAngle;
     private Vector3 playerForward;
-    [SerializeField] float rotateSpeed;
+    public bool cameraMove;
+    public bool isFirstPerson = false;
+    public bool isCameraMoveEnd = false;
     public float angleInDegrees;//検証用
+    [SerializeField] float rotateSpeed;
     [SerializeField] float verticalUpAngleLimit = 70;
     [SerializeField] float verticalDownAngleLimit = -30;
-    public bool isFirstPerson = false;
-    public Vector3 firstPlayerForward;
-    [SerializeField] float smoothnessFactor = 0.5f;
-    public bool cameraMove;
-    public bool isCameraMoveEnd = false;
-    PlayerControl _playerControl;
-    Vector3 offset;// 回転時のプレイヤーからの離れ具合、
+    [SerializeField] float smoothnessFactor = 12.5f;
     [SerializeField] float upDistanceCorrection = 20f; //上方向のカメラの回転時の、距離の補正
     [SerializeField] float downDistanceCorrection = 4f; //下方向のカメラの回転時の、距離の補正
     [SerializeField] float verticalAngleUnderZeroGazePoint = 20f; // /下方向のカメラの回転時の注視点の高さの補正
+    [SerializeField] Vector3 firstPersonDistanceY = new Vector3(0, 1, 0);
+
+    Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
+    PlayerControl _playerControl;
+    Vector3 offset;// 回転時のプレイヤーからの離れ具合、
+
+
 
     //ロックオン関連
-    LockOn _lockOn;
+
     private Vector3 lockOnGazePoint;
     int i;
     public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 前回フレームのリスト
     public List<GameObject> GazeEnemyList = new List<GameObject>(); // 今回フレームのリスト
-    public bool listHasChanged = false; // リストに変更があったかどうかを示すフラグ
-    [SerializeField] private float rotationSpeed = 5.0f; // 回転の速度
-    private Quaternion targetRotation; // 目標の回転
-    public bool isRotateLockOn;
-    public bool isSwitching = false;
-    [SerializeField] Vector3 firstPersonDistanceY = new Vector3(0, 1, 0);
+    [SerializeField] private float rotationSpeed = 12f; // 回転の速度
+
+    Quaternion targetRotation; // 目標の回転
+    bool isRotateLockOn;
+    bool isSwitching = false;
+    LockOn _lockOn;
+    // public bool listHasChanged = false; // リストに変更があったかどうかを示すフラグ // 今後使う可能性がある
+
 
     void Start()
     {
-
-        // _characterController = Player.GetComponent<CharacterController>();
         _playerControl = Player.GetComponent<PlayerControl>();
 
-        beforeTargetPosi = Player.transform.position;//プレイヤーの位置を記録
+        // beforeTargetPosi = Player.transform.position;//プレイヤーの位置を記録
         cameraMove = false;
     }
 
@@ -88,9 +91,7 @@ public class CameraFollow : MonoBehaviour
             Vector3 targetPosition = Player.transform.position + firstPersonDistanceY + Player.transform.forward.normalized;
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * smoothnessFactor);
 
-            _playerControl.getInputMove(false);
-
-            if (Vector3.Distance(transform.position, targetPosition) < 0.01f) // 厳密な座標の一致は難しいため
+            if (Vector3.Distance(transform.position, targetPosition) < 0.5f) // 厳密な座標の一致は難しいため
             {
                 isCameraMoveEnd = true;
                 cameraMove = false;
@@ -303,6 +304,7 @@ public class CameraFollow : MonoBehaviour
         }
 
         // １人称にした瞬間にプレイヤーの向きを１人称の向き（カメラの向き）にそろえる
+        Vector3 firstPlayerForward;
         firstPlayerForward = transform.forward;
         firstPlayerForward.y = 0;
         Player.transform.forward = firstPlayerForward;
@@ -334,7 +336,7 @@ public class CameraFollow : MonoBehaviour
             // リストがL1をおす前後と異なるかをチェック
             if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
             {
-                listHasChanged = true;
+                // listHasChanged = true;
 
                 if (realTimeEnemyList[0] == GazeEnemyList[i])
                 {
@@ -351,7 +353,7 @@ public class CameraFollow : MonoBehaviour
             }
             else
             {
-                listHasChanged = false;
+                // listHasChanged = false;
                 i++;
             }
 

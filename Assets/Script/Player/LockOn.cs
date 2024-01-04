@@ -13,9 +13,9 @@ public class LockOn : MonoBehaviour
     LockOnCol _lockOnCol;
     public bool isLockOn;
     public List<GameObject> enemyListDistance = new List<GameObject>(); // エネミーのリスト
-    Vector3 playerPosition;
     public List<GameObject> nearEnemyList = new List<GameObject>();
-    //ロックオンを押したときの敵の距離準のlist　enemyListDistanceをそのまま使ってしまうと勝手にロックオン対象が距離に応じて切り替わるために仕様
+    //ロックオンを押したときの敵の距離順のlist　enemyListDistanceをそのまま使ってしまうと勝手にロックオン対象が距離に応じて切り替わるために使用
+    Vector3 playerPosition;
 
 
 

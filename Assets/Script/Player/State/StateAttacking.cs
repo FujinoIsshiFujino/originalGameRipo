@@ -5,10 +5,7 @@ using UnityEngine;
 public partial class PlayerControl
 {
     [SerializeField] private Collider attackCollider;
-
     [SerializeField] private float attackCoolDown = 0.5f;
-
-
     bool isRedyAttack = true;
     public class StateAttacking : PlayerStateBase
     {

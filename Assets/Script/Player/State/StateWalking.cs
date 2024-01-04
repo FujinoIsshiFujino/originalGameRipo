@@ -10,17 +10,8 @@ public partial class PlayerControl
     public class StateWalking : PlayerStateBase
     {
 
-
-
-
-        //arias
         public GameObject Camera;
-
-
-        public Vector3 moveDirection;
-
-
-
+        public Vector3 moveDirection;//確認用にpublic
 
 
         public override void OnEnter(PlayerControl owner, PlayerStateBase preState)
