@@ -67,7 +67,6 @@ public class ConfilmSet : MonoBehaviour
         {
             if (collider.CompareTag(targetTag))
             {
-                // Debug.Log("Collision with: " + collider.gameObject.name);
                 return true; // 指定のタグの物体に接触している場合は true を返す
             }
         }

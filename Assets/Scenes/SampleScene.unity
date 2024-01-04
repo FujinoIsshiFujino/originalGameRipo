@@ -2223,26 +2223,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e4a26d98708b74b8eb64b2e60c09a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objUpDownMovingSpeed: 20
-  objForwardBackMovingSpeed: 20
   inputObjVertical: 0
-  distanceToPlayer: 0
-  _PlayerController: {fileID: 0}
+  flatDistanceToPlayer: 0
+  distanceToPlayerHeigh: 0
   verocity: {x: 0, y: 0, z: 0}
-  rb: {fileID: 0}
   rbAjustSpeed: 30
   objForwardLimit: 20
   objBackLimit: 5
+  isObjVec: 0
+  isSetable: 0
   distance: 50
   direction: {x: -0, y: -1, z: -0}
-  _objManager: {fileID: 0}
-  ObjManager: {fileID: 0}
   _confilmSetFront: {fileID: 0}
   _confilmSetBack: {fileID: 0}
   frontColl: {fileID: 0}
   backColl: {fileID: 0}
-  isObjVec: 0
-  isSetable: 0
 --- !u!114 &759743470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2623,7 +2618,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.9
+      value: 16.3
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2631,7 +2626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -17.8
+      value: 39.2
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2908,7 +2903,6 @@ MonoBehaviour:
   smoothnessFactor: 10
   cameraMove: 0
   isCameraMoveEnd: 0
-  cameraDistance: 0
   upDistanceCorrection: 20
   downDistanceCorrection: 4
   verticalAngleUnderZeroGazePoint: 20
@@ -2918,9 +2912,7 @@ MonoBehaviour:
   rotationSpeed: 12
   isRotateLockOn: 0
   isSwitching: 0
-  horizontalAngleSum: 0
-  verticalAngleSum: 0
-  firstPersonDistanceZ: {x: 0, y: 1, z: 0}
+  firstPersonDistanceY: {x: 0, y: 1, z: 0}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2936,9 +2928,9 @@ MonoBehaviour:
   Player: {fileID: 759743447}
   Camera: {fileID: 963194225}
   LockOnCol: {fileID: 1741110455}
-  isButtonLock: 0
+  isLockOn: 0
   enemyListDistance: []
-  previousList: []
+  nearEnemyList: []
 --- !u!1 &969413181
 GameObject:
   m_ObjectHideFlags: 0
@@ -5178,11 +5170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyTag: Enemy
-  enemyList: []
-  enemyListTrigger: []
   enemyListResult: []
-  isLockOn: 0
-  Player: {fileID: 0}
 --- !u!54 &1687993455
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5311,26 +5299,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e4a26d98708b74b8eb64b2e60c09a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objUpDownMovingSpeed: 20
-  objForwardBackMovingSpeed: 20
   inputObjVertical: 0
-  distanceToPlayer: 0
-  _PlayerController: {fileID: 0}
+  flatDistanceToPlayer: 0
+  distanceToPlayerHeigh: 0
   verocity: {x: 0, y: 0, z: 0}
-  rb: {fileID: 0}
   rbAjustSpeed: 30
   objForwardLimit: 20
   objBackLimit: 5
+  isObjVec: 0
+  isSetable: 0
   distance: 50
   direction: {x: -0, y: -1, z: -0}
-  _objManager: {fileID: 0}
-  ObjManager: {fileID: 0}
   _confilmSetFront: {fileID: 0}
   _confilmSetBack: {fileID: 0}
   frontColl: {fileID: 0}
   backColl: {fileID: 0}
-  isObjVec: 0
-  isSetable: 0
 --- !u!143 &1709145989
 CharacterController:
   m_ObjectHideFlags: 0
@@ -5490,11 +5473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyTag: Enemy
-  enemyList: []
-  enemyListTrigger: []
   enemyListResult: []
-  isLockOn: 0
-  Player: {fileID: 0}
 --- !u!135 &1741110458
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -3,11 +3,10 @@ using UnityEngine;
 public class ChangeAlpha : MonoBehaviour
 {
     public Renderer targetRenderer;  // カスタムマテリアルを持つオブジェクトのRenderer
-    ObjMove _objMove;
     [SerializeField] public float alphaValue = 0.5f;  // 設定したいAlpha値
     [SerializeField] public float redValie = 1;
     [SerializeField] public float buleValue = 1;
-    private Material originalMaterial;
+    Material originalMaterial;
     BridgeMove bridgeMove;
 
     private void Start()

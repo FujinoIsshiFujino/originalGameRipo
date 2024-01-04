@@ -481,26 +481,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc6566b1163c644da897c39ec9c0849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objUpDownMovingSpeed: 20
-  objForwardBackMovingSpeed: 20
   inputObjVertical: 0
-  distanceToPlayer: 0
-  _PlayerController: {fileID: 0}
+  flatDistanceToPlayer: 0
+  distanceToPlayerHeigh: 0
   verocity: {x: 0, y: 0, z: 0}
-  rb: {fileID: 3851989267553300494}
   rbAjustSpeed: 30
   objForwardLimit: 20
   objBackLimit: 5
+  isObjVec: 0
+  isSetable: 0
   distance: 50
   direction: {x: -0, y: -1, z: -0}
-  _objManager: {fileID: 0}
-  ObjManager: {fileID: 0}
   _confilmSetFront: {fileID: 1845975499688110574}
   _confilmSetBack: {fileID: 4148824701943966573}
   frontColl: {fileID: 5303981573986346489}
   backColl: {fileID: 2301977194470154008}
-  isObjVec: 0
-  isSetable: 0
   boxSize: {x: 0.1, y: 0.1, z: 0.1}
   raycastLayerMask:
     serializedVersion: 2

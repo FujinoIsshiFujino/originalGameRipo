@@ -5,21 +5,21 @@ using UnityEngine;
 public class BridgeMove : ObjMove
 {
 
-    public Vector3 boxSize = new Vector3(0.1f, 0.1f, 0.1f);
-
+    [SerializeField] Vector3 boxSize = new Vector3(0.1f, 0.1f, 0.1f);
     [SerializeField] private LayerMask raycastLayerMask;
 
     protected override void ObjInternal()
     {
-
         base.ObjInternal();
 
-        //terrainなどの中身がないものにめり込んだ場合
+        /// <summary>
+        /// terrainなどの中身がないものにめり込んだ場合
+        /// </summary>
+
         //橋の場合は端同士からrayを打つ
         Vector3[] corners = new Vector3[2];
         corners[0] = transform.position + new Vector3(0, 0, -transform.localScale.z / 2);
         corners[1] = transform.position + new Vector3(0, 0, transform.localScale.z / 2);
-
 
         // 各四隅からRayを飛ばしてめり込み時は上昇するように
         foreach (Vector3 corner in corners)
@@ -35,8 +35,10 @@ public class BridgeMove : ObjMove
             }
         }
 
+        /// <summary>
+        /// /中身のあるものにめり込んだ場合
+        /// </summary>
 
-        //中身のあるものにめり込んだ場合
         // オーバーラップしているColliderの配列を取得
         Collider[] overlappingColliders = Physics.OverlapBox(transform.position, boxSize / 2, Quaternion.identity);
 
@@ -49,8 +51,6 @@ public class BridgeMove : ObjMove
                 if (collider.gameObject != gameObject)
                 {
                     // ここでオーバーラップしているオブジェクトに対する処理を行う
-                    // Debug.Log("オブジェクトがめり込んでいます。対象: " + collider.gameObject.name);
-
                     Vector3 newPosition = transform.position + Vector3.up * 100 * Time.deltaTime;
                     transform.position = newPosition;
                 }
@@ -72,7 +72,6 @@ public class BridgeMove : ObjMove
             isObjVec = false;
         }
         return isObjVec;
-
     }
 
     protected override bool isSetableDiscrimination()

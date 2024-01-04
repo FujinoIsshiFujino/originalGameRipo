@@ -6,64 +6,52 @@ public class ObjMove : MonoBehaviour
 {
 
 
+    /// <summary>
+    /// Makeの基底クラス
+    /// </summary>
 
-    //Makeの基底クラス
 
-    [SerializeField] float objUpDownMovingSpeed = 20;
-    [SerializeField] float objForwardBackMovingSpeed = 20;
-
+    //インスペクター上で視認
     public float inputObjVertical;
-
-    public float distanceToPlayer;
-
-
-    public PlayerController _PlayerController;
+    public float flatDistanceToPlayer;
+    public float distanceToPlayerHeigh;
+    public Vector3 verocity;
     PlayerControl _playerControl;
-
     GameObject Player;
 
-    public Vector3 verocity;
 
-    public Rigidbody rb;
+    Rigidbody rb;
     [SerializeField] float rbAjustSpeed = 30f;
-
-
-
     [SerializeField] float objForwardLimit = 20;
     [SerializeField] float objBackLimit = 5;
-
-    public RaycastHit raycasthit;
-
-    public float distance = 50;
-    public Vector3 direction = -Vector3.up;
     CameraFollow _cameraFollow;
     GameObject Camera;
     float horizontalAngle;
-    public ObjManager _objManager;
-    public GameObject ObjManager;
+    ObjManager _objManager;
+    GameObject ObjManager;
+    Vector3 playerUpVec;
+    Vector3 playerForward;
 
+
+    //継承先で使う
+    public bool isObjVec;
+    public bool isSetable;
+    public RaycastHit raycasthit;
+    public float distance = 50;
+    public Vector3 direction = -Vector3.up;
     public ConfilmSet _confilmSetFront;
     public ConfilmSet _confilmSetBack;
     public GameObject frontColl;
     public GameObject backColl;
-    public bool isObjVec;
-    public bool isSetable;
-    ObjjRotate _objjRotate;
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        PlayerControl yourComponent = GameObject.FindObjectOfType<PlayerControl>();
-
-
-        if (yourComponent != null)
+        PlayerControl playerControlComponent = GameObject.FindObjectOfType<PlayerControl>();
+        if (playerControlComponent != null)
         {
-            Player = yourComponent.gameObject;
-            Transform objTransform = yourComponent.transform;
-
-            Debug.Log("objobj" + Player);
+            Player = playerControlComponent.gameObject;
             transform.parent = Player.transform;
-
             // ゲームオブジェクト名で絞るより、プログラム名で絞ったほうが変更が後々少なそうなのでプログラムで絞る。
         }
 
@@ -71,188 +59,60 @@ public class ObjMove : MonoBehaviour
         _cameraFollow = Camera.GetComponent<CameraFollow>();
 
         ObjManager = GameObject.FindGameObjectWithTag("ObjManager");
-        //  ObjectContainer objectContainer = FindObjectOfType<ObjectContainer>();
         _objManager = ObjManager.GetComponent<ObjManager>();
+        //tag数が足りなくなったら上記のように、プログラムから絞る
     }
 
-    // Update is called once per frame
     void Update()
     {
 
         rb = GetComponent<Rigidbody>();
-        Vector3 playerForward = Player.transform.forward.normalized;
+        playerForward = Player.transform.forward.normalized;
 
         //現段階ではstartで取得してしまってもいいかもしれないが（そもそもこのオブジェ生成が成功している時点で、isMakeがtrueなので。
         //後々のことを考えてプレイヤーの状態は参照することが多いので、一旦毎フレーム取得
         _playerControl = Player.GetComponent<PlayerControl>();
 
-
         if (_playerControl.isGrounded)
         {
 
+            //オブジェとプレイヤーのｙ座標をそろえた距離を算出
             Vector3 objPosi = this.gameObject.transform.position;
             objPosi.y = Player.transform.position.y;
-
-            distanceToPlayer = Vector3.Distance(objPosi, Player.transform.position);
+            flatDistanceToPlayer = Vector3.Distance(objPosi, Player.transform.position);
 
 
 
             if (_playerControl.isMake)
             {
 
-
-                objSet();
-
-                inputObjVertical = Input.GetAxis("VerticalCamera");
-                // マイナス符号を付けることで上下反転
-
-                Vector3 playerUpVec = Player.transform.up;
+                playerUpVec = Player.transform.up;
                 playerUpVec = playerUpVec.normalized;
 
-                // float verticalStic = Input.GetAxis("Vertical");
-                // このあと調整に使うかも
+                ObjUpDownMove();
 
-                Vector3 distanceToPlayerHeighTransPosi =
-                new Vector3(Player.transform.position.x, transform.position.y, Player.transform.position.z);
-
-                float distanceToPlayerHeigh = Vector3.Distance(distanceToPlayerHeighTransPosi, Player.transform.position);
-
-                if (distanceToPlayerHeigh < 15)
+                if (Input.GetButton("First"))
                 {
-                    verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
-                    rb.velocity = verocity;
+                    ObjForwardBackMove();
                 }
-                // else if (distanceToPlayerHeigh > 15 && distanceToPlayerHeigh < 16)
-                else
-                {
-                    // このあとカメラ調整に使うかも
-                    //horizontalAngle = Input.GetAxis("HorizontalCamera");
 
-                    rb.velocity = new Vector3(0, 0, 0);
-
-                    //範囲何に戻すための処理　2
-                    // inputObjVertical = 0;
-                    // transform.position = transform.position + -playerUpVec * 0.01f;
-                    // transform.position = new Vector3(transform.position.x, transform.position.y - 0.001f, transform.position.z);
-
-
-                    if (inputObjVertical < 0)
-                    {
-                        transform.position = new Vector3(transform.position.x, transform.position.y - 0.1f, transform.position.z);
-                        verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
-                        rb.velocity = verocity;
-
-                    }
-                    else if (inputObjVertical > 0)
-                    {
-                        inputObjVertical = 0;
-                    }
-
-                }
-                // else if (distanceToPlayerHeigh > 16)
-                // {
-
-                //     //角度がうまくいかない、マックの調節後の話してから？
-                //     // _cameraFollow.enabled = false;
-
-
-                //     // if (horizontalAngle < 0)
-                //     // {
-                //     //     if (horizontalAngle > 0)
-                //     //     {
-                //     //         _cameraFollow.enabled = true;
-                //     //     }
-                //     // }
-                //     // else
-                //     // {
-                //     //     if (horizontalAngle < 0)
-                //     //     {
-                //     //         _cameraFollow.enabled = true;
-                //     //     }
-                //     // }
-
-
-
-
-
-
-                //     //正面方向にすすんで行ったときに、制限高度より高くならないように
-                //     // _playerControl.enabled = false;
-                //     // if (verticalStic < 0)
-                //     // {
-                //     //     _playerControl.enabled = true;
-                //     //     Debug.Log("tomatoma2");
-                //     // }
-
-                //     transform.position = new Vector3(transform.position.x, transform.position.y - 50 * Time.deltaTime, transform.position.z);
-                // }
-
-                if (_playerControl.isMake)
-                {
-                    if (Input.GetButton("First"))
-                    {
-
-                        inputObjVertical = Input.GetAxis("Vertical");
-
-                        // 制限距離以上に移動しようとした場合は移動しない処理
-                        if (distanceToPlayer < objForwardLimit && distanceToPlayer > objBackLimit)
-                        {
-                            verocity = playerForward * rbAjustSpeed * inputObjVertical;
-                            rb.velocity = verocity;
-                        }
-                        else
-                        {
-                            if (distanceToPlayer > objForwardLimit)
-                            {
-                                //範囲何に戻すための処理　2
-                                // rb.velocity = new Vector3(0, 0, 0);
-                                // transform.position = transform.position + -playerForward * 0.01f;
-
-                                rb.velocity = new Vector3(0, 0, 0);
-
-                                if (inputObjVertical < 0)
-                                {
-                                    transform.position = transform.position + -playerForward * 0.1f;
-
-                                    verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
-                                    rb.velocity = verocity;
-                                }
-                            }
-
-                            if (distanceToPlayer < objBackLimit)
-                            {
-                                //範囲何に戻すための処理　2
-                                // rb.velocity = new Vector3(0, 0, 0);
-                                // transform.position = transform.position + playerForward * 0.01f;
-
-                                if (inputObjVertical > 0)
-                                {
-                                    transform.position = transform.position + playerForward * 0.1f;
-
-                                    verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
-                                    rb.velocity = verocity;
-                                }
-                            }
-                        }
-                    }
-                }
 
                 //前後異動ではなく、縦移動で斜面に沿って動かして下がってきたときに、設定距離よりも動いてしまう時の処理（プレイヤーの上にかぶさるのを防ぐ
-                if (distanceToPlayer < objForwardLimit && distanceToPlayer > objBackLimit)
+                if (flatDistanceToPlayer < objForwardLimit && flatDistanceToPlayer > objBackLimit)
                 {
 
                 }
                 else
                 {
 
-                    if (distanceToPlayer > objForwardLimit)
+                    if (flatDistanceToPlayer > objForwardLimit)
                     {
                         rb.velocity = new Vector3(0, 0, 0);
                         transform.position = transform.position + -playerForward * 0.1f;
 
                     }
 
-                    if (distanceToPlayer < objBackLimit)
+                    if (flatDistanceToPlayer < objBackLimit)
                     {
                         rb.velocity = new Vector3(0, 0, 0);
                         transform.position = transform.position + playerForward * 0.1f;
@@ -278,15 +138,150 @@ public class ObjMove : MonoBehaviour
 
                 //デバッグ用のray
                 // Debug.DrawRay(transform.position, new Vector3(-0.29f, 0.00f, -0.96f), Color.red);
+
+                isObjSet();
+            }
+        }
+    }
+
+
+    //オブジェの前後異動
+    void ObjForwardBackMove()
+    {
+        inputObjVertical = Input.GetAxis("Vertical"); // マイナス符号を付けることで上下反転
+
+        // 制限距離以上に移動しようとした場合は移動しない処理
+        if (flatDistanceToPlayer < objForwardLimit && flatDistanceToPlayer > objBackLimit)
+        {
+            verocity = playerForward * rbAjustSpeed * inputObjVertical;
+            rb.velocity = verocity;
+        }
+        else
+        {
+            if (flatDistanceToPlayer > objForwardLimit)
+            {
+                //範囲何に戻すための処理　2
+                // rb.velocity = new Vector3(0, 0, 0);
+                // transform.position = transform.position + -playerForward * 0.01f;
+
+                rb.velocity = new Vector3(0, 0, 0);
+
+                if (inputObjVertical < 0)
+                {
+                    transform.position = transform.position + -playerForward * 0.1f;
+
+                    verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
+                    rb.velocity = verocity;
+                }
+            }
+
+            if (flatDistanceToPlayer < objBackLimit)
+            {
+                //範囲何に戻すための処理　2
+                // rb.velocity = new Vector3(0, 0, 0);
+                // transform.position = transform.position + playerForward * 0.01f;
+
+                if (inputObjVertical > 0)
+                {
+                    transform.position = transform.position + playerForward * 0.1f;
+
+                    verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
+                    rb.velocity = verocity;
+                }
+            }
+        }
+    }
+
+    //オブジェの上下移動
+    void ObjUpDownMove()
+    {
+
+        // float verticalStic = Input.GetAxis("Vertical");
+        // このあと調整に使うかも
+
+        inputObjVertical = Input.GetAxis("VerticalCamera");
+
+        Vector3 distanceToPlayerHeighTransPosi =
+        new Vector3(Player.transform.position.x, transform.position.y, Player.transform.position.z);
+
+        distanceToPlayerHeigh = Vector3.Distance(distanceToPlayerHeighTransPosi, Player.transform.position);
+
+        if (distanceToPlayerHeigh < 15)
+        {
+            verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
+            rb.velocity = verocity;
+        }
+        // else if (distanceToPlayerHeigh > 15 && distanceToPlayerHeigh < 16)
+        else
+        {
+            // このあとカメラ調整に使うかも
+            //horizontalAngle = Input.GetAxis("HorizontalCamera");
+
+            rb.velocity = new Vector3(0, 0, 0);
+
+            //範囲何に戻すための処理　2
+            // inputObjVertical = 0;
+            // transform.position = transform.position + -playerUpVec * 0.01f;
+            // transform.position = new Vector3(transform.position.x, transform.position.y - 0.001f, transform.position.z);
+
+
+            if (inputObjVertical < 0)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y - 0.1f, transform.position.z);
+                verocity = playerUpVec * rbAjustSpeed * inputObjVertical;
+                rb.velocity = verocity;
+
+            }
+            else if (inputObjVertical > 0)
+            {
+                inputObjVertical = 0;
             }
 
         }
+        // else if (distanceToPlayerHeigh > 16)
+        // {
 
+        //     //角度がうまくいかない、マックの調節後の話してから？
+        //     // _cameraFollow.enabled = false;
+
+
+        //     // if (horizontalAngle < 0)
+        //     // {
+        //     //     if (horizontalAngle > 0)
+        //     //     {
+        //     //         _cameraFollow.enabled = true;
+        //     //     }
+        //     // }
+        //     // else
+        //     // {
+        //     //     if (horizontalAngle < 0)
+        //     //     {
+        //     //         _cameraFollow.enabled = true;
+        //     //     }
+        //     // }
+
+
+
+
+
+
+        //     //正面方向にすすんで行ったときに、制限高度より高くならないように
+        //     // _playerControl.enabled = false;
+        //     // if (verticalStic < 0)
+        //     // {
+        //     //     _playerControl.enabled = true;
+        //     //     Debug.Log("tomatoma2");
+        //     // }
+
+        //     transform.position = new Vector3(transform.position.x, transform.position.y - 50 * Time.deltaTime, transform.position.z);
+        // }
 
     }
 
-    private void objSet()
+    //オブジェが設置可能かどうか
+    private void isObjSet()
     {
+        ObjjRotate _objjRotate;
         _objjRotate = GetComponent<ObjjRotate>();
 
         // 回転軸のタイプを見て、オブジェのベクトルがあるべき方向にあるかを調べて、isSetableを更新
@@ -330,19 +325,14 @@ public class ObjMove : MonoBehaviour
                     Debug.LogError("ObjectStorage component not found!");
                 }
 
-                ObjjRotate _objjRotate = GetComponent<ObjjRotate>();
                 _objjRotate.enabled = false;
-
-                // _playerController.isMake = false;
                 _playerControl.isMake = false;
-
                 _playerControl.makeEnd = true;
-                gameObject.tag = "ground";
+                gameObject.tag = "ground";//固定化したら歩けるようにする
 
-                //固定化
+                //固定化した後はコンポーネント消去
                 Destroy(rb);
-                Destroy(this);//多分これいみない
-                this.enabled = false;
+                Destroy(this);
             }
         }
     }
@@ -441,15 +431,19 @@ public class ObjMove : MonoBehaviour
         }
         // }
     }
+
+    //オブジェの設置のために使う条件式　ベクトルが正しい方向にあるか
     protected virtual bool isObjVecDiscrimination()//オブジェによって処理を継承先で変える
     {
         return isObjVec;
     }
+    //オブジェの設置のために使う条件式　接地が必要な場合正しく接地できているか
     protected virtual bool isSetableDiscrimination()//オブジェによって処理を継承先で変える
     {
         return isSetable;
     }
 
+    //オブジェが何かにめり込んでしまったときの処理
     protected virtual void ObjInternal()//オブジェによって処理を継承先で変える
     {
 
