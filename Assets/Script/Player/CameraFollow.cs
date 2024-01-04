@@ -208,7 +208,7 @@ public class CameraFollow : MonoBehaviour
 
                 if (makeObj != null)
                 {
-                    if (_objMove.distanceToPlayerHeigh <= 15)
+                    if (_objMove.distanceToPlayerHeigh < 16)
                     {
                         verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
                         transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);

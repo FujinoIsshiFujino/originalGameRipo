@@ -5,6 +5,7 @@ using UnityEngine;
 public partial class PlayerControl
 {
 
+    bool isDash;
 
 
     public class StateWalking : PlayerStateBase

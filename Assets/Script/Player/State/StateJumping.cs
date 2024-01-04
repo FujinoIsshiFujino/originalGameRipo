@@ -6,6 +6,7 @@ using UnityEngine;
 public partial class PlayerControl
 {
     public bool isJump;
+    int jumpCount;
 
     public class StateJumping : PlayerStateBase
     {

@@ -6,43 +6,27 @@ using UnityEngine;
 
 public partial class PlayerControl : MonoBehaviour
 {
-
-    [SerializeField] public float moveSpeed = 3;
     public CharacterController characterController;
     public Vector3 moveDirection;
     public GameObject Camera;
-    public float initialMoveSpeed;
-
-    // private Vector3 startPosition; // ジャンプ時の初期位置
-    private float time;
-    private float groundtime;
-    public bool isGrounded;
-
-    [SerializeField] float apex;
-    [SerializeField] float apexTime;
-    public double jumpPower;
     public float virtualGra;
-
-    // 1人称視点
-    CameraFollow _cameraFollow;
-
-    public Vector3 cameraForward;
-
-
-    public bool isDash;
-
+    public bool isGrounded;
     public float inputHorizontal;
     public float inputVertical;
 
+    [SerializeField] public float moveSpeed = 3;
+    [SerializeField] float apex;
+    [SerializeField] float apexTime;
 
 
-    public int jumpCount;
+    double jumpPower;
+    float time;
+    float groundtime;
+    CameraFollow _cameraFollow;
+    Vector3 cameraForward;
     bool isDashJump;
-
     Animator _animator;
-
-    public PlayerStatus _playerStatus;
-
+    PlayerStatus _playerStatus;
     LockOn _lockOn;
 
 
@@ -68,7 +52,7 @@ public partial class PlayerControl : MonoBehaviour
         // 取得
 
         characterController = GetComponent<CharacterController>();
-        initialMoveSpeed = moveSpeed;
+
 
         _cameraFollow = Camera.GetComponent<CameraFollow>();
 
