@@ -38,11 +38,12 @@ public class CameraFollow : MonoBehaviour
     Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
     PlayerControl _playerControl;
     Vector3 offset;// 回転時のプレイヤーからの離れ具合、
+    BridgeMove _objMove;
+    GameObject makeObj;
 
 
 
     //ロックオン関連
-
     private Vector3 lockOnGazePoint;
     int i;
     public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 前回フレームのリスト
@@ -69,6 +70,16 @@ public class CameraFollow : MonoBehaviour
     {
 
         _lockOn = GetComponent<LockOn>();
+
+        makeObj = GameObject.FindGameObjectWithTag("Make");
+        if (makeObj != null)
+        {
+            _objMove = makeObj.GetComponent<BridgeMove>();
+        }
+        else
+        {
+            Debug.Log("MakeObjは見つかりません");
+        }
 
         getInputAngle();
 
@@ -195,15 +206,21 @@ public class CameraFollow : MonoBehaviour
                     }
                 }
 
-                //暫定的なカメラのずれの対応。
                 if (makeObj != null)
                 {
-                    verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
-                    transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
+                    if (_objMove.distanceToPlayerHeigh <= 15)
+                    {
+                        verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
+                        transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
 
-                    Vector3 objPlayerDistance = (makeObj.position - Player.transform.position) / 2;
-                    //transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
-                    transform.LookAt(Player.transform.position + objPlayerDistance);
+                        Vector3 objPlayerDistance = (makeObj.position - Player.transform.position) / 2;
+                        //transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
+                        transform.LookAt(Player.transform.position + objPlayerDistance);
+                    }
+                    else //規定値以上の高さにオブジェが移動すると、カメラは注視を辞める
+                    {
+                        //カメラのが核のふちにアイコンを発生させる処理を追加
+                    }
                 }
             }
         }

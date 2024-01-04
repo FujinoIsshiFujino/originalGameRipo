@@ -11,7 +11,7 @@ public class ObjMove : MonoBehaviour
     /// </summary>
 
 
-    //インスペクター上で視認
+    //インスペクター上で視認 もしくはほかのクラスから参照
     public float inputObjVertical;
     public float flatDistanceToPlayer;
     public float distanceToPlayerHeigh;

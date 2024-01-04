@@ -203,7 +203,6 @@ public partial class PlayerControl : MonoBehaviour
         {
             inputHorizontal = 0;
             inputVertical = 0;
-            Debug.Log("aaaa3");
         }
     }
 
