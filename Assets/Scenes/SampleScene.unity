@@ -2269,6 +2269,7 @@ MonoBehaviour:
   _playerStatus: {fileID: 0}
   attackCollider: {fileID: 1764699488}
   attackCoolDown: 0.5
+  isJump: 0
   prefabToInstantiate: {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
   isMake: 0
   makeEnd: 0
@@ -2619,7 +2620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.3
+      value: 19.91
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2627,7 +2628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 39.2
+      value: -14.98
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2749,7 +2750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &908718522
 Transform:
   m_ObjectHideFlags: 0
@@ -2786,6 +2787,8 @@ MonoBehaviour:
   isCameraMoveEnd: 0
   smoothnessFactor: 4
   selectedType: 0
+  slowlyPositionMatchWidth: 0.5
+  momentPositionMatchWidth: 0.01
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2895,25 +2898,21 @@ MonoBehaviour:
   Player: {fileID: 759743447}
   horizontalAngle: 0
   verticalAngle: 0
-  rotateSpeed: 0.4
+  cameraMove: 0
+  isFirstPerson: 0
+  isCameraMoveEnd: 0
   angleInDegrees: 0
+  rotateSpeed: 0.4
   verticalUpAngleLimit: 70
   verticalDownAngleLimit: -30
-  isFirstPerson: 0
-  firstPlayerForward: {x: 0, y: 0, z: 0}
   smoothnessFactor: 10
-  cameraMove: 0
-  isCameraMoveEnd: 0
   upDistanceCorrection: 20
   downDistanceCorrection: 4
   verticalAngleUnderZeroGazePoint: 20
+  firstPersonDistanceY: {x: 0, y: 1, z: 0}
   realTimeEnemyList: []
   GazeEnemyList: []
-  listHasChanged: 0
   rotationSpeed: 12
-  isRotateLockOn: 0
-  isSwitching: 0
-  firstPersonDistanceY: {x: 0, y: 1, z: 0}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3063,7 +3062,7 @@ Transform:
   m_GameObject: {fileID: 1001829653}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 57.001007, y: 3.04, z: 38.34946}
+  m_LocalPosition: {x: 16.08, y: 2.43, z: 30.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3088,8 +3087,10 @@ MonoBehaviour:
   elapseTime: 0
   cameraMove: 0
   isCameraMoveEnd: 0
-  smoothnessFactor: 0
-  selectedType: 0
+  smoothnessFactor: 7
+  selectedType: 1
+  slowlyPositionMatchWidth: 0.5
+  momentPositionMatchWidth: 0.01
 --- !u!1 &1081525452
 GameObject:
   m_ObjectHideFlags: 0
