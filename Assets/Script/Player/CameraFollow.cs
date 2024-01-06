@@ -219,7 +219,7 @@ public class CameraFollow : MonoBehaviour
                     }
                     else //規定値以上の高さにオブジェが移動すると、カメラは注視を辞める
                     {
-                        //カメラのが核のふちにアイコンを発生させる処理を追加
+                        //カメラの画核のふちにアイコンを発生させる処理を追加
                     }
                 }
             }
@@ -246,8 +246,8 @@ public class CameraFollow : MonoBehaviour
         {
             //  verticalAngleが下がるほど、カメラを近づける
             float distance = 9 + verticalAngle / downDistanceCorrection;
+            distance = Mathf.Clamp(distance, 1.4f, 10); //カメラがプレイヤーに近づく距離を制限　make時に影響
             offset = Quaternion.Euler(0, horizontalAngle, 0) * new Vector3(0, 0, -distance) + new Vector3(0, 1f, 0); //new Vector3は床下が見えないように高さ調整
-
         }
         else
         {
@@ -268,15 +268,12 @@ public class CameraFollow : MonoBehaviour
             }
             else
             {
-                //make時はカメラの位置が変わるのでそれにともなって処理も変わる
-                if (!_playerControl.isMake)
-                {
-                    // // カメラをプレイヤーに向ける
-                    // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
-                    transform.LookAt(Player.transform.position + new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint, 0));
-                    // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
-
-                }
+                // 0度以下の時は上の処理でカメラがプレイヤーに近づいていく、その時にカメラの注視点を上にする
+                // //new Vector3(0, Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePointでカメラの注視点をプレイヤーから少し上にずらしていく。verticalAngleUnderZeroGazePointは補正
+                float gazaPointY = Mathf.Abs(verticalAngle) / verticalAngleUnderZeroGazePoint;
+                gazaPointY = Mathf.Clamp(gazaPointY, 0, 1.6f);  //カメラがプレイヤーに近づく時に回転する角度を制限　make時に影響
+                transform.LookAt(Player.transform.position + new Vector3(0, gazaPointY, 0));
+                // カメラの注視点の違いから、lockOnEnd(verticalAngle)は使わない
             }
 
             isSwitching = false;
