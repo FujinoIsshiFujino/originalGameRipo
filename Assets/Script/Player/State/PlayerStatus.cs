@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerStatus : MobStatus
 {
@@ -9,12 +10,16 @@ public class PlayerStatus : MobStatus
     [SerializeField] float invincibleTIme = 3;
     [SerializeField] private Renderer[] childrenRenderer;
     [SerializeField] private float _cycle = 0.2f;    // 点滅周期[s]
-    private double _time;
+    float HP;
+    public Slider healthBar;
+    double _time;
 
     protected override void Start()
     {
         base.Start();
         childrenRenderer = GetComponentsInChildren<Renderer>();
+        HP = LifeMax;
+        healthBar.maxValue = LifeMax;
     }
     protected override void OnDie()
     {
@@ -33,6 +38,8 @@ public class PlayerStatus : MobStatus
     protected override void invincible()
     {
         damageble = false;
+        HP = Life;
+        healthBar.value = HP;
         StartCoroutine(returnDamagebleState());
     }
 
@@ -47,7 +54,8 @@ public class PlayerStatus : MobStatus
     }
 
     private void Update()
-    {        // 内部時刻を経過させる
+    {
+        // 内部時刻を経過させる
         if (isDead == false)
         {
             if (damageble == false)
