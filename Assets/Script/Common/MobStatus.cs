@@ -37,11 +37,12 @@ public class MobStatus : MonoBehaviour
     // プロパティの主な目的は、フィールドに対するアクセスを制御し、外部コードが直接フィールドにアクセスすることなく、安全かつ制御された方法でデータにアクセスできるようにすることです。
     //_life自体はプライべべーとだが、それをgetしているLifeはパブリックで外部からもアクセス可能ということ
     public float Life => _life;
+    public bool damageble;
     protected virtual void Start()
     {
         _life = lifeMax;
         _animator = GetComponentInChildren<Animator>();
-
+        damageble = true;
     }
 
     protected virtual void OnDie()
@@ -51,14 +52,21 @@ public class MobStatus : MonoBehaviour
 
     public void Damage(int damage)
     {
-        if (_state == StateEnum.Die) return;
+        if (damageble)
+        {
+            Debug.Log("damageble" + damageble);
+            if (_state == StateEnum.Die) return;
 
-        _life -= damage;
-        if (_life > 0) return;
+            _life -= damage;
+            _animator.SetTrigger("Damage");
+            invincible();
+            if (_life > 0) return;
 
-        _state = StateEnum.Die;
-        _animator.SetTrigger("Die");
-        OnDie();
+            _state = StateEnum.Die;
+            _animator.SetTrigger("Die");
+            OnDie();
+        }
+
     }
 
     public void GoToAttackStateIfPossible()
@@ -73,5 +81,10 @@ public class MobStatus : MonoBehaviour
     {
         if (_state == StateEnum.Die) return;
         _state = StateEnum.Normal;
+    }
+
+    protected virtual void invincible()
+    {
+        //各継承先にて記述
     }
 }

@@ -167,10 +167,7 @@ public class CameraFollow : MonoBehaviour
             }
 
             // 垂直回転の角度を制限
-            if (!_playerControl.isMake)
-            {
-                verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit);
-            }
+            verticalAngle = Mathf.Clamp(verticalAngle, verticalDownAngleLimit, verticalUpAngleLimit);
 
 
             if (verticalAngle >= 30)
