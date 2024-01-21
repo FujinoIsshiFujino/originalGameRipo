@@ -50,7 +50,7 @@ public class MobStatus : MonoBehaviour
 
     }
 
-    public void Damage(int damage)
+    public virtual void Damage(int damage)
     {
         if (damageble)
         {

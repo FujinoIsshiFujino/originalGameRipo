@@ -10,7 +10,6 @@ public class PlayerStatus : MobStatus
     [SerializeField] float invincibleTIme = 3;
     [SerializeField] private Renderer[] childrenRenderer;
     [SerializeField] private float _cycle = 0.2f;    // 点滅周期[s]
-    float HP;
     public Slider healthBar;
     double _time;
 
@@ -18,8 +17,9 @@ public class PlayerStatus : MobStatus
     {
         base.Start();
         childrenRenderer = GetComponentsInChildren<Renderer>();
-        HP = LifeMax;
+
         healthBar.maxValue = LifeMax;
+        healthBar.value = LifeMax;
     }
     protected override void OnDie()
     {
@@ -34,12 +34,16 @@ public class PlayerStatus : MobStatus
         SceneManager.LoadScene("GameOverScene");
     }
 
+    public override void Damage(int damage)
+    {
+        base.Damage(damage);
+        healthBar.value = Life;
+    }
+
     //無敵時間
     protected override void invincible()
     {
         damageble = false;
-        HP = Life;
-        healthBar.value = HP;
         StartCoroutine(returnDamagebleState());
     }
 
