@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -26,6 +27,7 @@ public class CameraFollow : MonoBehaviour
     public bool isFirstPerson = false;
     public bool isCameraMoveEnd = false;
     public float angleInDegrees;//検証用
+    public GameObject nowGazeObj;//検証用
     [SerializeField] float rotateSpeed;
     [SerializeField] float verticalUpAngleLimit = 70;
     [SerializeField] float verticalDownAngleLimit = -30;
@@ -44,18 +46,19 @@ public class CameraFollow : MonoBehaviour
 
 
     //ロックオン関連
-    private Vector3 lockOnGazePoint;
-    int i;
-    public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 前回フレームのリスト
-    public List<GameObject> GazeEnemyList = new List<GameObject>(); // 今回フレームのリスト
     [SerializeField] private float rotationSpeed = 12f; // 回転の速度
+    [SerializeField] Collider lockOnCollider;
 
+    public Vector3 lockOnGazePoint;
+    int i;
+    public List<GameObject> realTimeEnemyList = new List<GameObject>(); // 
+    public List<GameObject> GazeEnemyList = new List<GameObject>(); // 
     Quaternion targetRotation; // 目標の回転
     bool isRotateLockOn;
-    bool isSwitching = false;
-    LockOn _lockOn;
+    public bool isSwitching = false;
+    LockOnCol _lockOnCol;
     // public bool listHasChanged = false; // リストに変更があったかどうかを示すフラグ // 今後使う可能性がある
-
+    bool enemyDestroyCopy = false;
 
     void Start()
     {
@@ -69,16 +72,12 @@ public class CameraFollow : MonoBehaviour
     void Update()
     {
 
-        _lockOn = GetComponent<LockOn>();
+        _lockOnCol = lockOnCollider.GetComponent<LockOnCol>();
 
         makeObj = GameObject.FindGameObjectWithTag("Make");
         if (makeObj != null)
         {
             _objMove = makeObj.GetComponent<BridgeMove>();
-        }
-        else
-        {
-            Debug.Log("MakeObjは見つかりません");
         }
 
         getInputAngle();
@@ -124,7 +123,7 @@ public class CameraFollow : MonoBehaviour
 
         if (isFirstPerson)
         {
-            _lockOn.isLockOn = false;
+            _lockOnCol.isLockOn = false;
             //カメラの移動が終わってからのカメラの回転と移動処理
             if (isCameraMoveEnd)
             {
@@ -220,9 +219,14 @@ public class CameraFollow : MonoBehaviour
                     }
                 }
             }
+
+            //ロックオン時はプレイヤーとの距離が一番近い敵のlistを常に保持
+            if (_lockOnCol.enemyListResult != null)
+            {
+                realTimeEnemyList = _lockOnCol.enemyListResult;
+            }
         }
     }
-
 
     //角度ごとのカメラ挙動の制御
     private void eachAngleCameraMove()
@@ -252,7 +256,7 @@ public class CameraFollow : MonoBehaviour
             offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
         }
 
-        if (_lockOn.isLockOn)
+        if (_lockOnCol.isLockOn)
         {
             lockOnStart();
         }
@@ -323,77 +327,114 @@ public class CameraFollow : MonoBehaviour
 
     void lockOnStart()
     {
-        // _lockOn.enemyListDistanceを注視すると、カメラはプレイヤーとの距離に応じて勝手にロックオン対象を切り替えてしまう。なのでカメラは別のGazeEnemyListを注視しづける。
-        // GazeEnemyListは初回ロックオフ→オン時に代入され、ロックオン対象の切り替えをして、ロックオン範囲内の敵情報が変わったフレームorロックオンが終わるor敵の撃破（これはまだ未処理）によって更新される
+        // realTimeEnemyList(_lockOnCol.enemyListDistance)を注視すると、カメラはプレイヤーとの距離に応じて勝手にロックオン対象を切り替えてしまう。
+        //なのでカメラは別の注視し続ける用のGazeEnemyList（ _lockOnCol.nearEnemyList）を注視しづける。
+        // GazeEnemyListは初回ロックオフ→オン時に代入され、ロックオン対象の切り替えをしたときにロックオン範囲内の敵情報が変わると更新される
+        //ロックオン終了時はリストは破棄され、敵の撃破時はrealTimeEnemyList（コリジョン内の敵の）の有無を確認し、存在すればそちらを注視し、存在しなければみない
         //更新されたかどうかはListsAreEqualdメソッドで判断
         //ロックオン範囲内の敵情報が変わっていない状態で、ロックオン対象を切り替えてもlistは更新されず、切り替えるごとにそのままlistのインデックスをあげていって遠い敵をロックオンする
         //更新された状態においても、更新前にロックオンしていた敵が更新後に一番近い（index０）の場合と、そうでない場合にわけた。
 
 
-        //ロックオフ→オン時にの処理
+        //realTimeEnemyListがロックオンの最中に増えたときの対応
+        //ロックオンしてから初回切り替え時
         if (isSwitching == false)
         {
-            GazeEnemyList = _lockOn.nearEnemyList;
+            if (_lockOnCol.nearEnemyList != null)
+            {
+                GazeEnemyList = _lockOnCol.nearEnemyList;
+            }
         }
 
-        //プレイヤーとの距離が一番近い敵のlistを常に保持
-        realTimeEnemyList = _lockOn.enemyListDistance;
-
-
-
-        // ロックオン対象切り替え
-        if (Input.GetButtonDown("L1"))
+        if (realTimeEnemyList.Count > 0)
         {
-            // リストがL1をおす前後と異なるかをチェック
-            if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
+            // ロックオン対象切り替え
+            if (Input.GetButtonDown("L1"))
             {
-                // listHasChanged = true;
-
-                if (realTimeEnemyList[0] == GazeEnemyList[i])
+                Debug.Log("osareta1");
+                // リストがL1をおす前後と異なるかをチェック
+                if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
                 {
-                    //一番近い敵がL1前後で同じ場合。
-                    i = 1;
+                    Debug.Log("osareta2");
+
+                    // listHasChanged = true;//今後使う可能性
+
+                    if (realTimeEnemyList[0] == GazeEnemyList[i])
+                    {
+                        //一番近い敵がL1前後で同じ場合。
+                        i = 1;
+                    }
+                    else
+                    {
+                        i = 0;
+                    }
+
+                    GazeEnemyList = new List<GameObject>(realTimeEnemyList);
                 }
                 else
+                {
+                    Debug.Log("osareta3 : " + i);
+
+                    // listHasChanged = false;//今後使う可能性
+                    i++;
+                }
+
+                //i番目の敵を注視し、L1をおすごとにiを++していくので、それが配列数を超えた場合はiのリセット
+                if (GazeEnemyList.Count - i <= 0)
                 {
                     i = 0;
                 }
 
-                GazeEnemyList = new List<GameObject>(realTimeEnemyList);
+                isSwitching = true;
 
             }
-            else
-            {
-                // listHasChanged = false;
-                i++;
-            }
 
+            //i番目の敵を注視し、L1をおすごとにiを++していくので、それが配列数を超えた場合はiのリセット
             if (GazeEnemyList.Count - i <= 0)
             {
                 i = 0;
             }
 
-            isSwitching = true;
-
+            //コリジョン内の敵リストが撃破によって更新されたらiを０にもどす
+            if (enemyDestroyCopy != _lockOnCol.enemyDestroy)
+            {
+                if (GazeEnemyList.Count == 0)
+                {
+                    GazeEnemyList.Clear();
+                    if (realTimeEnemyList.Count > 0)
+                    {
+                        foreach (var enemy in realTimeEnemyList)
+                        {
+                            GazeEnemyList.Add(enemy);
+                        }
+                    }
+                }
+                i = 0;
+                enemyDestroyCopy = _lockOnCol.enemyDestroy;
+            }
         }
-
 
         // 旧
         // if (Input.GetButtonDown("L1"))
         // {
 
         //     i++;
-        //     if (_lockOn.enemyListDistance.Count - i <= 0)
+        //     if (_lockOnCol.enemyListDistance.Count - i <= 0)
         //     {
         //         i = 0;
         //     }
 
         // }
 
-        //  ロックオンオン時はプレイヤーと敵の中心を回転の軸にする
-        // lockOnGazePoint = (_lockOn.enemyListDistance[i].transform.position - Player.transform.position) / 2;
+        if (GazeEnemyList.Count > 0)
+        {
+            if (GazeEnemyList[i] != null)
+            {
+                nowGazeObj = GazeEnemyList[i];
+                lockOnGazePoint = (GazeEnemyList[i].transform.position - Player.transform.position) / 2;
+            }
+        }
 
-        lockOnGazePoint = (GazeEnemyList[i].transform.position - Player.transform.position) / 2;
 
         Vector3 directionToTarget = (Player.transform.position + lockOnGazePoint) - transform.position;
         // directionToTarget.y = 0;
@@ -413,6 +454,26 @@ public class CameraFollow : MonoBehaviour
             transform.LookAt(Player.transform.position + lockOnGazePoint);
         }
     }
+
+    // 2つのリストが等しいかどうかをチェックするメソッド 数と要素をみる。
+    public bool ListsAreEqual(List<GameObject> list1, List<GameObject> list2)
+    {
+        if (list1.Count != list2.Count)
+        {
+            return false; // リストの要素数が異なる場合、異なるリストとみなす
+        }
+
+        for (int i = 0; i < list1.Count; i++)
+        {
+            if (list1[i] != list2[i])
+            {
+                return false; // 要素が異なる場合、異なるリストとみなす
+            }
+        }
+
+        return true; // リストが等しい場合、同じリストとみなす
+    }
+
     void lockOnEnd(float verticalAngle)
     {
         Vector3 directionToTarget = Player.transform.position - transform.position;
@@ -444,25 +505,8 @@ public class CameraFollow : MonoBehaviour
         {
             isRotateLockOn = false;
         }
-    }
 
-    // 2つのリストが等しいかどうかをチェックするメソッド
-    private bool ListsAreEqual(List<GameObject> list1, List<GameObject> list2)
-    {
-        if (list1.Count != list2.Count)
-        {
-            return false; // リストの要素数が異なる場合、異なるリストとみなす
-        }
-
-        for (int i = 0; i < list1.Count; i++)
-        {
-            if (list1[i] != list2[i])
-            {
-                return false; // 要素が異なる場合、異なるリストとみなす
-            }
-        }
-
-        return true; // リストが等しい場合、同じリストとみなす
+        realTimeEnemyList.Clear();
     }
 
 }

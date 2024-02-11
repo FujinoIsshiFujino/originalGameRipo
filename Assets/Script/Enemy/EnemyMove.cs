@@ -98,7 +98,7 @@ public class EnemyMove : MonoBehaviour
         //アイテムの球のコライダーをプレイヤーじゃなくて、アイテムにつけるときはプレイヤーにコライダーつければいい。
         //キャラコンはコライダーではないので、いちいちコライダーをつけたり、プレイヤーについているコライダーをいじったりしている
 
-
+        if (_status.Life == 0) { return; }
 
         if (collider.gameObject.tag == "Player")
         {

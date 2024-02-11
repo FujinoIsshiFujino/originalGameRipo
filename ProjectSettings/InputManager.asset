@@ -169,7 +169,7 @@ InputManager:
     m_Name: Lock
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: 
+    negativeButton: r
     positiveButton: joystick button 5
     altNegativeButton: 
     altPositiveButton: 

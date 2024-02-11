@@ -1,15 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class EnemyLifeGague : MonoBehaviour
 {
+    EnemyStatus enemyStatus;
+    [SerializeField] GameObject Enemy;
+
     void Update()
     {
-        //　カメラと同じ向きに設定
-        transform.rotation = Camera.main.transform.rotation;
+        enemyStatus = Enemy.GetComponent<EnemyStatus>();
+
+        if (enemyStatus.Life != 0)
+        {
+            //　カメラと同じ向きに設定
+            transform.rotation = Camera.main.transform.rotation;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+
     }
 }
 

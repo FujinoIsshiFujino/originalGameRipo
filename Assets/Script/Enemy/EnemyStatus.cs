@@ -26,19 +26,22 @@ public class EnemyStatus : MobStatus
     {
         _animator.SetFloat("MoveSpeed", _agent.velocity.magnitude);
         //Hpの表示をカメラとの距離によって切り替える。
-        if (Vector3.Distance(Camera.main.transform.position, transform.position) <= HPverActiveDistance)
+        if (HPPanel != null)
         {
-            HPPanel.SetActive(true);
-        }
-        else
-        {
-            HPPanel.SetActive(false);
-        }
+            if (Vector3.Distance(Camera.main.transform.position, transform.position) <= HPverActiveDistance)
+            {
+                HPPanel.SetActive(true);
+            }
+            else
+            {
+                HPPanel.SetActive(false);
+            }
 
-        //Hpの表示をカメラが近すぎる場合に非表示にする
-        if (Vector3.Distance(Camera.main.transform.position, transform.position) <= ForClosestCameraHPverActiveDistance)
-        {
-            HPPanel.SetActive(false);
+            //Hpの表示をカメラが近すぎる場合に非表示にする
+            if (Vector3.Distance(Camera.main.transform.position, transform.position) <= ForClosestCameraHPverActiveDistance)
+            {
+                HPPanel.SetActive(false);
+            }
         }
     }
 
@@ -47,23 +50,6 @@ public class EnemyStatus : MobStatus
         base.Damage(damage);
         healthBar.value = Life;
     }
-
-    //無敵時間 今のところ実装予定なし
-    // protected override void invincible()
-    // {
-    //     damageble = false;
-    //     StartCoroutine(returnDamagebleState());
-    // }
-
-    // private IEnumerator returnDamagebleState()
-    // {
-    //     yield return new WaitForSeconds(invincibleTIme);
-    //     damageble = true;
-    //     for (int i = 0; i < childrenRenderer.Length; i++)
-    //     {
-    //         childrenRenderer[i].enabled = true;
-    //     }
-    // }
 
     protected override void OnDie()
     {

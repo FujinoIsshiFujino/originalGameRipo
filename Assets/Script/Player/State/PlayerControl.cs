@@ -27,7 +27,8 @@ public partial class PlayerControl : MonoBehaviour
     bool isDashJump;
     Animator _animator;
     PlayerStatus _playerStatus;
-    LockOn _lockOn;
+    LockOnCol _lockOnCol;
+    [SerializeField] Collider lockOnCollider;
 
 
 
@@ -61,7 +62,7 @@ public partial class PlayerControl : MonoBehaviour
         // _attack = GetComponent<MobAttack>();
 
 
-        _lockOn = Camera.GetComponent<LockOn>();
+        _lockOnCol = lockOnCollider.GetComponent<LockOnCol>();
 
         //jumpPower = apex/apexTime + 0.5*9.81*apexTime;
         //jumpPower = jumpPower*apexTime/(jumpPower/9.81);
