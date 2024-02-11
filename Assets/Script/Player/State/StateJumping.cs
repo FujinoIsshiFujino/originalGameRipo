@@ -27,7 +27,8 @@ public partial class PlayerControl
                 owner.jumpCount++;
                 moveDirection = new Vector3(0, 0, 0);
 
-                jumpDirection = owner.transform.forward.normalized;
+                //入力方向にジャンプ方向を定める
+                jumpDirection = (owner.cameraForward * owner.inputVertical + owner.Camera.transform.right * owner.inputHorizontal).normalized;
 
 
                 beforeJumpInputHorizontal = owner.inputHorizontal;
