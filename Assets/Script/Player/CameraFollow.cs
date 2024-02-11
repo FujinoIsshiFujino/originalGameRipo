@@ -24,6 +24,7 @@ public class CameraFollow : MonoBehaviour
     public float verticalAngle;
     private Vector3 playerForward;
     public bool cameraMove;
+    public GameObject makeObj;
     public bool isFirstPerson = false;
     public bool isCameraMoveEnd = false;
     public float angleInDegrees;//検証用
@@ -41,7 +42,6 @@ public class CameraFollow : MonoBehaviour
     PlayerControl _playerControl;
     Vector3 offset;// 回転時のプレイヤーからの離れ具合、
     BridgeMove _objMove;
-    GameObject makeObj;
 
 
 
