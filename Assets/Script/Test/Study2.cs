@@ -14,6 +14,7 @@ using UnityEngine;
 //検証９
 
 
+
 // sortの降順をsort を使わないで表現。foreachで繰り返しで大小比べて、一番大きい値を元の配列から削除して・・を繰り返す
 
 // using System.Collections.Generic;
