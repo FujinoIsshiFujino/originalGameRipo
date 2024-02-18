@@ -8,7 +8,7 @@ public partial class PlayerControl
     float waitTime;
     public class StateIdle : PlayerStateBase
     {
-
+        float inputTime;
         public override void OnUpdate(PlayerControl owner)
         {
 
@@ -23,6 +23,25 @@ public partial class PlayerControl
                 if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
                 {
                     owner.ChangeState(stateWalking);
+                }
+
+                if (owner.currentState is not StateMaking)
+                {
+                    if (Input.GetButton("Rotate"))
+                    {
+                        inputTime += Time.deltaTime;
+                        if (inputTime < 1)
+                        {
+                            if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                            {
+                                inputTime = 0;
+
+                                owner._animator.SetTrigger("Roll");
+                                owner.ChangeState(stateRolling);
+
+                            }
+                        }
+                    }
                 }
 
                 if (!owner._cameraFollow.isFirstPerson)

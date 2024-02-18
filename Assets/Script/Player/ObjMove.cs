@@ -288,7 +288,6 @@ public class ObjMove : MonoBehaviour
         if (_objjRotate.selectedType == ObjjRotate.rotateType.horizon)
         {
             isSetable = isObjVecDiscrimination();
-            Debug.Log("isSetableisSetable" + isSetable);
         }
         else if (_objjRotate.selectedType == ObjjRotate.rotateType.vertical)
         {

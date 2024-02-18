@@ -40,6 +40,7 @@ public partial class PlayerControl : MonoBehaviour
     private static readonly StateWalking stateWalking = new StateWalking();
     private static readonly StateAttacking stateAttacking = new StateAttacking();
     private static readonly StateMaking stateMaking = new StateMaking();
+    private static readonly StateRolling stateRolling = new StateRolling();
     private static readonly StateDead stateDead = new StateDead();
 
     public bool IsDead => currentState is StateDead;

@@ -152,7 +152,17 @@ public partial class PlayerControl
                         }
                     }
 
-
+                    if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                    {
+                        if (owner.currentState is not StateMaking)
+                        {
+                            if (Input.GetButtonDown("Rotate"))
+                            {
+                                owner._animator.SetTrigger("Roll");
+                                owner.ChangeState(stateRolling);
+                            }
+                        }
+                    }
                 }
 
 
