@@ -1777,7 +1777,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &329866670
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3167,6 +3167,9 @@ MonoBehaviour:
   prefabToInstantiate: {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
   isMake: 0
   makeEnd: 0
+  rollingCoolDown: 0.05
+  rollingSpeed: 2.5
+  dashSpeed: 1.75
 --- !u!1 &787631588
 GameObject:
   m_ObjectHideFlags: 0
@@ -3757,7 +3760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 35.91
+      value: 46.4
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3765,7 +3768,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.53
+      value: -3.6
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4121,6 +4124,7 @@ MonoBehaviour:
   horizontalAngle: 0
   verticalAngle: 0
   cameraMove: 0
+  makeObj: {fileID: 0}
   isFirstPerson: 0
   isCameraMoveEnd: 0
   angleInDegrees: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public partial class PlayerControl
 {
-
+    [SerializeField] private float dashSpeed = 1.75f;
     bool isDash;
 
 
@@ -55,8 +55,8 @@ public partial class PlayerControl
                 {
 
                     owner.isDash = true;
-                    moveDirection.x *= 2;
-                    moveDirection.z *= 2;
+                    moveDirection.x *= owner.dashSpeed;
+                    moveDirection.z *= owner.dashSpeed;
 
                 }
                 else //ダッシュしてないときの処理
