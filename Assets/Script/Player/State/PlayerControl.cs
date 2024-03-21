@@ -149,6 +149,7 @@ public partial class PlayerControl : MonoBehaviour
         // {
         //  freeFall();をステイト内の実行がされるまにしておくことで、接地を担保する
         // }
+        _recipe = RecipieMenue.GetComponent<Recipe>();
 
 
         freeFall();

@@ -8,7 +8,9 @@ public partial class PlayerControl
     //これやりながら走れてていまうので意味ない？メイキングから遷移できなくて歩きから遷移できるものがあるので、意味はありそう。
     //ならこのステートにも歩けるようにいしなきゃってなるけど、接地のときのやつどうしようってなる
 
-    [SerializeField] public GameObject prefabToInstantiate;
+    [SerializeField] public GameObject[] prefabToInstantiateArray;
+    [SerializeField] GameObject RecipieMenue;
+    Recipe _recipe;
     public bool isMake;
     public bool makeEnd;
     public class StateMaking : PlayerStateBase
@@ -26,9 +28,20 @@ public partial class PlayerControl
             owner.makeEnd = false;
             Quaternion playerRotation = owner.transform.rotation;
 
-            // プレハブからクローンを生成
-            Instantiate(owner.prefabToInstantiate, owner.transform.position + owner.transform.forward * 8 + new Vector3(0, 1, 0), playerRotation);
 
+            foreach (GameObject prefab in owner.prefabToInstantiateArray)
+            {
+                // prefab のコンポーネントを取得
+                MakeButtoon itemType = prefab.GetComponent<MakeButtoon>();
+
+                // itemType が null でない場合、かつ owner._recipe.selectedMakeItemType と一致する場合
+                if (itemType != null && itemType.type == owner._recipe.selectedMakeItemType)
+                {
+                    // owner._recipe.selectedMakeItemType と prefab の type が一致した場合の処理をここに記述
+                    Instantiate(prefab, owner.transform.position + owner.transform.forward * 8 + new Vector3(0, 1, 0), playerRotation);
+                    break; // 一致する prefab が見つかったらループを終了
+                }
+            }
         }
         public override void OnUpdate(PlayerControl owner)
         {

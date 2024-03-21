@@ -5,6 +5,7 @@ using UnityEngine;
 
 public partial class PlayerControl
 {
+    [SerializeField] MakeMchineUI _makeMchineUI;
     float waitTime;
     public class StateIdle : PlayerStateBase
     {
@@ -48,7 +49,7 @@ public partial class PlayerControl
                 {
                     if (Input.GetButtonDown("Make"))
                     {
-                        owner.ChangeState(stateMaking);
+                        owner._makeMchineUI.makeMchineUI();
                         owner._lockOnCol.isLockOn = false;
                     }
                 }
