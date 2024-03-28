@@ -15,7 +15,10 @@ public class EnemyAllDeath : FlagSwitch
     {
         base.Start();
         boxsize = GetComponent<BoxCollider>().size;
-        anounceTextPanel.SetActive(false);
+        if (anounceTextPanel != null)
+        {
+            anounceTextPanel.SetActive(false);
+        }
     }
 
 
@@ -37,10 +40,13 @@ public class EnemyAllDeath : FlagSwitch
         {
             if (flagCaller.isOn)
             {
-                OpenText();
-                anounceText.text = anounceTextMessage;
+                if (anounceTextPanel != null && anounceText != null)
+                {
+                    OpenText();
+                    anounceText.text = anounceTextMessage;
+                    Time.timeScale = 0;
+                }
                 firstTime = true;
-                Time.timeScale = 0;
             }
         }
 
@@ -48,7 +54,10 @@ public class EnemyAllDeath : FlagSwitch
         {
             if (Input.GetButtonDown("Dash"))
             {
-                CloseText();
+                if (anounceTextPanel != null && anounceText != null)
+                {
+                    CloseText();
+                }
             }
         }
     }

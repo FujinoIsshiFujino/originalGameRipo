@@ -27,6 +27,8 @@ public class GimmicCameraMove : MonoBehaviour
     [SerializeField] moveType selectedType;
     [SerializeField] float slowlyPositionMatchWidth = 0.5f;
     [SerializeField] float momentPositionMatchWidth = 0.01f;
+    FlagCaller flagCaller;
+    public bool firstTime;
 
 
     // Start is called before the first frame update
@@ -38,18 +40,28 @@ public class GimmicCameraMove : MonoBehaviour
         _playerControl = Player.GetComponent<PlayerControl>();
 
         //isCameraMoveEnd = false; //　これは初期化しなくていいかも
+
+        firstTime = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("9")) // ここはフラグになる
-        {
-            cameraMove = true;
-            targetPosition = this.transform.position;
+        flagCaller = GetComponent<FlagCaller>();
 
-            beforeCameraPosi = Camera.transform.position;
-            beforeCameraVec = Camera.transform.forward;
+        if (firstTime == false)
+        {
+            if (flagCaller.isOn)
+            {
+
+                cameraMove = true;
+                targetPosition = this.transform.position;
+
+                beforeCameraPosi = Camera.transform.position;
+                beforeCameraVec = Camera.transform.forward;
+
+                firstTime = true;
+            }
         }
 
         //カメラが動いている途中
@@ -113,6 +125,7 @@ public class GimmicCameraMove : MonoBehaviour
         elapseTime += Time.deltaTime;
         if (isReturnOrGo)
         {
+            //戻ってから止まる処理
             if (returnStopSecond <= elapseTime)
             {
                 _cameraFollow.enabled = true;
@@ -124,6 +137,7 @@ public class GimmicCameraMove : MonoBehaviour
         }
         else
         {
+            //ギミック前で止まる処理
             if (gimmicStopSecond <= elapseTime)
             {
                 isCameraMoveEnd = true;

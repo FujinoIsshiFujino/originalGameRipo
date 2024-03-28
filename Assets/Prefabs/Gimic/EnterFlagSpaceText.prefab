@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8881650637373235074}
   - component: {fileID: -8039755685395353687}
   m_Layer: 0
-  m_Name: FlagSpace
+  m_Name: EnterFlagSpaceText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

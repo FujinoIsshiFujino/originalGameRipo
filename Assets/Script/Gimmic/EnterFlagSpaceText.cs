@@ -12,7 +12,10 @@ public class EnterFlagSpaceText : FlagSwitch
     public override void Start()
     {
         base.Start();
-        anounceTextPanel.SetActive(false);
+        if (anounceTextPanel != null)
+        {
+            anounceTextPanel.SetActive(false);
+        }
     }
 
     public override void Update()
@@ -22,10 +25,13 @@ public class EnterFlagSpaceText : FlagSwitch
         {
             if (flagCaller.isOn)
             {
-                OpenText();
-                anounceText.text = anounceTextMessage;
+                if (anounceTextPanel != null && anounceText != null)
+                {
+                    OpenText();
+                    anounceText.text = anounceTextMessage;
+                    Time.timeScale = 0;
+                }
                 firstTime = true;
-                Time.timeScale = 0;
             }
         }
 
@@ -33,7 +39,10 @@ public class EnterFlagSpaceText : FlagSwitch
         {
             if (Input.GetButtonDown("Dash"))
             {
-                CloseText();
+                if (anounceTextPanel != null && anounceText != null)
+                {
+                    CloseText();
+                }
             }
         }
     }
