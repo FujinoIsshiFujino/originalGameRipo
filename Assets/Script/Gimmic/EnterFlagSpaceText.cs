@@ -65,6 +65,8 @@ public class EnterFlagSpaceText : FlagSwitch
 
             _characterController.enabled = false;
             _playerControl.enabled = false;
+            _cameraFollow.enabled = false;
+
         }
     }
 
@@ -78,6 +80,7 @@ public class EnterFlagSpaceText : FlagSwitch
 
             _characterController.enabled = true;
             _playerControl.enabled = true;
+            _cameraFollow.enabled = true;
 
         }
     }

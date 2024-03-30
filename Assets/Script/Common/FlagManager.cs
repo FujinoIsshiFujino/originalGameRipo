@@ -5,6 +5,7 @@ public class FlagManager : MonoBehaviour
 {
     public enum Flag
     {
+        moveText,
         firstEnemyMeet,
         allEnemyDeathInFirst,
         cc

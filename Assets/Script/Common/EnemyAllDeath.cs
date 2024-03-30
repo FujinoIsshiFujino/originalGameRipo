@@ -44,7 +44,6 @@ public class EnemyAllDeath : FlagSwitch
                 {
                     OpenText();
                     anounceText.text = anounceTextMessage;
-                    Time.timeScale = 0;
                 }
                 firstTime = true;
             }
@@ -85,7 +84,6 @@ public class EnemyAllDeath : FlagSwitch
 
             _characterController.enabled = true;
             _playerControl.enabled = true;
-
         }
     }
 }
