@@ -31,7 +31,12 @@ public partial class PlayerControl : MonoBehaviour
     [SerializeField] Collider lockOnCollider;
 
 
-
+    //落下系
+    [SerializeField] GameObject fadePanel;
+    FadeController fadeController;
+    float WaitTime = 2;
+    public Vector3 lastGroundPosi;
+    Rigidbody rb;
 
 
     // Start is called before the first frame update
@@ -87,6 +92,10 @@ public partial class PlayerControl : MonoBehaviour
 
 
         attackCollider.enabled = false;
+
+        fadeController = fadePanel.GetComponent<FadeController>();
+        rb = GetComponent<Rigidbody>();
+
     }
 
     private void Update()
@@ -151,17 +160,15 @@ public partial class PlayerControl : MonoBehaviour
         // }
         _recipe = RecipieMenue.GetComponent<Recipe>();
 
+        DetermaineLastPosi();
+
+        SlopePush();
 
         freeFall();
-
-
-
-
 
         currentState.OnUpdate(this);
         // Debug.Log("attackCollider.enabled " + attackCollider.enabled);
         Debug.Log("currentState" + currentState);
-        Debug.Log("isGrounded" + isGrounded);
         Debug.Log("mmmoveDirection" + moveDirection);
 
     }
@@ -219,12 +226,12 @@ public partial class PlayerControl : MonoBehaviour
     public void freeFall()
     {
         time += Time.deltaTime;
-        moveDirection = new Vector3(0, virtualGra * time, 0); // ジャンプではない自由落下? って過去の俺が書いてるけど、地面ついていないときこれがおこってるので、普通に自由落下では？
-                                                              // ジャンプの時は方向が毎フレーム加算される　V=gt
-                                                              //moveDirection.y = virtualGra * time;
+        moveDirection = new Vector3(0, virtualGra * time, 0);
+        // ジャンプではない自由落下? って過去の俺が書いてるけど、地面ついていないときこれがおこってるので、普通に自由落下では？
+        // ジャンプの時は方向が毎フレーム加算される　V=gt
+        //moveDirection.y = virtualGra * time;
         characterController.Move(moveDirection * Time.deltaTime);
     }
-
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
@@ -248,13 +255,59 @@ public partial class PlayerControl : MonoBehaviour
             //     ChangeState(stateIdle);
             // }
 
+            if (isLastGroundPosiForDown && isLastGroundPosiForSide)
+            {
+                lastGroundPosi = transform.position;
+            }
+
+            Vector3 zeroRbVerocityX = rb.velocity;
+            zeroRbVerocityX.x = 0;
+            zeroRbVerocityX.z = 0;
+            rb.velocity = zeroRbVerocityX;
+
             if (currentState is StateJumping && isJump == true)
             {
                 ChangeState(stateIdle);
             }
-
-
-
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Hole")
+        {
+            fadeController.isFadeOut = true;//フェードアウト
+
+            //同じフレームでフェードのOut/Inを行うと止まるのでコルーチンで時間をずらす。
+            StartCoroutine(WarpFadeIn());
+            //フェードアウトする前に座標移動しないようにコルーチン
+            StartCoroutine(GetRespawnObjectPositionCoroutine());
+        }
+    }
+
+    private IEnumerator GetRespawnObjectPositionCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        characterController.enabled = false;
+        transform.position = lastGroundPosi;
+
+        RaycastHit hit;
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f; // プレイヤーの位置から少し上にレイを飛ばす
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayLength))
+        {
+            if (hit.collider.tag == "ground")
+            {
+                characterController.enabled = true;
+            }
+        }
+    }
+
+    private IEnumerator WarpFadeIn()
+    {
+        yield return new WaitForSeconds(WaitTime);
+        fadeController.isFadeIn = true;//フェードイン
+        characterController.enabled = true;
     }
 }

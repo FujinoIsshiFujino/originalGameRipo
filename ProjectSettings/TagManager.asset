@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Make
   - ObjManager
+  - Hole
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - EnemyAttack
   - PlayerAttack
   - objColl
-  - 
-  - 
+  - Respawn
+  - Hole
   - 
   - 
   - 
