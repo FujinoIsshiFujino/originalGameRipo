@@ -292,10 +292,13 @@ public class ObjMove : MonoBehaviour
         else if (_objjRotate.selectedType == ObjjRotate.rotateType.vertical)
         {
 
+            // ここに追記の必要がある
+            // そもそもブリッジムーブ以外の必要がある
         }
         else if (_objjRotate.selectedType == ObjjRotate.rotateType.arbitraryAxis)
         {
-
+            // ここに追記の必要がある
+            // そもそもブリッジムーブ以外の必要がある
         }
 
         //そのうえでちゃんと接地できているかを確認してisSetableを更新　ここの順序は逆にしてはいけない

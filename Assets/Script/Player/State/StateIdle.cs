@@ -49,7 +49,9 @@ public partial class PlayerControl
                 {
                     if (Input.GetButtonDown("Make"))
                     {
-                        owner._makeMchineUI.makeMchineUI();
+                        owner._makeMchineUI.OpenMenu(owner.recipeDialog);
+                        // recipeDialogをひらくと、同階層のunity上の他のメニューまで開いてしまうのでsetActiveでfalseにする
+                        owner.mainMenuPanel.SetActive(false);
                         owner._lockOnCol.isLockOn = false;
                     }
                 }

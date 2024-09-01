@@ -77,7 +77,17 @@ public class CameraFollow : MonoBehaviour
         makeObj = GameObject.FindGameObjectWithTag("Make");
         if (makeObj != null)
         {
-            _objMove = makeObj.GetComponent<BridgeMove>();
+            if (makeObj.GetComponent<BridgeMove>() != null)
+            {
+                _objMove = makeObj.GetComponent<BridgeMove>();
+            }
+
+            //ブロック用
+            // if (makeObj.GetComponent<BlockMove>() != null)
+            // {
+            //     _objMove = makeObj.GetComponent<BlockMove>();
+            // }
+
         }
 
         getInputAngle();

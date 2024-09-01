@@ -38,6 +38,9 @@ public partial class PlayerControl : MonoBehaviour
     public Vector3 lastGroundPosi;
     Rigidbody rb;
 
+    //メニュー系
+    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private GameObject recipeDialog;
 
     // Start is called before the first frame update
     public static readonly StateIdle stateIdle = new StateIdle();
@@ -107,6 +110,15 @@ public partial class PlayerControl : MonoBehaviour
         {
             ChangeState(stateDead);
         }
+
+        //メニュー画面
+        if (Input.GetButtonDown("Start"))
+        {
+            // 同階層のunity上の他のメニューまで開いてしまうのでsetActiveでfalseにする
+            recipeDialog.SetActive(false);
+            _makeMchineUI.OpenMenu(mainMenuPanel);
+        }
+
 
 
         //カメラ正面のベクトルのｘｚ成分を取得して、単位ベクトル化し、地面に平行なベクトルを取得

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class MakeMchineUI : MonoBehaviour
 {
     [SerializeField] private GameObject backPanel;
-    [SerializeField] private GameObject recipeDialog;
 
     enum faze
     {
@@ -17,13 +16,9 @@ public class MakeMchineUI : MonoBehaviour
     }
     faze currentFaze;
 
-
     [SerializeField] GameObject Player;
     PlayerControl _playerControl;
     CharacterController _characterController;
-
-    bool recipeToggle;
-    [SerializeField] private GameObject pausePanel;
 
     void Start()
     {
@@ -31,61 +26,29 @@ public class MakeMchineUI : MonoBehaviour
         _characterController = Player.GetComponent<CharacterController>();
 
         currentFaze = faze.none;
-        recipeToggle = false;
-        recipeDialog.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CloseMenu(GameObject menu)
     {
-        if (pausePanel.activeSelf == true)
-        {
-            if (Input.GetButton("Dash"))
-            {
-                CloseRecipeDialog();
-            }
-        }
-    }
-    public void makeMchineUI()
-    {
-        pausePanel.SetActive(true);
-        ToggleRecipeDialog();
+        Time.timeScale = 1;
+
+        menu.SetActive(false);
+
+        _characterController.enabled = true;
+        _playerControl.enabled = true;
+
+        backPanel.SetActive(true);
     }
 
-    public void CloseRecipeDialog()
+    public void OpenMenu(GameObject menu)
     {
-        ToggleRecipeDialog();
-        pausePanel.SetActive(false);
-    }
+        Time.timeScale = 0;
 
-    private void ToggleRecipeDialog()
-    {
-        if (recipeDialog.activeSelf == true)
-        {
+        menu.SetActive(true);
 
-            Time.timeScale = 1;
+        _characterController.enabled = false;
+        _playerControl.enabled = false;
 
-            recipeDialog.SetActive(false);//ここはもしかしたら itemsDialog.Toggle();みたいに専用のをつくったほうがいいかも
-
-            _characterController.enabled = true;
-            _playerControl.enabled = true;
-
-            backPanel.SetActive(true);
-
-            currentFaze = faze.item;
-        }
-        else
-        {
-            Time.timeScale = 0;
-
-            recipeDialog.SetActive(true);//ここはもしかしたら itemsDialog.Toggle();みたいに専用のをつくったほうがいいかも
-
-            _characterController.enabled = false;
-            _playerControl.enabled = false;
-
-            backPanel.SetActive(false);
-
-            currentFaze = faze.item;
-        }
+        backPanel.SetActive(false);
     }
 }

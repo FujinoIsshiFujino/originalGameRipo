@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 1104088406851020712}
   - component: {fileID: 7673697298925049083}
   - component: {fileID: -1503477607094669212}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Make
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 1592998539282379716}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 432.98767, y: 335.8352, z: -142.6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -155,6 +155,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  itemDataArray:
+  - itemType: 0
+    consumeItemNumber: 0
 --- !u!114 &7673697298925049083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,7 +174,7 @@ MonoBehaviour:
   v3Axisrgiht: {x: 0, y: 0, z: 0}
   v3AxisUp: {x: 0, y: 0, z: 0}
   v3Axis: {x: 0, y: 0, z: 0}
-  selectedType: 0
+  selectedType: 1
 --- !u!54 &-1503477607094669212
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -229,7 +232,7 @@ Transform:
   m_GameObject: {fileID: 5344307402349564725}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.729, z: -1.64}
+  m_LocalPosition: {x: 0, y: -0.719, z: -1.64}
   m_LocalScale: {x: 3, y: 0.25, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
