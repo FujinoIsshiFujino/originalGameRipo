@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Recipe : MenuBase
 {
-    [SerializeField] MakeMchineUI _makeMchineUI;
+    [SerializeField] MenuBase _menuBase;
     MakeButtoon _makeButtoon;
     public MakeButtoon.makeItemType selectedMakeItemType;
     [SerializeField] MainMenu _mainMenu;
@@ -26,7 +26,7 @@ public class Recipe : MenuBase
             //ポーズ画面からrecipeを開いたかどうかで分岐
             if (!_mainMenu.isActiveAndEnabled)
             {
-                _makeMchineUI.CloseMenu(this.gameObject);
+                _menuBase.CloseMenu(this.gameObject);
             }
             else
             {
@@ -85,7 +85,7 @@ public class Recipe : MenuBase
         {
             if (!_mainMenu.isActiveAndEnabled)
             {
-                _makeMchineUI.CloseMenu(this.gameObject);
+                _menuBase.CloseMenu(this.gameObject);
                 return;
             }
             else
@@ -133,13 +133,13 @@ public class Recipe : MenuBase
                 //ポーズ画面からrecipeを開いたかどうかで分岐
                 if (!_mainMenu.isActiveAndEnabled)
                 {
-                    _makeMchineUI.CloseMenu(this.gameObject);
+                    _menuBase.CloseMenu(this.gameObject);
                 }
                 else
                 {
                     _mainMenu.currentFaze = MainMenu.faze.pause;
                     Toggle(this.gameObject);
-                    _makeMchineUI.CloseMenu(_mainMenu.gameObject);
+                    _menuBase.CloseMenu(_mainMenu.gameObject);
                 }
                 playerControl.ChangeState(stateMaking);
             }

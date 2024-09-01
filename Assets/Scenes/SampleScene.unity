@@ -1161,7 +1161,9 @@ MonoBehaviour:
   disabledColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
   selectedDisabledColor: {r: 0.507, g: 0, b: 0, a: 1}
   VerticalDepth: 0.2
-  _makeMchineUI: {fileID: 1779234965}
+  backPanel: {fileID: 849074096}
+  Player: {fileID: 759743447}
+  _menuBase: {fileID: 1432623808}
   selectedMakeItemType: 0
   _mainMenu: {fileID: 1432623808}
 --- !u!1 &158164970 stripped
@@ -4560,6 +4562,7 @@ MonoBehaviour:
   lastGroundPosi: {x: 0, y: 0, z: 0}
   mainMenuPanel: {fileID: 1432623804}
   recipeDialog: {fileID: 137041672}
+  menuBase: {fileID: 1432623808}
   slopeAngleThreshold: 30
   rayLength: 2
   rayLengthDetemine: 0.5
@@ -4569,7 +4572,7 @@ MonoBehaviour:
   isLastGroundPosiForSide: 1
   attackCollider: {fileID: 1764699488}
   attackCoolDown: 0.5
-  _makeMchineUI: {fileID: 1779234965}
+  _menuBase: {fileID: 1432623808}
   isJump: 0
   prefabToInstantiateArray:
   - {fileID: 1592998539282379716, guid: 0826aedb38e11f944a8c7309afdc00ee, type: 3}
@@ -8064,10 +8067,11 @@ MonoBehaviour:
   disabledColor: {r: 0.58431375, g: 0.58431375, b: 0.58431375, a: 1}
   selectedDisabledColor: {r: 0.5058824, g: 0, b: 0, a: 1}
   VerticalDepth: 0.2
+  backPanel: {fileID: 849074096}
+  Player: {fileID: 759743447}
   itemsDialog: {fileID: 651383484}
   recipe: {fileID: 137041672}
   currentFaze: 0
-  _makeMchineUI: {fileID: 1779234965}
 --- !u!1 &1479458140
 GameObject:
   m_ObjectHideFlags: 0
@@ -10548,7 +10552,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backPanel: {fileID: 849074096}
+  currentFaze: 0
   Player: {fileID: 759743447}
+  _playerControl: {fileID: 0}
+  _characterController: {fileID: 0}
 --- !u!4 &1786658795 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 1f1cd6faa38270c449338bafe0a4b7ce, type: 3}

@@ -16,7 +16,6 @@ public class MainMenu : MenuBase
         recipe
     }
     public faze currentFaze;
-    [SerializeField] MakeMchineUI _makeMchineUI;
 
     protected override void Start()
     {
@@ -41,7 +40,7 @@ public class MainMenu : MenuBase
         {
             if (currentFaze == faze.pause)
             {
-                _makeMchineUI.CloseMenu(this.gameObject);
+                CloseMenu(this.gameObject);
                 currentFaze = faze.none;
             }
             else if (currentFaze == faze.item)
@@ -76,7 +75,7 @@ public class MainMenu : MenuBase
         // 再開
         else if (selectedButtonIndex == 2 && currentFaze == faze.pause)
         {
-            _makeMchineUI.CloseMenu(this.gameObject);
+            CloseMenu(this.gameObject);
             currentFaze = faze.none;
         }
     }

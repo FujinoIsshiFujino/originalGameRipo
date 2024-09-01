@@ -41,6 +41,7 @@ public partial class PlayerControl : MonoBehaviour
     //メニュー系
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject recipeDialog;
+    [SerializeField] MenuBase menuBase;
 
     // Start is called before the first frame update
     public static readonly StateIdle stateIdle = new StateIdle();
@@ -116,7 +117,7 @@ public partial class PlayerControl : MonoBehaviour
         {
             // 同階層のunity上の他のメニューまで開いてしまうのでsetActiveでfalseにする
             recipeDialog.SetActive(false);
-            _makeMchineUI.OpenMenu(mainMenuPanel);
+            menuBase.OpenMenu(mainMenuPanel);
         }
 
 

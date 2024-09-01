@@ -17,12 +17,18 @@ public class MenuBase : MonoBehaviour
     bool previousInputWasUp = false;
     bool previousInputWasDown = false;
     [SerializeField] float VerticalDepth = 0.2f;//斜め方向の感度
-
+    [SerializeField] private GameObject backPanel;
+    [SerializeField] GameObject Player;
+    PlayerControl _playerControl;
+    CharacterController _characterController;
     protected virtual void Start()
     {
         // 最初のボタンを選択状態にする
         SelectButton(selectedButtonIndex);
         stateMaking = new PlayerControl.StateMaking();
+
+        _playerControl = Player.GetComponent<PlayerControl>();
+        _characterController = Player.GetComponent<CharacterController>();
     }
 
     //  オブジェクトがアクティブになるたびに実行されるメソッド
@@ -127,5 +133,28 @@ public class MenuBase : MonoBehaviour
     protected virtual void DecisionAction()//オブジェによって処理を継承先で変える
     {
 
+    }
+    public void CloseMenu(GameObject menu)
+    {
+        Time.timeScale = 1;
+
+        menu.SetActive(false);
+
+        _characterController.enabled = true;
+        _playerControl.enabled = true;
+
+        backPanel.SetActive(true);
+    }
+
+    public void OpenMenu(GameObject menu)
+    {
+        Time.timeScale = 0;
+
+        menu.SetActive(true);
+
+        _characterController.enabled = false;
+        _playerControl.enabled = false;
+
+        backPanel.SetActive(false);
     }
 }
