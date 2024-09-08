@@ -4571,7 +4571,7 @@ MonoBehaviour:
   circleRadius: 1
   isLastGroundPosiForSide: 1
   attackCollider: {fileID: 1764699488}
-  attackCoolDown: 0.5
+  attackCoolDown: 0.1
   _menuBase: {fileID: 1432623808}
   isJump: 0
   prefabToInstantiateArray:

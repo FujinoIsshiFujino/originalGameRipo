@@ -58,7 +58,7 @@ public partial class PlayerControl
         yield return new WaitForSeconds(attackCoolDown);
         // GoToNormalStateIfPossible();
 
-
+        _animator.SetTrigger("Exit");
         isRedyAttack = true;
         ChangeState(stateIdle);
 
