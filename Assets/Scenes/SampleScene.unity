@@ -4571,7 +4571,9 @@ MonoBehaviour:
   circleRadius: 1
   isLastGroundPosiForSide: 1
   attackCollider: {fileID: 1764699488}
-  attackCoolDown: 0.1
+  attackCoolDown: 0.25
+  attackInterval: 0.1
+  attackFinished: 0
   _menuBase: {fileID: 1432623808}
   isJump: 0
   prefabToInstantiateArray:
@@ -5556,7 +5558,7 @@ PrefabInstance:
       objectReference: {fileID: 2100272666}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: lifeMax
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: HPverActiveDistance
@@ -6595,7 +6597,7 @@ PrefabInstance:
       objectReference: {fileID: 1512130833}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: lifeMax
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: HPverActiveDistance
@@ -12216,7 +12218,7 @@ PrefabInstance:
       objectReference: {fileID: 1056551520}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: lifeMax
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5654492716322965402, guid: 7755a63c5d95e134f95463e91c6e1e4a, type: 3}
       propertyPath: HPverActiveDistance
