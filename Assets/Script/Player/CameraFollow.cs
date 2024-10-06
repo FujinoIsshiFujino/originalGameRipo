@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 
@@ -48,6 +49,7 @@ public class CameraFollow : MonoBehaviour
     //ロックオン関連
     [SerializeField] private float rotationSpeed = 12f; // 回転の速度
     [SerializeField] Collider lockOnCollider;
+    [SerializeField] Image lockOnCursor;
 
     public Vector3 lockOnGazePoint;
     int i;
@@ -66,6 +68,9 @@ public class CameraFollow : MonoBehaviour
 
         // beforeTargetPosi = Player.transform.position;//プレイヤーの位置を記録
         cameraMove = false;
+
+        lockOnCursor = this.GetComponentInChildren<Image>();
+        lockOnCursor.enabled = false;
     }
 
     // Update is called once per frame
@@ -235,6 +240,14 @@ public class CameraFollow : MonoBehaviour
             {
                 realTimeEnemyList = _lockOnCol.enemyListResult;
             }
+
+            // ロックオンカーソルの描画中の処理
+            if (lockOnCursor.enabled == true)
+            {
+                //現在ロックオンしている敵のワールド座標をスクリーン座標に変換し、lockOnCursorのスクリーン座標を変更
+                lockOnCursor.rectTransform.position = Camera.main.WorldToScreenPoint(nowGazeObj.transform.position);
+                lockOnCursor.rectTransform.Rotate(0, 0, 1f);
+            }
         }
     }
 
@@ -345,6 +358,8 @@ public class CameraFollow : MonoBehaviour
         //ロックオン範囲内の敵情報が変わっていない状態で、ロックオン対象を切り替えてもlistは更新されず、切り替えるごとにそのままlistのインデックスをあげていって遠い敵をロックオンする
         //更新された状態においても、更新前にロックオンしていた敵が更新後に一番近い（index０）の場合と、そうでない場合にわけた。
 
+        //ロックオンカーソル表示
+        lockOnCursor.enabled = true;
 
         //realTimeEnemyListがロックオンの最中に増えたときの対応
         //ロックオンしてから初回切り替え時
@@ -361,11 +376,9 @@ public class CameraFollow : MonoBehaviour
             // ロックオン対象切り替え
             if (Input.GetButtonDown("L1"))
             {
-                Debug.Log("osareta1");
                 // リストがL1をおす前後と異なるかをチェック
                 if (!ListsAreEqual(realTimeEnemyList, GazeEnemyList))
                 {
-                    Debug.Log("osareta2");
 
                     // listHasChanged = true;//今後使う可能性
 
@@ -517,6 +530,9 @@ public class CameraFollow : MonoBehaviour
         }
 
         realTimeEnemyList.Clear();
+
+        //ロックオンカーソル非表示
+        lockOnCursor.enabled = false;
     }
 
 }
