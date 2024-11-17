@@ -4564,35 +4564,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22445688f3fcd94bb81ccc4833de6c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  moveDirection: {x: 0, y: 0, z: 0}
-  Camera: {fileID: 963194225}
-  inputHorizontal: 0
-  inputVertical: 0
-  isDashJump: 0
-  initialMoveSpeed: 0
-  jumpForce: 10
-  isJump: 0
-  jumpCount: 0
-  isGrounded: 0
-  jumpAdjust: 0
-  beforeJumpInputHorizontal: 0
-  beforeJumpInputVertical: 0
-  jumpDirection: {x: 0, y: 0, z: 0}
-  jumpFoarwardPower: 1.5
-  isDash: 0
-  apex: 1.5
-  apexTime: 0.5
-  jumpPower: 0
-  virtualGra: 0
-  isGlide: 0
-  horizontalAngle: 0
-  rotateSpeed: 0.4
-  _status: {fileID: 0}
-  prefabToInstantiate: {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
-  isMake: 0
-  makeEnd: 0
-  verticalAngle: 0
 --- !u!136 &759743457
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4732,15 +4703,16 @@ MonoBehaviour:
   moveDirection: {x: 0, y: 0, z: 0}
   Camera: {fileID: 963194225}
   virtualGra: 0
-  isGrounded: 0
   inputHorizontal: 0
   inputVertical: 0
   moveSpeed: 3
   apex: 3
-  apexTime: 1
+  apexTime: 0.6
   lockOnCollider: {fileID: 1741110458}
   fadePanel: {fileID: 1479458140}
   lastGroundPosi: {x: 0, y: 0, z: 0}
+  checkDistance: 0.5
+  isRayGrounded: 0
   mainMenuPanel: {fileID: 1432623804}
   recipeDialog: {fileID: 137041672}
   menuBase: {fileID: 1432623808}
@@ -4756,6 +4728,7 @@ MonoBehaviour:
   attackFinished: 0
   _menuBase: {fileID: 1432623808}
   isJump: 0
+  isStateJumping: 0
   prefabToInstantiateArray:
   - {fileID: 1592998539282379716, guid: 0826aedb38e11f944a8c7309afdc00ee, type: 3}
   - {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
@@ -4804,7 +4777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0f0371424642944b5a369a9c77a959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemInfoText: {fileID: 655683336}
 --- !u!1 &787631588
 GameObject:
   m_ObjectHideFlags: 0
@@ -5171,35 +5143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22445688f3fcd94bb81ccc4833de6c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  moveDirection: {x: 0, y: 0, z: 0}
-  Camera: {fileID: 963194225}
-  inputHorizontal: 0
-  inputVertical: 0
-  isDashJump: 0
-  initialMoveSpeed: 0
-  jumpForce: 10
-  isJump: 0
-  jumpCount: 0
-  isGrounded: 0
-  jumpAdjust: 0
-  beforeJumpInputHorizontal: 0
-  beforeJumpInputVertical: 0
-  jumpDirection: {x: 0, y: 0, z: 0}
-  jumpFoarwardPower: 1
-  isDash: 0
-  apex: 1.5
-  apexTime: 0.5
-  jumpPower: 0
-  virtualGra: 0
-  isGlide: 0
-  horizontalAngle: 0
-  rotateSpeed: 0.4
-  _status: {fileID: 0}
-  prefabToInstantiate: {fileID: 0}
-  isMake: 0
-  makeEnd: 0
-  verticalAngle: 0
 --- !u!143 &862836021
 CharacterController:
   m_ObjectHideFlags: 0
@@ -6142,6 +6085,8 @@ MonoBehaviour:
   downDistanceCorrection: 4
   verticalAngleUnderZeroGazePoint: 20
   firstPersonDistanceY: {x: 0, y: 1, z: 0}
+  recipeDialog: {fileID: 137041672}
+  pasePanel: {fileID: 1432623804}
   rotationSpeed: 12
   lockOnCollider: {fileID: 1741110458}
   lockOnCursor: {fileID: 0}

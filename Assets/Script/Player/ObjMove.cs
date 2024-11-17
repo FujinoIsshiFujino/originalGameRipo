@@ -73,7 +73,7 @@ public class ObjMove : MonoBehaviour
         //後々のことを考えてプレイヤーの状態は参照することが多いので、一旦毎フレーム取得
         _playerControl = Player.GetComponent<PlayerControl>();
 
-        if (_playerControl.isGrounded)
+        if (!_playerControl.isJump)
         {
 
             //オブジェとプレイヤーのｙ座標をそろえた距離を算出

@@ -54,7 +54,6 @@ public class MobStatus : MonoBehaviour
     {
         if (damageble)
         {
-            Debug.Log("damageble" + damageble);
             if (_state == StateEnum.Die) return;
 
             _life -= damage;

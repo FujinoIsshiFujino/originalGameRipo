@@ -38,6 +38,8 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] float downDistanceCorrection = 4f; //下方向のカメラの回転時の、距離の補正
     [SerializeField] float verticalAngleUnderZeroGazePoint = 20f; // /下方向のカメラの回転時の注視点の高さの補正
     [SerializeField] Vector3 firstPersonDistanceY = new Vector3(0, 1, 0);
+    [SerializeField] private GameObject recipeDialog;
+    [SerializeField] private GameObject pasePanel;
 
     Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
     PlayerControl _playerControl;
@@ -100,11 +102,15 @@ public class CameraFollow : MonoBehaviour
         /// <summary>
         ///一人称視点
         /// </summary>
-        if (!_playerControl.isMake)
+        /// 
+        if (recipeDialog.activeSelf == false && pasePanel.activeSelf == false)
         {
-            if (Input.GetButtonDown("First"))
+            if (!_playerControl.isMake)
             {
-                firstPersonCameraSetUp();
+                if (Input.GetButtonDown("First"))
+                {
+                    firstPersonCameraSetUp();
+                }
             }
         }
 
@@ -396,7 +402,6 @@ public class CameraFollow : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("osareta3 : " + i);
 
                     // listHasChanged = false;//今後使う可能性
                     i++;

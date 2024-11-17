@@ -42,14 +42,14 @@ public class ObjHeighAjust : MonoBehaviour
 
         //衝突判定が橋自体にかかってる
 
-        Debug.Log("hit");
+        // Debug.Log("hit");
         // this.gameObject.transform.position = this.gameObject.transform.position + Player.transform.forward.normalized * -0.01f;
         // moveDirection = new Vector3(0, 0, 0);
         // isHit = true;
 
         // 障害物の高さを取得
         float obstacleHeight = collision.contacts[0].point.y;
-        Debug.Log("obstacleHeight" + obstacleHeight);
+        // Debug.Log("obstacleHeight" + obstacleHeight);
 
 
         Transform objectTransform = transform;

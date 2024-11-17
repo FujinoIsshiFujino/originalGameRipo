@@ -86,6 +86,7 @@ public partial class PlayerControl
 
         _animator.SetTrigger("Exit");
         isRedyAttack = true;
+        _animator.SetFloat("Speed", 0);
         ChangeState(stateIdle);
 
     }

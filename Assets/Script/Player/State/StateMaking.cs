@@ -82,6 +82,7 @@ public partial class PlayerControl
             {
                 if (Input.GetButton("Dash"))
                 {
+                    owner._animator.SetFloat("Speed", 0);
                     owner.ChangeState(stateIdle);
                     owner.isMake = false;
                 }

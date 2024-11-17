@@ -43,7 +43,7 @@ public partial class PlayerControl
 
 
             // //　ダッシュの速度upとジャンプのベクトル決め
-            if (owner.isGrounded)
+            if (owner.isRayGrounded)
             {
                 //     // if (_status.IsMovable)
                 //     // {
@@ -108,61 +108,45 @@ public partial class PlayerControl
 
                 //Jumpは個々の位置におかないとうまくステイトチェンジしない
 
-                if (owner.isGrounded)
+
+                if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
                 {
-                    if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+                    owner._animator.SetFloat("Speed", 0);
+                    owner.ChangeState(stateIdle);
+                }
+
+
+
+
+                if (!owner._cameraFollow.isFirstPerson)
+                {
+                    if (Input.GetButtonDown("Make"))
                     {
-                        owner.ChangeState(stateIdle);
+                        owner._menuBase.OpenMenu(owner.recipeDialog);
+                        // recipeDialogをひらくと、同階層のunity上の他のメニューまで開いてしまうのでsetActiveでfalseにする
+                        owner.mainMenuPanel.SetActive(false);
+                        owner._lockOnCol.isLockOn = false;
                     }
+                }
 
 
-
-                    if (Input.GetButton("Dash"))
+                if (owner.isRedyAttack)
+                {
+                    if (Input.GetButtonDown("Attack"))
                     {
-                        if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
-                        {
-                            owner.isDashJump = true;
-                            owner.ChangeState(stateJumping);
-                        }
+                        owner.ChangeState(stateAttacking);
+                        owner._animator.SetTrigger("Attack");
                     }
-                    else
-                    {
-                        if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
-                        {
-                            owner.ChangeState(stateJumping);
-                        }
-                    }
+                }
 
-                    if (!owner._cameraFollow.isFirstPerson)
+                if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                {
+                    if (owner.currentState is not StateMaking)
                     {
-                        if (Input.GetButtonDown("Make"))
+                        if (Input.GetButtonDown("Rotate"))
                         {
-                            owner._menuBase.OpenMenu(owner.recipeDialog);
-                            // recipeDialogをひらくと、同階層のunity上の他のメニューまで開いてしまうのでsetActiveでfalseにする
-                            owner.mainMenuPanel.SetActive(false);
-                            owner._lockOnCol.isLockOn = false;
-                        }
-                    }
-
-
-                    if (owner.isRedyAttack)
-                    {
-                        if (Input.GetButtonDown("Attack"))
-                        {
-                            owner.ChangeState(stateAttacking);
-                            owner._animator.SetTrigger("Attack");
-                        }
-                    }
-
-                    if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-                    {
-                        if (owner.currentState is not StateMaking)
-                        {
-                            if (Input.GetButtonDown("Rotate"))
-                            {
-                                owner._animator.SetTrigger("Roll");
-                                owner.ChangeState(stateRolling);
-                            }
+                            owner._animator.SetTrigger("Roll");
+                            owner.ChangeState(stateRolling);
                         }
                     }
                 }
@@ -175,6 +159,28 @@ public partial class PlayerControl
 
             }
 
+            if (owner.isRayGrounded)
+            {
+                if (Input.GetButton("Dash"))
+                {
+                    if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
+                    {
+                        owner.isDashJump = true;
+                        owner._animator.SetBool("JumpBool", true);
+                        owner.ChangeState(stateJumping);
+
+                    }
+                }
+                else
+                {
+                    if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
+                    {
+                        owner._animator.SetBool("JumpBool", true);
+                        owner.ChangeState(stateJumping);
+
+                    }
+                }
+            }
 
         }
 

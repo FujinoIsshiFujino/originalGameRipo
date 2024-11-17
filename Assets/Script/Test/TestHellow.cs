@@ -19,6 +19,6 @@ public class TestHellow : MonoBehaviour
 
     public void SayHellow()
     {
-        Debug.Log("hellow");
+        // Debug.Log("hellow");
     }
 }

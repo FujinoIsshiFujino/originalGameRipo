@@ -29,7 +29,7 @@ public class GimmicCollison : MonoBehaviour
 
                 if (angleInDegrees >= 120 && angleInDegrees <= 180)
                 {
-                    Debug.Log("Treasure");
+                    // Debug.Log("Treasure");
                 }
 
             }

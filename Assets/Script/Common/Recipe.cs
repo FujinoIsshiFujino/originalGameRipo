@@ -43,7 +43,6 @@ public class Recipe : MenuBase
         if (menuButtons[index].TryGetComponent<MakeButtoon>(out var makeButton))
         {
             _makeButtoon = makeButton;
-            Debug.Log(_makeButtoon + "_makeButtoon");
         }
 
         if (_makeButtoon)

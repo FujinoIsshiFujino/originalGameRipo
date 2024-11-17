@@ -11,10 +11,7 @@ public class CollisionDetector : MonoBehaviour
     [SerializeField] private TriggerEvent onTriggerEnterEvent = new TriggerEvent();
     private void OnTriggerStay(Collider other)
     {
-
         onTriggerStayEvent.Invoke(other);
-        Debug.Log("other" + other);
-
     }
 
     private void OnTriggerEnter(Collider other)

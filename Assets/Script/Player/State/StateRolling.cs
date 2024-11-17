@@ -40,6 +40,7 @@ public partial class PlayerControl
         yield return new WaitForSeconds(rollingCoolDown);
 
         isRedyAttack = true;
+        _animator.SetFloat("Speed", 0);
         ChangeState(stateIdle);
     }
 

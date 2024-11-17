@@ -10,7 +10,6 @@ public partial class PlayerControl : MonoBehaviour
     public Vector3 moveDirection;
     public GameObject Camera;
     public float virtualGra;
-    public bool isGrounded;
     public float inputHorizontal;
     public float inputVertical;
 
@@ -21,7 +20,6 @@ public partial class PlayerControl : MonoBehaviour
 
     double jumpPower;
     float time;
-    float groundtime;
     CameraFollow _cameraFollow;
     Vector3 cameraForward;
     bool isDashJump;
@@ -37,6 +35,8 @@ public partial class PlayerControl : MonoBehaviour
     float WaitTime = 2;
     public Vector3 lastGroundPosi;
     Rigidbody rb;
+    public float checkDistance = 0.2f; // 地面との距離をチェックする閾値
+    public bool isRayGrounded;
 
     //メニュー系
     [SerializeField] private GameObject mainMenuPanel;
@@ -132,27 +132,11 @@ public partial class PlayerControl : MonoBehaviour
 
 
 
-        // isGrounded = isGroundDiscriminant();
-        // isGrounded = characterController.isGrounded;
+        // レイが地面に接しているかをチェック
+        isRayGrounded = Physics.Raycast(transform.position, Vector3.down, checkDistance);
+        Debug.DrawRay(transform.position, Vector3.down * checkDistance, Color.yellow);
 
-        if (characterController.isGrounded)
-        {
-            //_characterController.isGroundedの精度が悪いため（フレーム毎に接地判定されたりされなかったりする。）
-            //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
-            groundtime = 0.0f;
-            isGrounded = true;
-
-        }
-        else
-        {
-            groundtime += Time.deltaTime;
-            if (groundtime >= 0.3f)
-            { isGrounded = false; }
-            else
-            { isGrounded = true; }
-        }
-
-        if (isGrounded)
+        if (!isJump)
         {
             //めいくもここにはいる
             if (currentState is StateWalking || currentState is StateIdle)
@@ -181,8 +165,8 @@ public partial class PlayerControl : MonoBehaviour
 
         currentState.OnUpdate(this);
         // Debug.Log("attackCollider.enabled " + attackCollider.enabled);
-        Debug.Log("currentState" + currentState);
-        Debug.Log("mmmoveDirection" + moveDirection);
+        // Debug.Log("currentState" + currentState);
+        // Debug.Log("mmmoveDirection" + moveDirection);
 
     }
 
@@ -213,29 +197,6 @@ public partial class PlayerControl : MonoBehaviour
         }
     }
 
-    public bool isGroundDiscriminant()
-    {
-        if (characterController.isGrounded)
-        {
-            //_characterController.isGroundedの精度が悪いため（フレーム毎に接地判定されたりされなかったりする。）
-            //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
-            groundtime = 0.0f;
-            isGrounded = true;
-
-        }
-        else
-        {
-            groundtime += Time.deltaTime;
-            if (groundtime >= 0.3f)
-            { isGrounded = false; }
-            else
-            { isGrounded = true; }
-        }
-
-        return isGrounded;
-
-    }
-
     public void freeFall()
     {
         time += Time.deltaTime;
@@ -252,7 +213,6 @@ public partial class PlayerControl : MonoBehaviour
         {
             isDashJump = false;
             time = 0;
-            isGrounded = true;
             jumpCount = 0;
 
             // moveDirection.y = 0;
@@ -273,15 +233,28 @@ public partial class PlayerControl : MonoBehaviour
                 lastGroundPosi = transform.position;
             }
 
+            if (currentState is StateJumping && isStateJumping == true)
+            {
+                groundtime = 0.0f;
+                isStateJumping = false;
+
+
+                if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+                {
+                    _animator.SetFloat("Speed", 0);
+                    ChangeState(stateIdle);
+                }
+                else
+                {
+                    _animator.SetFloat("Speed", moveDirection.magnitude);
+                    ChangeState(stateWalking);
+                }
+            }
+
             Vector3 zeroRbVerocityX = rb.velocity;
             zeroRbVerocityX.x = 0;
             zeroRbVerocityX.z = 0;
             rb.velocity = zeroRbVerocityX;
-
-            if (currentState is StateJumping && isJump == true)
-            {
-                ChangeState(stateIdle);
-            }
         }
     }
 

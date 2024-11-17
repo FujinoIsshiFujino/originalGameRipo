@@ -35,7 +35,6 @@ public class TestFall : MonoBehaviour
 
             // if (hit.gameObject.tag == "Hole")
             // {
-            Debug.Log("unko");
 
             GetRespawnObjectPosition();
             // characterController.enabled = true;
@@ -76,7 +75,7 @@ public class TestFall : MonoBehaviour
                 // 当たったオブジェクトがRespawnタグを持つ場合の処理
                 if (hit.collider.CompareTag("Respawn"))
                 {
-                    Debug.Log(hit.collider.transform.position + "ffff");
+                    // Debug.Log(hit.collider.transform.position + "ffff");
                     characterController.enabled = false;
                     // RespawnPlayer();
                     Player.transform.position = hit.collider.transform.position + new Vector3(0, 30, 0);

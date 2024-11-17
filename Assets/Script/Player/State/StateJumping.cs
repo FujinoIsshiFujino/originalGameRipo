@@ -6,8 +6,9 @@ using UnityEngine;
 public partial class PlayerControl
 {
     public bool isJump;
+    public bool isStateJumping;
+    float groundtime;
     int jumpCount;
-
     public class StateJumping : PlayerStateBase
     {
 
@@ -18,7 +19,6 @@ public partial class PlayerControl
         Vector3 moveDirection;
         public override void OnEnter(PlayerControl owner, PlayerStateBase preState)
         {
-
 
 
             if (owner.jumpCount < 1)
@@ -36,21 +36,13 @@ public partial class PlayerControl
 
 
                 jumpDirection.y = 0;
-
-                // _animator.SetBool("Jump", true);
-
-
-                owner._animator.SetTrigger("Jump");
             }
-
-
-
-
 
         }
         public override void OnUpdate(PlayerControl owner)
         {
 
+            owner.isStateJumpingDtermine();
 
             if (owner.isJump)
             {
@@ -104,7 +96,6 @@ public partial class PlayerControl
 
                 owner.moveDirection = moveDirection + new Vector3(0, owner.moveDirection.y, 0);
                 owner.characterController.Move(moveDirection);
-                owner._animator.SetFloat("Speed", 0);
             }
 
         }
@@ -115,14 +106,23 @@ public partial class PlayerControl
             //moveDirectionのｙがなぜ０にならないのかわはよくわからない
 
 
-            owner._animator.SetTrigger("Idle");
 
             owner.isDashJump = false;
             owner.isJump = false;
 
-            // owner.ChangeState(stateIdle);
+            owner._animator.SetBool("JumpBool", false);
         }
     }
 
-
+    // ジャンプした数;秒後にisStateJumpingをtrueにし,この変数を使うことで
+    // 確実にジャンプした後の挙動を実現することができる。
+    // 特にジャンプした後の接地時の処理など友好
+    void isStateJumpingDtermine()
+    {
+        groundtime += Time.deltaTime;
+        if (groundtime >= 0.3f)
+        { isStateJumping = true; }
+        else
+        { isStateJumping = false; }
+    }
 }

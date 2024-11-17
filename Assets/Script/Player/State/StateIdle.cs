@@ -13,10 +13,11 @@ public partial class PlayerControl
         public override void OnUpdate(PlayerControl owner)
         {
 
-            if (owner.isGrounded)
+            if (owner.isRayGrounded)
             {
                 if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
                 {
+                    owner._animator.SetBool("JumpBool", true);
                     owner.ChangeState(stateJumping);
                 }
 
