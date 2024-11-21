@@ -84,7 +84,7 @@ public partial class PlayerControl
     private void WaitPose(float inputHorizontal, float inputVertical)
     {
 
-        if (inputHorizontal == 0 && inputVertical == 0)
+        if (inputHorizontal == 0 && inputVertical == 0 && !Input.anyKey)
         {
             waitTime += Time.deltaTime;
         }
