@@ -6,9 +6,10 @@ using UnityEngine;
 public partial class PlayerControl
 {
     public bool isJump;
-    public bool isStateJumping;
     float groundtime;
     int jumpCount;
+    public bool isJumpRayGrounded = true;
+    [SerializeField] float isJumpRayCheckDistance2;
     public class StateJumping : PlayerStateBase
     {
 
@@ -20,6 +21,7 @@ public partial class PlayerControl
         public override void OnEnter(PlayerControl owner, PlayerStateBase preState)
         {
 
+            owner.isJumpRayGrounded = false;
 
             if (owner.jumpCount < 1)
             {
@@ -42,7 +44,7 @@ public partial class PlayerControl
         public override void OnUpdate(PlayerControl owner)
         {
 
-            owner.isStateJumpingDtermine();
+            owner.IsJumpRayGroundedDtermine();
 
             if (owner.isJump)
             {
@@ -114,15 +116,43 @@ public partial class PlayerControl
         }
     }
 
-    // ジャンプした数;秒後にisStateJumpingをtrueにし,この変数を使うことで
-    // 確実にジャンプした後の挙動を実現することができる。
-    // 特にジャンプした後の接地時の処理など友好
-    void isStateJumpingDtermine()
+    void IsJumpRayGroundedDtermine()
     {
         groundtime += Time.deltaTime;
         if (groundtime >= 0.3f)
-        { isStateJumping = true; }
-        else
-        { isStateJumping = false; }
+        {
+            // キャラクター直下にレイを発射すると、characterControllerは地面に接地しているのに、rayは接地していないという現象が起こるので、
+            // characterControllerの円周上から下方向にrayを発射して、地面の接地を一致させている。
+            // characterController.isGroundedは下方向以外にも接地判定があってしまうので、例えば空中で壁などにキャラクターが当たっても
+            // 接地判定されてしまうので、下方向にrayを打つ必要があったが、上記の理由によりcharacterController.radiusの円周上に配置
+            for (int i = 0; i < rayCount; i++)
+            {
+                // 円周上の角度を計算
+                float angle = 360f / rayCount * i;
+                // 円周上の座標を計算
+                Vector3 direction = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), 0, Mathf.Sin(angle * Mathf.Deg2Rad));
+                Vector3 rayOrigin = transform.position + direction * radius;
+
+                // RaycastHitを作成
+                RaycastHit hit;
+
+                // Rayを発射
+                if (Physics.Raycast(rayOrigin, Vector3.down, out hit, isJumpRayCheckDistance2))
+                {
+                    isJumpRayGrounded = true;
+                    Debug.Log($"Ray {i}: Hit Object Naame = {hit.collider.gameObject.name}");
+
+                    // 1つでもヒットしたらループを終了
+                    break;
+                }
+                else
+                {
+                    isJumpRayGrounded = false;
+                }
+
+                // Rayをデバッグ表示
+                Debug.DrawRay(rayOrigin, Vector3.down * isJumpRayCheckDistance2, isJumpRayGrounded ? Color.black : Color.gray);
+            }
+        }
     }
 }

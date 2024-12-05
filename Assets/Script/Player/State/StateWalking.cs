@@ -49,7 +49,6 @@ public partial class PlayerControl
                 //     // {
 
 
-
                 //ダッシュ処理
                 if (Input.GetButton("Dash"))
                 {

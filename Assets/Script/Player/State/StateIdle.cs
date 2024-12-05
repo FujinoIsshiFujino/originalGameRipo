@@ -12,7 +12,6 @@ public partial class PlayerControl
         float inputTime;
         public override void OnUpdate(PlayerControl owner)
         {
-
             if (owner.isRayGrounded)
             {
                 if (Input.GetButtonDown("Jump") && owner.jumpCount < 1)
