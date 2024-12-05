@@ -19,7 +19,7 @@ public partial class PlayerControl : MonoBehaviour
 
 
     double jumpPower;
-    float time;
+    public float freeFallTime;
     CameraFollow _cameraFollow;
     Vector3 cameraForward;
     bool isDashJump;
@@ -37,6 +37,9 @@ public partial class PlayerControl : MonoBehaviour
     Rigidbody rb;
     public float checkDistance = 0.2f; // 地面との距離をチェックする閾値
     public bool isRayGrounded;
+    public bool isGrounded;
+    [SerializeField] int rayCount = 8; // 発射するRayの本数
+    float radius;
 
     //メニュー系
     [SerializeField] private GameObject mainMenuPanel;
@@ -100,6 +103,9 @@ public partial class PlayerControl : MonoBehaviour
         fadeController = fadePanel.GetComponent<FadeController>();
         rb = GetComponent<Rigidbody>();
 
+        radius = characterController.radius + 0.1f;
+
+        isJumpRayGrounded = true;
     }
 
     private void Update()
@@ -133,10 +139,26 @@ public partial class PlayerControl : MonoBehaviour
 
 
         // レイが地面に接しているかをチェック
-        isRayGrounded = Physics.Raycast(transform.position, Vector3.down, checkDistance);
-        Debug.DrawRay(transform.position, Vector3.down * checkDistance, Color.yellow);
+        isRayGrounded = CheckGroundedByRays();
 
-        if (!isJump)
+
+        if (characterController.isGrounded)
+        {
+            //_characterController.isGroundedの精度が悪いため（フレーム毎に接地判定されたりされなかったりする。）
+            //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
+            groundtime = 0.0f;
+            isGrounded = true;
+        }
+        else
+        {
+            groundtime += Time.deltaTime;
+            if (groundtime >= 0.3f)
+            { isGrounded = false; }
+            else
+            { isGrounded = true; }
+        }
+
+        if (isGrounded)
         {
             //めいくもここにはいる
             if (currentState is StateWalking || currentState is StateIdle)
@@ -199,22 +221,66 @@ public partial class PlayerControl : MonoBehaviour
 
     public void freeFall()
     {
-        time += Time.deltaTime;
-        moveDirection = new Vector3(0, virtualGra * time, 0);
+        freeFallTime += Time.deltaTime;
+        moveDirection = new Vector3(0, virtualGra * freeFallTime, 0);
         // ジャンプではない自由落下? って過去の俺が書いてるけど、地面ついていないときこれがおこってるので、普通に自由落下では？
         // ジャンプの時は方向が毎フレーム加算される　V=gt
         //moveDirection.y = virtualGra * time;
         characterController.Move(moveDirection * Time.deltaTime);
     }
 
+    // キャラクター直下にレイを発射すると、characterControllerは地面に接地しているのに、rayは接地していないという現象が起こるので、
+    // characterControllerの円周上から下方向にrayを発射して、地面の接地を一致させている。
+    // また、円周を少し大きくすることで、characterControllerの接地が確実になくなった後にisRayGroundedがfalseになるようにしている
+    // characterController.isGroundedは下方向以外にも接地判定があってしまうので、例えば空中で壁などにキャラクターが当たっても
+    // 接地判定されてしまうので、下方向にrayを打つ必要があったが、上記の理由によりcharacterController.radiusの円周上に配置
+    private bool CheckGroundedByRays()
+    {
+        for (int i = 0; i < rayCount; i++)
+        {
+            // 円周上の角度を計算
+            float angle = 360f / rayCount * i;
+            // 円周上の座標を計算
+            Vector3 direction = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), 0, Mathf.Sin(angle * Mathf.Deg2Rad));
+            Vector3 rayOrigin = transform.position + direction * radius;
+
+            // RaycastHitを作成
+            RaycastHit hit;
+
+            // Rayを発射
+            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, checkDistance))
+            {
+                Debug.Log($"Ray {i}: Hit Object Name = {hit.collider.gameObject.name}");
+
+                // ヒットしたRayを緑に描画
+                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.magenta);
+
+                // 1つでもヒットしたら接地を判定して終了
+                return true;
+            }
+            else
+            {
+                // ヒットしなかったRayを青に描画
+                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.blue);
+            }
+        }
+
+        // すべてのRayがヒットしなかった場合
+        return false;
+    }
+
+    //接地中ずっと呼ばれている
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.gameObject.tag == "ground")
         {
             isDashJump = false;
-            time = 0;
             jumpCount = 0;
 
+            if (isRayGrounded || isJumpRayGrounded)
+            {
+                freeFallTime = 0;
+            }
             // moveDirection.y = 0;
             // if (currentState is StateIdle || currentState is StateWalking || currentState is StateJumping)
             // {
@@ -233,11 +299,9 @@ public partial class PlayerControl : MonoBehaviour
                 lastGroundPosi = transform.position;
             }
 
-            if (currentState is StateJumping && isStateJumping == true)
+            if (currentState is StateJumping && isJumpRayGrounded == true)
             {
                 groundtime = 0.0f;
-                isStateJumping = false;
-
 
                 if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
                 {

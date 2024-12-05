@@ -4708,16 +4708,19 @@ MonoBehaviour:
   moveSpeed: 3
   apex: 3
   apexTime: 0.6
+  freeFallTime: 0
   lockOnCollider: {fileID: 1741110458}
   fadePanel: {fileID: 1479458140}
   lastGroundPosi: {x: 0, y: 0, z: 0}
-  checkDistance: 0.5
+  checkDistance: 0.2
   isRayGrounded: 0
+  isGrounded: 0
+  rayCount: 8
   mainMenuPanel: {fileID: 1432623804}
   recipeDialog: {fileID: 137041672}
   menuBase: {fileID: 1432623808}
   slopeAngleThreshold: 30
-  rayLength: 20
+  rayLength: 2
   rayLengthDetemine: 0.5
   isLastGroundPosiForDown: 1
   raysNum: 10
@@ -4729,6 +4732,8 @@ MonoBehaviour:
   _menuBase: {fileID: 1432623808}
   isJump: 0
   isStateJumping: 0
+  isJumpRayGrounded: 0
+  isJumpRayCheckDistance2: 0.2
   prefabToInstantiateArray:
   - {fileID: 1592998539282379716, guid: 0826aedb38e11f944a8c7309afdc00ee, type: 3}
   - {fileID: 7859868644931803791, guid: 29ed48a3090b0ef47be5832d905ba4ed, type: 3}
@@ -5440,15 +5445,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 197
+      value: 200.72
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.85
+      value: 10.86
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 275.6
+      value: 286.38
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10893,7 +10898,7 @@ GameObject:
   - component: {fileID: 1820586935}
   m_Layer: 0
   m_Name: Cube (7)
-  m_TagString: Untagged
+  m_TagString: ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

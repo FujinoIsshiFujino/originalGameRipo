@@ -82,7 +82,7 @@ public partial class PlayerControl
                 // 指定角度以下の斜面に接している場合は復帰地点としない
                 Vector3 groundCircleNormal = hitGroundCircle.normal;
                 float slopeAngle = Vector3.Angle(groundCircleNormal, Vector3.up);
-                Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.blue); // レイをデバッグ表示
+                // Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.blue); // レイをデバッグ表示
 
                 if (slopeAngle >= slopeAngleThreshold)
                 {
