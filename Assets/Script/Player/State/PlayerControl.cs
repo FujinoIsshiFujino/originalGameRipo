@@ -183,7 +183,7 @@ public partial class PlayerControl : MonoBehaviour
 
         SlopePush();
 
-        freeFall();
+        if (!characterController.isGrounded) { freeFall(); }
 
         currentState.OnUpdate(this);
         // Debug.Log("attackCollider.enabled " + attackCollider.enabled);
