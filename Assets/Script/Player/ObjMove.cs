@@ -39,6 +39,8 @@ public class ObjMove : MonoBehaviour
     public RaycastHit raycasthit;
     public float distance = 50;
     public Vector3 direction = -Vector3.up;
+
+    //このあたりはbridgeMoveだけでもいいかも。他のmakeオブジェが増えたときにまた考える
     public ConfilmSet _confilmSetFront;
     public ConfilmSet _confilmSetBack;
     public GameObject frontColl;

@@ -1,22 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using OpenCover.Framework.Model;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class ObjjRotate : MonoBehaviour
 {
     //インスペクターから視認
     public Vector3 v3AxisForward;
+
+    //任意回転軸用
+    Vector3 v3AxisCrossRight;
+    Vector3 v3AxisCrossUp;
+    float dotWorldPlayer;
     public Vector3 v3Axisrgiht;
     public Vector3 v3AxisUp;
     public Vector3 v3Axis; //回転軸
 
-
-
-    Vector3 v3AxisCrossRight;
-    Vector3 v3AxisCrossUp;
     float fAngle = 0.0f;
-    float inputHorizontal;
-    float inputVertical;
+    public float inputHorizontal;
+    public float inputVertical;
     float resetTime;
     bool resetTimeIs;
     PlayerControl playerControl;
@@ -28,10 +32,15 @@ public class ObjjRotate : MonoBehaviour
     }
     public rotateType selectedType;
     GameObject Player;
-    float dotWorldPlayer;
-
+    bool isRotate;
+    [SerializeField] float VerticalDepth = 0.2f;//斜め方向の感度
+    Quaternion qRot;
+    Vector3 axis;
+    [SerializeField] float rotateSpeed = 2;
     void Start()
     {
+        isRotate = false;
+
         PlayerControl playerControlComponent = GameObject.FindObjectOfType<PlayerControl>();
         if (playerControlComponent != null)
         {
@@ -92,53 +101,158 @@ public class ObjjRotate : MonoBehaviour
             inputVertical = Input.GetAxis("Vertical");
         }
 
+        /// <summary>
+        /// コメントアウト部分は任意回転軸
+        /// </summary>
+
         //回転方向の逆転を修正
-        if (inputHorizontal != 0)
-        {
-            dotWorldPlayer = Vector3.Dot(v3AxisForward, Vector3.forward);
-        }
-        if (dotWorldPlayer < 0)
-        {
-            inputHorizontal *= -1;
-        }
+        // if (inputHorizontal != 0)
+        // {
+        //     dotWorldPlayer = Vector3.Dot(v3AxisForward, Vector3.forward);
+        // }
+        // if (dotWorldPlayer < 0)
+        // {
+        //     inputHorizontal *= -1;
+        // }
 
-        //一旦仮の軸の作成
-        v3Axisrgiht = Vector3.right * inputHorizontal;
-        v3AxisUp = Vector3.up * inputVertical;
-
-
-        //任意回転軸の構成ベクトル（v3AxisCrossUp、v3AxisCrossRigh）の作成
-        //v3Axisrgihtを右に入力した場合は左手系の外積計算から下向きのｙ軸、左入力は上向きのｙ軸
-        //右を正の向きとしているので、右に入力した場合は実際は外積結果は下方向のものだが、便宜上名前はUpとする
-        v3AxisCrossUp = Vector3.Cross(v3Axisrgiht, v3AxisForward).normalized;
-
-        //同じようにx軸の作成　 
-        v3AxisCrossRight = Vector3.Cross(v3AxisUp, v3AxisForward).normalized;
+        // // 一旦仮の軸の作成
+        // v3Axisrgiht = Vector3.right * inputHorizontal;
+        // v3AxisUp = Vector3.up * inputVertical;
 
 
-        // 任意回転軸の作成　例えば右に１入力したら、v3AxisUpは０で、v3AxisCrossUp０なので、任意回転軸はv3AxisCrossRight
-        v3Axis = (v3AxisCrossUp + v3AxisCrossRight).normalized; //ベクトル（横と縦回転軸）の合成による軸の作成
+        // //任意回転軸の構成ベクトル（v3AxisCrossUp、v3AxisCrossRigh）の作成
+        // //v3Axisrgihtを右に入力した場合は左手系の外積計算から下向きのｙ軸、左入力は上向きのｙ軸
+        // //右を正の向きとしているので、右に入力した場合は実際は外積結果は下方向のものだが、便宜上名前はUpとする
+        // v3AxisCrossUp = Vector3.Cross(v3Axisrgiht, v3AxisForward).normalized;
+
+        // //同じようにx軸の作成　 
+        // v3AxisCrossRight = Vector3.Cross(v3AxisUp, v3AxisForward).normalized;
+
+
+        // // 任意回転軸の作成　例えば右に１入力したら、v3AxisUpは０で、v3AxisCrossUp０なので、任意回転軸はv3AxisCrossRight
+        // v3Axis = (v3AxisCrossUp + v3AxisCrossRight).normalized; //ベクトル（横と縦回転軸）の合成による軸の作成
 
         // 入力がされている限り毎フレーム回転する角度　入力の度合いは関係ない
-        if (inputHorizontal > 0 || inputVertical > 0)
-        {
-            fAngle = 90 * Time.deltaTime;
-        }
-        else if (inputHorizontal < 0 || inputVertical < 0)
-        {
-            fAngle = 90 * Time.deltaTime;
-        }
+        // if (inputHorizontal > 0 || inputVertical > 0)
+        // {
+        //     fAngle = 90 * Time.deltaTime;
+        // }
+        // else if (inputHorizontal < 0 || inputVertical < 0)
+        // {
+        //     fAngle = 90 * Time.deltaTime;
+        // }
 
-        //クォータ二オン　cosΘ/2 + nsinΘ/2  n=inx+jny+knz　unityはクォータ二オンのxyzwにそれぞれいれて、それを元の姿勢にかけてあげればいい
-        v3Axis.Normalize();                                         // 軸ベクトル単位化
-        qRot.w = Mathf.Cos(fAngle / 2.0f * Mathf.Deg2Rad);
-        qRot.x = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.x;
-        qRot.y = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.y;
-        qRot.z = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.z;
+        // //クォータ二オン　cosΘ/2 + nsinΘ/2  n=inx+jny+knz　unityはクォータ二オンのxyzwにそれぞれいれて、それを元の姿勢にかけてあげればいい
+        // v3Axis.Normalize();                                         // 軸ベクトル単位化
+        // qRot.w = Mathf.Cos(fAngle / 2.0f * Mathf.Deg2Rad);
+        // qRot.x = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.x;
+        // qRot.y = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.y;
+        // qRot.z = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * v3Axis.z;
 
-        transform.rotation = qRot * transform.rotation;
-        //  姿勢の回転
+        // transform.rotation = qRot * transform.rotation;
+        // //  姿勢の回転
+
+        if (!isRotate)
+        {
+            // 斜め回転
+            // if ((inputHorizontal <= 1 && VerticalDepth < inputHorizontal) && (inputVertical <= 1 && VerticalDepth < inputVertical))
+            // {
+            //     isRotate = true;
+            //     StartCoroutine(RotateSpecifiedAngle(90, "leftup"));
+            // }
+            // else if ((inputHorizontal >= -1 && -VerticalDepth > inputHorizontal) && (inputVertical >= -1 && -VerticalDepth > inputVertical))
+            // {
+            //     isRotate = true;
+            //     StartCoroutine(RotateSpecifiedAngle(-90, "leftup"));
+            // }
+            // else if ((inputHorizontal <= 1 && VerticalDepth < inputHorizontal) && (inputVertical >= -1 && -VerticalDepth > inputVertical))
+            // {
+            //     isRotate = true;
+            //     StartCoroutine(RotateSpecifiedAngle(-90, "rightup"));
+            // }
+            // else if ((inputHorizontal >= -1 && -VerticalDepth > inputHorizontal) && (inputVertical <= 1 && VerticalDepth < inputVertical))
+            // {
+            //     isRotate = true;
+            //     StartCoroutine(RotateSpecifiedAngle(90, "rightup"));
+            // }
+            // else 
+            if ((inputHorizontal <= 1 && VerticalDepth < inputHorizontal) || Input.GetKeyDown("a"))
+            {
+                isRotate = true;
+                StartCoroutine(RotateSpecifiedAngle(-90, "up"));
+            }
+            else if ((inputHorizontal >= -1 && -VerticalDepth > inputHorizontal) || Input.GetKeyDown("d"))
+            {
+                isRotate = true;
+                StartCoroutine(RotateSpecifiedAngle(90, "up"));
+            }
+            // 縦回転の条件
+            else if ((inputVertical <= 1 && VerticalDepth < inputVertical) || Input.GetKeyDown("w"))
+            {
+                isRotate = true;
+                StartCoroutine(RotateSpecifiedAngle(90, "right"));
+            }
+            else if ((inputVertical >= -1 && -VerticalDepth > inputVertical) || Input.GetKeyDown("s"))
+            {
+                isRotate = true;
+                StartCoroutine(RotateSpecifiedAngle(-90, "right"));
+            }
+        }
     }
+
+    IEnumerator RotateSpecifiedAngle(float targetAngle, string axisName)
+    {
+        float rotatedAngle = 0f;
+        fAngle = 0;
+        float tolerance = 0.01f;
+
+        while (Mathf.Abs(rotatedAngle - targetAngle) > tolerance && !resetTimeIs)
+        {
+            if (axisName == "up")
+            {
+                axis = Vector3.up;
+            }
+            else if (axisName == "right")
+            {
+                axis = Player.transform.right;
+                //外積で縦回転軸の算出
+                // axis = Vector3.Cross(Vector3.up, Player.transform.forward).normalized;
+            }
+            // else if (axisName == "leftup")
+            // {
+            //     axis = (Player.transform.right + Vector3.up * -1).normalized;
+            // }
+            // else if (axisName == "rightup")
+            // {
+            //     axis = (Player.transform.right + Vector3.up).normalized;
+            // Debug.DrawLine(new Vector3(transform.position.x + transform.localScale.x / 2, transform.position.y + transform.localScale.y / 2, transform.position.z),
+            //                 new Vector3(transform.position.x + -transform.localScale.x / 2, transform.position.y + -transform.localScale.y / 2, transform.position.z), Color.green, 0.1f, false);
+            // }
+
+            fAngle = targetAngle * Time.deltaTime * rotateSpeed;//１フレームに回る角度
+            rotatedAngle += fAngle;//回った合計の角度
+
+            if (Mathf.Abs(rotatedAngle) > Mathf.Abs(targetAngle))
+            {
+                float diff = rotatedAngle - targetAngle;
+                fAngle -= diff; // 誤差分を補正
+                rotatedAngle = targetAngle;
+            }
+            qRot.w = Mathf.Cos(fAngle / 2.0f * Mathf.Deg2Rad);
+            qRot.x = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * axis.x;
+            qRot.y = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * axis.y;
+            qRot.z = Mathf.Sin(fAngle / 2.0f * Mathf.Deg2Rad) * axis.z;
+
+            transform.rotation = qRot * transform.rotation;
+
+            // Debug.Log("rotatedAngle : " + rotatedAngle + "targetAngle : " + targetAngle + "resetTimeIs" + resetTimeIs);
+
+            yield return null;
+        }
+
+        isRotate = false;
+    }
+
 
     //回転リセット
     void resetTimeStart()
@@ -153,6 +267,9 @@ public class ObjjRotate : MonoBehaviour
         {
             resetTimeIs = false;
             resetTime = 0; //リセットタイム更新
+
+            //回転姿勢・位置を初期姿勢に戻す
+            this.transform.forward = Player.transform.forward;
         }
     }
 

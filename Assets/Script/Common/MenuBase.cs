@@ -41,7 +41,7 @@ public class MenuBase : MonoBehaviour
     {
         float input = Input.GetAxis("Vertical");
 
-        if (input <= 1 && VerticalDepth < input)
+        if ((input <= 1 && VerticalDepth < input) || Input.GetKeyDown("w"))
         {
             if (!previousInputWasUp)
             {
@@ -61,7 +61,7 @@ public class MenuBase : MonoBehaviour
             previousInputWasUp = false;
         }
 
-        if (input >= -1 && -VerticalDepth > input)
+        if ((input >= -1 && -VerticalDepth > input) || Input.GetKeyDown("s"))
         {
             if (!previousInputWasDown)
             {
