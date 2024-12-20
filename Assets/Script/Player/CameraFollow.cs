@@ -44,7 +44,7 @@ public class CameraFollow : MonoBehaviour
     Vector3 beforeTargetPosi;//カメラの追尾がいらなくなったので不要かもしれないがい一応保留
     PlayerControl _playerControl;
     Vector3 offset;// 回転時のプレイヤーからの離れ具合、
-    BridgeMove _objMove;
+    ObjMove objMove;
 
 
 
@@ -82,20 +82,6 @@ public class CameraFollow : MonoBehaviour
         _lockOnCol = lockOnCollider.GetComponent<LockOnCol>();
 
         makeObj = GameObject.FindGameObjectWithTag("Make");
-        if (makeObj != null)
-        {
-            if (makeObj.GetComponent<BridgeMove>() != null)
-            {
-                _objMove = makeObj.GetComponent<BridgeMove>();
-            }
-
-            //ブロック用
-            // if (makeObj.GetComponent<BlockMove>() != null)
-            // {
-            //     _objMove = makeObj.GetComponent<BlockMove>();
-            // }
-
-        }
 
         getInputAngle();
 
@@ -220,12 +206,13 @@ public class CameraFollow : MonoBehaviour
                     if (child.tag == "Make")
                     {
                         makeObj = child;
+                        objMove = child.GetComponent<ObjMove>();
                     }
                 }
 
                 if (makeObj != null)
                 {
-                    if (_objMove.distanceToPlayerHeigh < 16)
+                    if (objMove.distanceToPlayerHeigh < 16)
                     {
                         verticalAngle = 20;//角度によってカメラの距離が変化するので、Makeボタンを押したときの角度に関係なく定位置にカメラを移動させるため
                         transform.position = new Vector3(transform.position.x, Player.transform.position.y + 5, transform.position.z);
@@ -539,6 +526,5 @@ public class CameraFollow : MonoBehaviour
         //ロックオンカーソル非表示
         lockOnCursor.enabled = false;
     }
-
 }
 

@@ -12,10 +12,11 @@ GameObject:
   - component: {fileID: 1128563534184914668}
   - component: {fileID: 5187795670413857639}
   - component: {fileID: 5911759721861858550}
-  - component: {fileID: -3951422102803701306}
   - component: {fileID: 1104088406851020712}
   - component: {fileID: 7673697298925049083}
   - component: {fileID: -1503477607094669212}
+  - component: {fileID: 754636360309210325}
+  - component: {fileID: 1066067172586802002}
   m_Layer: 11
   m_Name: Cube
   m_TagString: Make
@@ -111,37 +112,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-3951422102803701306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1592998539282379716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc6566b1163c644da897c39ec9c0849, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputObjVertical: 0
-  flatDistanceToPlayer: 0
-  distanceToPlayerHeigh: 0
-  verocity: {x: 0, y: 0, z: 0}
-  rbAjustSpeed: 30
-  objForwardLimit: 20
-  objBackLimit: 5
-  isObjVec: 0
-  isSetable: 0
-  distance: 50
-  direction: {x: -0, y: -1, z: -0}
-  _confilmSetFront: {fileID: 4157518092294272111}
-  _confilmSetBack: {fileID: 7348972389557229641}
-  frontColl: {fileID: 8233954377424031337}
-  backColl: {fileID: 5344307402349564725}
-  boxSize: {x: 0.1, y: 0.1, z: 0.1}
-  raycastLayerMask:
-    serializedVersion: 2
-    m_Bits: 2039
 --- !u!114 &1104088406851020712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +144,11 @@ MonoBehaviour:
   v3Axisrgiht: {x: 0, y: 0, z: 0}
   v3AxisUp: {x: 0, y: 0, z: 0}
   v3Axis: {x: 0, y: 0, z: 0}
-  selectedType: 1
+  inputHorizontal: 0
+  inputVertical: 0
+  selectedType: 2
+  VerticalDepth: 0.4
+  rotateSpeed: 2
 --- !u!54 &-1503477607094669212
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -202,6 +176,54 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
+--- !u!114 &754636360309210325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592998539282379716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0214e8ff1c4aae54ab32f2e2123beed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputObjVertical: 0
+  flatDistanceToPlayer: 0
+  distanceToPlayerHeigh: 0
+  verocity: {x: 0, y: 0, z: 0}
+  rbAjustSpeed: 30
+  objForwardLimit: 20
+  objBackLimit: 5
+  isObjVec: 0
+  isSetable: 0
+  distance: 50
+  direction: {x: -0, y: -1, z: -0}
+  _confilmSetFront: {fileID: 4157518092294272111}
+  _confilmSetBack: {fileID: 7348972389557229641}
+  frontColl: {fileID: 8233954377424031337}
+  backColl: {fileID: 5344307402349564725}
+  boxSize: {x: 0.1, y: 0.1, z: 0.1}
+  raycastLayerMask:
+    serializedVersion: 2
+    m_Bits: 2039
+  rayLength: 3
+--- !u!114 &1066067172586802002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592998539282379716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 236735742db512f44b68faac463c75f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderer: {fileID: 5187795670413857639}
+  alphaValue: 0.5
+  redValie: 1
+  buleValue: 1
 --- !u!1 &5344307402349564725
 GameObject:
   m_ObjectHideFlags: 0

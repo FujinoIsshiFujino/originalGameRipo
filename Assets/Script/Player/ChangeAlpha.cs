@@ -8,6 +8,8 @@ public class ChangeAlpha : MonoBehaviour
     [SerializeField] public float buleValue = 1;
     Material originalMaterial;
     BridgeMove bridgeMove;
+    CubeMove cubeMove;
+    ObjMove objMove;
 
     private void Start()
     {
@@ -26,10 +28,11 @@ public class ChangeAlpha : MonoBehaviour
 
     private void ChangeMaterialAlpha()
     {
-        bridgeMove = GetComponent<BridgeMove>();
+        objMove = GetComponent<ObjMove>();
+
         if (targetRenderer != null)
         {
-            if (bridgeMove.isSetable)
+            if (objMove.isSetable)
             {
                 Material material = targetRenderer.material;
                 Color color = new Color(0, 0, buleValue, alphaValue);
