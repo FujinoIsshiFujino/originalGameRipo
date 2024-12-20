@@ -244,7 +244,7 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    //角度ごとのカメラ挙動の制御
+    //角度ごとにプレイヤーの周りに回転させるカメラ挙動の制御
     private void eachAngleCameraMove()
     {
         if (verticalAngle >= 30)
@@ -254,10 +254,9 @@ public class CameraFollow : MonoBehaviour
             offset = new Vector3(0, 0, -distance); // カメラを適切な距離に配置
 
 
-            // カメラをプレイヤーの周りに回転させる
-            // ベクトルをクォータニオンの行列で１次変換して位置の回転とベクトルのスカラー倍をしている
+            // ベクトルをクォータニオンの行列で１次変換して回転後のベクトル（座標）を算出している
             //これじたいは位置回転なので、姿勢回転はlockOnEnd()
-            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset;
+            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * offset + new Vector3(0, 1f, 0); ;
         }
         else if (verticalAngle < 0)
         {
@@ -269,7 +268,7 @@ public class CameraFollow : MonoBehaviour
         else
         {
             // カメラの位置をプレイヤーの周囲に回転させる
-            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9);
+            offset = Quaternion.Euler(verticalAngle, horizontalAngle, 0) * new Vector3(0, 0, -9) + new Vector3(0, 1f, 0); ;
         }
 
         if (_lockOnCol.isLockOn)
