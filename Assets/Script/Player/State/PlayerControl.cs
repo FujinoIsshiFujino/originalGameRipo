@@ -183,11 +183,19 @@ public partial class PlayerControl : MonoBehaviour
 
         SlopePush();
 
-        if (!characterController.isGrounded) { freeFall(); }
+        if (!characterController.isGrounded)
+        {
+            freeFall();
+        }
+        FreeFallStateChange();
+
+        // デフォルト状態へのチェック
+        CheckAndSetDefaultState();
 
         currentState.OnUpdate(this);
+
         // Debug.Log("attackCollider.enabled " + attackCollider.enabled);
-        // Debug.Log("currentState" + currentState);
+        Debug.Log("currentState" + currentState);
         // Debug.Log("mmmoveDirection" + moveDirection);
 
     }
@@ -204,7 +212,20 @@ public partial class PlayerControl : MonoBehaviour
     //     ChangeState(stateDead);
     // }
 
-    // // 入力を受け付ける
+    private void CheckAndSetDefaultState()
+    {
+        // 現在の状態が有効でない場合、stateIdleに切り替える
+        if (!(currentState is StateIdle || currentState is StateWalking || currentState is StateJumping ||
+              currentState is StateAttacking || currentState is StateMaking || currentState is StateRolling ||
+              currentState is StateDead))
+        {
+            Debug.Log("Switching to stateIdle because no valid state was found.");
+            _animator.SetTrigger("Idle");
+            ChangeState(stateIdle);
+        }
+    }
+
+    // 入力を受け付ける
     public void getInputMove(bool isGetInput)
     {
         if (isGetInput)
@@ -216,6 +237,36 @@ public partial class PlayerControl : MonoBehaviour
         {
             inputHorizontal = 0;
             inputVertical = 0;
+        }
+    }
+
+    //自由落下時のモーション遷移
+    // walingとidleとmakingから遷移
+    public void FreeFallStateChange()
+    {
+        // "Fall" モーションを開始
+        if (currentState is not StateJumping && !isRayGrounded)
+        {
+            // 作成後のオブジェクトを検知して削除
+            ObjMove objMove = null;
+
+            // すべての子オブジェクトから ObjMove コンポーネントを取得
+            foreach (ObjMove child in this.GetComponentsInChildren<ObjMove>())
+            {
+                if (child.CompareTag("Make"))
+                {
+                    objMove = child.GetComponent<ObjMove>();
+                    Destroy(objMove.gameObject);
+                }
+            }
+
+            _animator.SetBool("Fall", true);
+            ChangeState(stateIdle);
+        }
+        // "Fall" モーションを停止
+        else if (_animator.GetBool("Fall") && isRayGrounded)
+        {
+            _animator.SetBool("Fall", false);
         }
     }
 
