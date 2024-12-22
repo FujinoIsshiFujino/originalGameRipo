@@ -28,7 +28,7 @@ public partial class PlayerControl
 
                 if (owner.currentState is not StateMaking)
                 {
-                    if (Input.GetButton("Rotate"))
+                    if (Input.GetButtonDown("Rotate"))
                     {
                         inputTime += Time.deltaTime;
                         if (inputTime < 1)
