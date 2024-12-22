@@ -40,7 +40,6 @@ public partial class PlayerControl : MonoBehaviour
     public bool isGrounded;
     [SerializeField] int rayCount = 8; // 発射するRayの本数
     float radius;
-    public bool firstFieldTouch;
 
     //メニュー系
     [SerializeField] private GameObject mainMenuPanel;
