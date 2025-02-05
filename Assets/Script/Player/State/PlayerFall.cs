@@ -86,13 +86,13 @@ public partial class PlayerControl
                 Vector3 direction = Quaternion.Euler(0, angle, 0) * Vector3.forward * 2; //2はcircleの大きさの調整
                 if (Physics.Raycast(rayOrigin + direction, Vector3.down * rayLengthDetemine, rayLengthDetemine))
                 {
-                    Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.blue); // レイをデバッグ表示
+                    // Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.blue); // レイをデバッグ表示
                     allSlopesBelowThreshold = true;
                 }
                 else
                 {
                     // Rayが何にも当たらなかった場合
-                    Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.red); // レイをデバッグ表示
+                    // Debug.DrawRay(rayOrigin + direction, Vector3.down * rayLengthDetemine, Color.red); // レイをデバッグ表示
                     allSlopesBelowThreshold = false; // Rayが何にも当たらなかった場合もfalseに設定
                 }
             }

@@ -116,6 +116,7 @@ public partial class PlayerControl
         }
     }
 
+    // ジャンプした後にrayを出すことで接地を保証
     void IsJumpRayGroundedDtermine()
     {
         groundtime += Time.deltaTime;
@@ -151,7 +152,7 @@ public partial class PlayerControl
                 }
 
                 // Rayをデバッグ表示
-                Debug.DrawRay(rayOrigin, Vector3.down * isJumpRayCheckDistance2, isJumpRayGrounded ? Color.black : Color.gray);
+                // Debug.DrawRay(rayOrigin, Vector3.down * isJumpRayCheckDistance2, isJumpRayGrounded ? Color.black : Color.gray);
             }
         }
     }

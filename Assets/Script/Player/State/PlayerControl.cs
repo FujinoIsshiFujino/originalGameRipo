@@ -38,6 +38,7 @@ public partial class PlayerControl : MonoBehaviour
     public float checkDistance = 0.2f; // 地面との距離をチェックする閾値
     public bool isRayGrounded;
     public bool isGrounded;
+    public bool characterController_isGrounded;
     [SerializeField] int rayCount = 8; // 発射するRayの本数
     float radius;
 
@@ -141,21 +142,14 @@ public partial class PlayerControl : MonoBehaviour
         // レイが地面に接しているかをチェック
         isRayGrounded = CheckGroundedByRays();
 
-
+        characterController_isGrounded = characterController.isGrounded;
         if (characterController.isGrounded)
         {
-            //_characterController.isGroundedの精度が悪いため（フレーム毎に接地判定されたりされなかったりする。）
-            //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
-            groundtime = 0.0f;
             isGrounded = true;
         }
         else
         {
-            groundtime += Time.deltaTime;
-            if (groundtime >= 0.3f)
-            { isGrounded = false; }
-            else
-            { isGrounded = true; }
+            isGrounded = false;
         }
 
         if (isGrounded)
@@ -305,7 +299,7 @@ public partial class PlayerControl : MonoBehaviour
                 // Debug.Log($"Ray {i}: Hit Object Name = {hit.collider.gameObject.name}");
 
                 // ヒットしたRayを緑に描画
-                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.magenta);
+                // Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.magenta);
 
                 // 1つでもヒットしたら接地を判定して終了
                 return true;
@@ -313,7 +307,7 @@ public partial class PlayerControl : MonoBehaviour
             else
             {
                 // ヒットしなかったRayを青に描画
-                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.blue);
+                // Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.blue);
             }
         }
 
@@ -329,10 +323,11 @@ public partial class PlayerControl : MonoBehaviour
             isDashJump = false;
             jumpCount = 0;
 
-            if (isRayGrounded || isJumpRayGrounded)
+            if (characterController.isGrounded)
             {
                 freeFallTime = 0;
             }
+
             // moveDirection.y = 0;
             // if (currentState is StateIdle || currentState is StateWalking || currentState is StateJumping)
             // {
