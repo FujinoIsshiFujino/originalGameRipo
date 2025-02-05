@@ -89,7 +89,7 @@ public class CubeMove : ObjMove
         RaycastHit hit;
 
         // デバッグ用の線を描画（レイキャストの可視化）
-        Debug.DrawRay(origin, direction * rayLength, Color.red, 0.1f);
+        // Debug.DrawRay(origin, direction * rayLength, Color.red, 0.1f);
 
         // レイキャストを実行
         if (Physics.Raycast(origin, direction, out hit, rayLength))
@@ -99,7 +99,7 @@ public class CubeMove : ObjMove
             Debug.Log("下の面が接触しています: " + hit.collider.gameObject.name);
 
             // 接触した位置までのレイを緑色で描画
-            Debug.DrawRay(origin, direction * hit.distance, Color.green, 0.1f);
+            // Debug.DrawRay(origin, direction * hit.distance, Color.green, 0.1f);
         }
         else
         {

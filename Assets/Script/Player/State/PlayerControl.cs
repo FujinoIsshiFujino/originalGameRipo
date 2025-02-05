@@ -32,12 +32,13 @@ public partial class PlayerControl : MonoBehaviour
     //落下系
     [SerializeField] GameObject fadePanel;
     FadeController fadeController;
-    float WaitTime = 2;
+    [SerializeField] float WaitTime = 0.5f;
     public Vector3 lastGroundPosi;
     Rigidbody rb;
     public float checkDistance = 0.2f; // 地面との距離をチェックする閾値
     public bool isRayGrounded;
     public bool isGrounded;
+    public bool characterController_isGrounded;
     [SerializeField] int rayCount = 8; // 発射するRayの本数
     float radius;
 
@@ -141,21 +142,14 @@ public partial class PlayerControl : MonoBehaviour
         // レイが地面に接しているかをチェック
         isRayGrounded = CheckGroundedByRays();
 
-
+        characterController_isGrounded = characterController.isGrounded;
         if (characterController.isGrounded)
         {
-            //_characterController.isGroundedの精度が悪いため（フレーム毎に接地判定されたりされなかったりする。）
-            //時間によって接地判定。0.1秒以上接地がなかったとすると空中判定となる
-            groundtime = 0.0f;
             isGrounded = true;
         }
         else
         {
-            groundtime += Time.deltaTime;
-            if (groundtime >= 0.3f)
-            { isGrounded = false; }
-            else
-            { isGrounded = true; }
+            isGrounded = false;
         }
 
         if (isGrounded)
@@ -181,7 +175,8 @@ public partial class PlayerControl : MonoBehaviour
 
         DetermaineLastPosi();
 
-        SlopePush();
+        // 地上で斜面にいる場合はその方向へ滑らせる
+        HandleSlopeSliding();
 
         if (!characterController.isGrounded)
         {
@@ -301,10 +296,10 @@ public partial class PlayerControl : MonoBehaviour
             // Rayを発射
             if (Physics.Raycast(rayOrigin, Vector3.down, out hit, checkDistance))
             {
-                Debug.Log($"Ray {i}: Hit Object Name = {hit.collider.gameObject.name}");
+                // Debug.Log($"Ray {i}: Hit Object Name = {hit.collider.gameObject.name}");
 
                 // ヒットしたRayを緑に描画
-                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.magenta);
+                // Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.magenta);
 
                 // 1つでもヒットしたら接地を判定して終了
                 return true;
@@ -312,7 +307,7 @@ public partial class PlayerControl : MonoBehaviour
             else
             {
                 // ヒットしなかったRayを青に描画
-                Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.blue);
+                // Debug.DrawRay(rayOrigin, Vector3.down * checkDistance, Color.blue);
             }
         }
 
@@ -328,10 +323,11 @@ public partial class PlayerControl : MonoBehaviour
             isDashJump = false;
             jumpCount = 0;
 
-            if (isRayGrounded || isJumpRayGrounded)
+            if (characterController.isGrounded)
             {
                 freeFallTime = 0;
             }
+
             // moveDirection.y = 0;
             // if (currentState is StateIdle || currentState is StateWalking || currentState is StateJumping)
             // {
@@ -345,9 +341,12 @@ public partial class PlayerControl : MonoBehaviour
             //     ChangeState(stateIdle);
             // }
 
-            if (isLastGroundPosiForDown && isLastGroundPosiForSide)
+            if (isLastGroundPosiForDown)
             {
-                lastGroundPosi = transform.position;
+                if (IsGrounded())
+                {
+                    lastGroundPosi = transform.position;
+                }
             }
 
             if (currentState is StateJumping && isJumpRayGrounded == true)
@@ -370,7 +369,15 @@ public partial class PlayerControl : MonoBehaviour
             zeroRbVerocityX.x = 0;
             zeroRbVerocityX.z = 0;
             rb.velocity = zeroRbVerocityX;
+
+            MotorOnControllerColliderHit(hit);
         }
+    }
+
+    public bool IsGrounded()
+    {
+        // groundNormal.y > 0.01は完全に垂直でないことの保証くらいの意味合い
+        return characterController.isGrounded && (groundNormal.y > 0.01);
     }
 
     void OnTriggerEnter(Collider other)
