@@ -5012,6 +5012,7 @@ MonoBehaviour:
   mainMenuPanel: {fileID: 1432623804}
   recipeDialog: {fileID: 137041672}
   menuBase: {fileID: 1432623808}
+  sword: {fileID: 381894797}
   rayLength: 2
   rayLengthDetemine: 0.3
   isLastGroundPosiForDown: 1
