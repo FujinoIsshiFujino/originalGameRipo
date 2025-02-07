@@ -47,6 +47,9 @@ public partial class PlayerControl : MonoBehaviour
     [SerializeField] private GameObject recipeDialog;
     [SerializeField] MenuBase menuBase;
 
+    //攻撃系
+    [SerializeField] GameObject sword;
+
     // Start is called before the first frame update
     public static readonly StateIdle stateIdle = new StateIdle();
     private static readonly StateJumping stateJumping = new StateJumping();

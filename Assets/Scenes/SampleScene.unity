@@ -2978,6 +2978,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 366851700}
   m_CullTransparentMesh: 1
+--- !u!1 &381894797 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 1f1cd6faa38270c449338bafe0a4b7ce, type: 3}
+  m_PrefabInstance: {fileID: 1724726854}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &383620967
 GameObject:
   m_ObjectHideFlags: 0
@@ -7754,6 +7759,34 @@ MonoBehaviour:
   _characterController: {fileID: 759743458}
   _cameraFollow: {fileID: 963194229}
   OpenTreasure: {fileID: 1989892580}
+  onTreasureOpened:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1274162203}
+        m_TargetAssemblyTypeName: SwordTreasureSwitch, Assembly-CSharp
+        m_MethodName: SwordTreasureSwitchFunction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1274162203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274162196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1720bb3b065c39e4c9167aac905e3ab3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sword: {fileID: 381894797}
 --- !u!1 &1320302364
 GameObject:
   m_ObjectHideFlags: 0
@@ -10610,7 +10643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 1f1cd6faa38270c449338bafe0a4b7ce, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 1f1cd6faa38270c449338bafe0a4b7ce, type: 3}
       propertyPath: m_LocalScale.y
@@ -11412,6 +11445,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1000011713842796, guid: ffd3e66d4df2a554fb995d41f7ffe4c2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1274162201}
+    - targetCorrespondingSourceObject: {fileID: 1000011713842796, guid: ffd3e66d4df2a554fb995d41f7ffe4c2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1274162203}
   m_SourcePrefab: {fileID: 100100000, guid: ffd3e66d4df2a554fb995d41f7ffe4c2, type: 3}
 --- !u!1 &1841620487 stripped
 GameObject:

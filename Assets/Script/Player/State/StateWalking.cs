@@ -128,13 +128,15 @@ public partial class PlayerControl
                     }
                 }
 
-
-                if (owner.isRedyAttack)
+                if (owner.sword.activeSelf)
                 {
-                    if (Input.GetButtonDown("Attack"))
+                    if (owner.isRedyAttack)
                     {
-                        owner.ChangeState(stateAttacking);
-                        owner._animator.SetTrigger("Attack");
+                        if (Input.GetButtonDown("Attack"))
+                        {
+                            owner.ChangeState(stateAttacking);
+                            owner._animator.SetTrigger("Attack");
+                        }
                     }
                 }
 
