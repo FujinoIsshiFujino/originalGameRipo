@@ -9,7 +9,8 @@ public class FlagManager : MonoBehaviour
         jumpText,
         firstEnemyMeet,
         allEnemyDeathInFirst,
-        cc
+        cc,
+        swordTreasureOpen
     }
 
     public Dictionary<Flag, object> flagDictionary =
