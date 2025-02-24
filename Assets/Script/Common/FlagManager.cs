@@ -7,6 +7,7 @@ public class FlagManager : MonoBehaviour
     {
         moveText,
         jumpText,
+        lockOnText,
         firstEnemyMeet,
         allEnemyDeathInFirst,
         cc,
