@@ -1166,6 +1166,7 @@ MonoBehaviour:
   _menuBase: {fileID: 1432623808}
   selectedMakeItemType: 0
   _mainMenu: {fileID: 1432623808}
+  mainMenu: {fileID: 0}
   scrollbar: {fileID: 301586276}
   scrollbarPosition: 0
   content: {fileID: 0}
@@ -2660,7 +2661,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2144004135}
   m_HandleRect: {fileID: 2144004134}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0.9999999
   m_Size: 0.43571427
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3623,11 +3624,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd9de1f266e97cd45a213089c564263e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scrollRect: {fileID: 757665630}
-  _viewportRectransform: {fileID: 1638565341}
-  _contentTransform: {fileID: 520508040}
-  _nodePrefab: {fileID: 0}
-  _verticalLayoutGroup: {fileID: 520508042}
 --- !u!224 &528645524 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
@@ -5165,6 +5161,7 @@ MonoBehaviour:
   _menuBase: {fileID: 1432623808}
   selectedMakeItemType: 0
   _mainMenu: {fileID: 1432623808}
+  mainMenu: {fileID: 1432623804}
   scrollbar: {fileID: 301586276}
   scrollbarPosition: 0
   content: {fileID: 520508040}
@@ -7220,7 +7217,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1638137391}
   m_HandleRect: {fileID: 1638137390}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8893,6 +8890,7 @@ MonoBehaviour:
   _menuBase: {fileID: 1432623808}
   selectedMakeItemType: 0
   _mainMenu: {fileID: 1432623808}
+  mainMenu: {fileID: 0}
   scrollbar: {fileID: 301586276}
   scrollbarPosition: 0
   content: {fileID: 0}
@@ -9968,8 +9966,9 @@ MonoBehaviour:
   backPanel: {fileID: 849074096}
   Player: {fileID: 759743447}
   itemsDialog: {fileID: 651383484}
-  recipe: {fileID: 137041672}
+  recipe: {fileID: 757665628}
   currentFaze: 0
+  beforeFaze: 0
 --- !u!1 &1479458140
 GameObject:
   m_ObjectHideFlags: 0

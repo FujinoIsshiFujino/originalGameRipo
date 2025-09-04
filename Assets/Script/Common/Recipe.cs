@@ -11,6 +11,7 @@ public class Recipe : MenuBase
     MakeButtoon _makeButtoon;
     public MakeButtoon.makeItemType selectedMakeItemType;
     [SerializeField] MainMenu _mainMenu;
+    [SerializeField] GameObject mainMenu;
     [SerializeField] Scrollbar scrollbar;
     public float scrollbarPosition;
 
@@ -50,15 +51,17 @@ public class Recipe : MenuBase
         //recipeを閉じるときの処理
         if (Input.GetButtonDown("Dash"))
         {
-            //ポーズ画面からrecipeを開いたかどうかで分岐
-            if (!_mainMenu.isActiveAndEnabled)
+            // メニューを経由した場合
+            if (_mainMenu.beforeFaze == MainMenu.faze.pause && _mainMenu.currentFaze == MainMenu.faze.recipe)
             {
-                _menuBase.CloseMenu(this.gameObject);
+                // MainMenuに記述
             }
+            // していない場合
             else
             {
-                _mainMenu.currentFaze = MainMenu.faze.pause;
-                Toggle(this.gameObject);
+                _mainMenu.currentFaze = MainMenu.faze.none;
+                _mainMenu.beforeFaze = MainMenu.faze.none;
+                _menuBase.CloseMenu(this.gameObject);
             }
         }
     }
@@ -103,6 +106,7 @@ public class Recipe : MenuBase
         return colors;
     }
 
+    // recipeから何かを選択した時
     protected override void DecisionAction()
     {
         // resume
@@ -170,6 +174,9 @@ public class Recipe : MenuBase
                 playerControl.ChangeState(stateMaking);
             }
         }
+
+        _mainMenu.beforeFaze = MainMenu.faze.none;
+        _mainMenu.currentFaze = MainMenu.faze.none;
     }
 
     public void UpdateMenuButtons()
