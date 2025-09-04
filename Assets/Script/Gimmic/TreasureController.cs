@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class TreasureController : FlagSwitch
 {
+    [SerializeField] GameObject CloseTreasure;
     [SerializeField] GameObject OpenTreasure;
     [SerializeField] private UnityEvent onTreasureOpened = new UnityEvent();
 
@@ -18,12 +19,12 @@ public class TreasureController : FlagSwitch
                 {
                     flagCaller.SetTrueFlag(flagCaller.flagType);
 
-                    // オブジェクトの入れ替え
-                    this.gameObject.SetActive(false);
-                    OpenTreasure.SetActive(true);
-
                     // 設定されているイベントがあれば実行する
                     onTreasureOpened?.Invoke();
+
+                    // オブジェクトの入れ替え
+                    CloseTreasure.SetActive(false);
+                    OpenTreasure.SetActive(true);
                 }
             }
         }

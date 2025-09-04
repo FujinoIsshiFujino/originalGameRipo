@@ -31,6 +31,6 @@ public class FlagCaller : MonoBehaviour
 
     public void SetFalseFlag(FlagManager.Flag flagType)
     {
-        flagManager.flagDictionary[flagType] = true;
+        flagManager.flagDictionary[flagType] = false;
     }
 }

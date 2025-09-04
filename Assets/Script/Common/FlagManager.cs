@@ -11,7 +11,8 @@ public class FlagManager : MonoBehaviour
         firstEnemyMeet,
         allEnemyDeathInFirst,
         cc,
-        swordTreasureOpen
+        swordTreasureOpen,
+        bridgeRecipe
     }
 
     public Dictionary<Flag, object> flagDictionary =

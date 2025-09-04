@@ -37,6 +37,7 @@ public class MenuBase : MonoBehaviour
         SelectButton(selectedButtonIndex);
     }
 
+    //ボタンの選択や決定
     protected virtual void Update()
     {
         float input = Input.GetAxis("Vertical");
