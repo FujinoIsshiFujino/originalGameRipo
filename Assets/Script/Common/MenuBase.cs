@@ -37,6 +37,7 @@ public class MenuBase : MonoBehaviour
         SelectButton(selectedButtonIndex);
     }
 
+    //ボタンの選択や決定
     protected virtual void Update()
     {
         float input = Input.GetAxis("Vertical");
@@ -115,8 +116,8 @@ public class MenuBase : MonoBehaviour
         }
     }
 
-    // Toggleは親メニューがあった場合に、子メニューを開くときに使う
-    //CloseMenuやOpenMenuは親メニューを開くときに使う
+    // Toggleは親メニューがあった場合に、親メニューに手を加えずに子メニューを開くときに使う
+    //CloseMenuやOpenMenuは親メニュー自体に。時間も止める。
     public void Toggle(GameObject gameObject)
     {
         //自分自身のアクティブをボタンが押されたときに切り替える
