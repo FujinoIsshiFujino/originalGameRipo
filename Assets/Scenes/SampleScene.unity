@@ -2661,8 +2661,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2144004135}
   m_HandleRect: {fileID: 2144004134}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.43571427
+  m_Value: 1
+  m_Size: 0.8575758
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3604,7 +3604,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 100
+  m_Spacing: 40
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -5061,7 +5061,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 200}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &757665630
 MonoBehaviour:
@@ -5106,7 +5106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5640,7 +5640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8526,7 +8526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13099,7 +13099,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 8270087164048445193, guid: 0f0b8bdde6713c8498d6cb6db1285acc, type: 3}
       propertyPath: m_LocalPosition.x
