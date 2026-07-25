@@ -10,6 +10,8 @@ public class MakeButtoon : MonoBehaviour
         block,
     }
 
+    public bool CanMake { get; set; }
+
     [SerializeField] public makeItemType type;
 
     [System.Serializable]

@@ -21,6 +21,7 @@ public class MenuBase : MonoBehaviour
     [SerializeField] GameObject Player;
     PlayerControl _playerControl;
     CharacterController _characterController;
+
     protected virtual void Start()
     {
         // 最初のボタンを選択状態にする
@@ -32,6 +33,7 @@ public class MenuBase : MonoBehaviour
     }
 
     //  オブジェクトがアクティブになるたびに実行されるメソッド
+    // メニュー系を開いたときになにかしらのボタンが選択されている状態
     protected virtual void OnEnable()
     {
         SelectButton(selectedButtonIndex);
@@ -54,7 +56,7 @@ public class MenuBase : MonoBehaviour
 
                 //ボタンの色を変える
                 SelectButton(selectedButtonIndex);
-                previousInputWasUp = true; //連続入力の禁止
+                previousInputWasUp = true; //連続入力の制御
             }
         }
         else
@@ -74,7 +76,7 @@ public class MenuBase : MonoBehaviour
 
                 //ボタンの色を変える
                 SelectButton(selectedButtonIndex);
-                previousInputWasDown = true; //連続入力の禁止
+                previousInputWasDown = true; //連続入力の制御
             }
         }
         else
@@ -91,28 +93,16 @@ public class MenuBase : MonoBehaviour
 
     void SelectButton(int index)
     {
-        // このメソッド実行時にすべてのボタンに対して実行される。条件に応じてボタンの色が変わる
+        // EventSystem 経由で選択状態を切り替える
         for (int i = 0; i < menuButtons.Length; i++)
         {
-            var colors = menuButtons[i].colors;
-
             if (i == index)
             {
-                if (colors.normalColor.Equals(disabledColor))
+                if (menuButtons[i].interactable == true)
                 {
-                    colors.normalColor = selectedDisabledColor;
-                }
-                else
-                {
-                    colors.normalColor = selectedColor;
+                    menuButtons[i].Select(); // ← これだけで selectedColor になる
                 }
             }
-            else
-            {
-                colors.normalColor = ButtonsColor(i, colors).normalColor;
-            }
-
-            menuButtons[i].colors = colors;
         }
     }
 
