@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using System.Linq;
 
 public class Recipe : MenuBase
 {
@@ -66,44 +67,62 @@ public class Recipe : MenuBase
         }
     }
 
-    //選択していないボタンのノーマルカラーを決定
-    protected override ColorBlock ButtonsColor(int index, ColorBlock colors)
+    protected override void OnEnable()
     {
-        // 所持アイテムが消費アイテムに数に足りないとき
-        if (menuButtons[index].TryGetComponent<MakeButtoon>(out var makeButton))
-        {
-            _makeButtoon = makeButton;
-        }
+        base.OnEnable();
 
-        if (_makeButtoon)
+        InitButtonsColor();
+    }
+
+    void InitButtonsColor()
+    {
+        foreach (var button in menuButtons)
         {
-            foreach (var buttonItemData in _makeButtoon.itemDataArray)
+            // MakeButtoon を持つボタンのみ対象
+            if (!button.TryGetComponent<MakeButtoon>(out var makeButton))
             {
-                // OwnedItemsData.Instance.OwnedItemsは所持しているアイテムの種類　それぞれのボタンに対応したアイテムを持っているか否かを見てボタンの色を変える
-                foreach (var item in OwnedItemsData.Instance.OwnedItems)
+                continue;
+            }
+
+            makeButton.CanMake = true;
+
+            // 必要なアイテムごとにチェック
+            foreach (var req in makeButton.itemDataArray)
+            {
+                // 所持しているか？
+                var owned = OwnedItemsData.Instance.OwnedItems
+                    .FirstOrDefault(x => x.Type == req.itemType);
+
+                // そのアイテムをもっていないもしくはそのアイテムを持ってはいるが量が足りない
+                if (owned == null || owned.Number < req.consumeItemNumber)
                 {
-                    if (item.Type == buttonItemData.itemType)
-                    {
-                        if (item.Number < buttonItemData.consumeItemNumber)
-                        {
-                            colors.normalColor = disabledColor;
-                        }
-                    }
-                    else
-                    {
-                        colors.normalColor = normalColor;
-                    }
+                    makeButton.CanMake = false;
+
+                    break;
+                }
+                // 消費アイテムに対してそれ以上に持っている時
+                else if (owned.Number >= req.consumeItemNumber)
+                {
+                    button.interactable = true;
                 }
             }
-        }
 
-        // resumeボタン用
-        if (index == menuButtons.Length - 1)
-        {
-            colors.normalColor = normalColor;
-        }
+            ColorBlock colors = button.colors;
 
-        return colors;
+            if (makeButton.CanMake)
+            {
+                colors.normalColor = normalColor;
+                colors.selectedColor = selectedColor;
+            }
+            else
+            {
+                colors.normalColor = disabledColor;
+                colors.selectedColor = selectedDisabledColor;
+            }
+
+            // 色を反映
+            button.colors = colors;
+        }
     }
 
     // recipeから何かを選択した時
@@ -129,8 +148,12 @@ public class Recipe : MenuBase
         //MakeButtoonを持つオブジェクトから取得、resumeボタンは取得しない
         if (menuButtons[selectedButtonIndex].TryGetComponent<MakeButtoon>(out var makeButton))
         {
-            _makeButtoon = makeButton;
-            selectedMakeItemType = _makeButtoon.type;
+            // アイテムを十分に持っている場合に、selectedMakeItemType（選択したボタンのアイテムタイプ）が更新され、それがmakeのstateで参照される
+            if (menuButtons[selectedButtonIndex].interactable == true)
+            {
+                _makeButtoon = makeButton;
+                selectedMakeItemType = _makeButtoon.type;
+            }
         }
 
         if (_makeButtoon)
@@ -143,6 +166,8 @@ public class Recipe : MenuBase
                     {
                         if (item.Number >= buttonItemData.consumeItemNumber)
                         {
+                            // ここではアイテムの消費を行っているだけで実際の作成はStateMakingで行う
+                            // Debug.Log("Recipe DecisionAction UseItem:" + buttonItemData.itemType);
                             OwnedItemsData.Instance.Use(buttonItemData.itemType, buttonItemData.consumeItemNumber);
                         }
                         else
@@ -181,7 +206,6 @@ public class Recipe : MenuBase
 
     public void UpdateMenuButtons()
     {
-
         // すでにボタンが追加されていたら処理しない
         if (content.childCount == (menuButtons.Length - 1)) return;
 

@@ -64,13 +64,6 @@ public class MainMenu : MenuBase
         }
     }
 
-    //選択していないボタンのノーマルカラーを決定
-    protected override ColorBlock ButtonsColor(int index, ColorBlock colors)
-    {
-        colors.normalColor = normalColor;
-        return colors;
-    }
-
     protected override void DecisionAction()
     {
         // アイテム
