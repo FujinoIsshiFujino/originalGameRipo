@@ -103,6 +103,7 @@ public class Recipe : MenuBase
                 // 消費アイテムに対してそれ以上に持っている時
                 else if (owned.Number >= req.consumeItemNumber)
                 {
+                    makeButton.CanMake = true;
                     button.interactable = true;
                 }
             }
@@ -149,10 +150,10 @@ public class Recipe : MenuBase
         if (menuButtons[selectedButtonIndex].TryGetComponent<MakeButtoon>(out var makeButton))
         {
             // アイテムを十分に持っている場合に、selectedMakeItemType（選択したボタンのアイテムタイプ）が更新され、それがmakeのstateで参照される
-            if (menuButtons[selectedButtonIndex].interactable == true)
+            if (makeButton.CanMake)
             {
                 _makeButtoon = makeButton;
-                selectedMakeItemType = _makeButtoon.type;
+                selectedMakeItemType = makeButton.type;
             }
         }
 
