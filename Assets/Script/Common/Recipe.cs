@@ -3,7 +3,6 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using System.Linq;
 
 public class Recipe : MenuBase
@@ -12,12 +11,9 @@ public class Recipe : MenuBase
     MakeButtoon _makeButtoon;
     public MakeButtoon.makeItemType selectedMakeItemType;
     [SerializeField] MainMenu _mainMenu;
-    [SerializeField] GameObject mainMenu;
-    [SerializeField] Scrollbar scrollbar;
-    public float scrollbarPosition;
-
+    [SerializeField] private ScrollRect scrollRect;
+    [SerializeField] private RectTransform viewport;
     [SerializeField] private Transform content;
-    private UnityEngine.UI.Button[] contentArry;
 
     void Start()
     {
@@ -27,27 +23,19 @@ public class Recipe : MenuBase
 
     protected override void Update()
     {
+        // 更新前の選択位置を記録
+        int previousIndex = selectedButtonIndex;
+
+        // 共通のボタン選択処理
         base.Update();
 
-        // スクロールバーの位置を決定（バーの位置だけなので、ボタンの色などは関係ない）
-        if (selectedButtonIndex == 0)
+        // 選択位置が変わったら、必要に応じてスクロール
+        if (selectedButtonIndex != previousIndex &&
+            selectedButtonIndex >= 0 &&
+            selectedButtonIndex < menuButtons.Length)
         {
-            scrollbarPosition = 1.0f;
+            ScrollToSelectedButton(menuButtons[selectedButtonIndex]);
         }
-        else if (selectedButtonIndex == (menuButtons.Length - 2))
-        {
-            scrollbarPosition = 0;
-        }
-        else if (selectedButtonIndex == (menuButtons.Length - 1))
-        {
-            // 何も書かないが、書かないことによってスクロールバーの位置をとどまらせる
-        }
-        else
-        {
-            scrollbarPosition = 1.0f / (((menuButtons.Length - 1) - 2) + 1);
-            scrollbarPosition = 1 - (scrollbarPosition * selectedButtonIndex);
-        }
-        scrollbar.value = scrollbarPosition;
 
         //recipeを閉じるときの処理
         if (Input.GetButtonDown("Dash"))
@@ -72,6 +60,66 @@ public class Recipe : MenuBase
         base.OnEnable();
 
         InitButtonsColor();
+    }
+
+    private void ScrollToSelectedButton(Button button)
+    {
+        if (scrollRect == null ||
+            viewport == null ||
+            scrollRect.content == null ||
+            button == null)
+        {
+            Debug.LogWarning("ScrollRect、Viewport、Content、またはButtonが未設定です。");
+            return;
+        }
+
+        // レシピボタン以外はスクロール対象外
+        if (!button.TryGetComponent<MakeButtoon>(out _))
+        {
+            return;
+        }
+
+        RectTransform target = button.GetComponent<RectTransform>();
+        RectTransform contentRect = scrollRect.content;
+
+        // レイアウトを最新の状態にする
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+        Canvas.ForceUpdateCanvases();
+
+        // 選択ボタンの範囲をViewportの座標系で取得
+        Bounds bounds =
+            RectTransformUtility.CalculateRelativeRectTransformBounds(
+                viewport,
+                target
+            );
+
+        float bottom = viewport.rect.min.y;
+        float top = viewport.rect.max.y;
+
+        float moveY = 0f;
+
+        // ボタンがViewportの下にはみ出している
+        if (bounds.min.y < bottom)
+        {
+            moveY = bottom - bounds.min.y;
+        }
+        // ボタンがViewportの上にはみ出している
+        else if (bounds.max.y > top)
+        {
+            moveY = top - bounds.max.y;
+        }
+
+        // 画面内に収まっていれば何もしない
+        if (Mathf.Approximately(moveY, 0f))
+        {
+            return;
+        }
+
+        // Contentを移動する。ScrollRectがスクロールバーも更新する
+        Vector2 position = contentRect.anchoredPosition;
+        position.y += moveY;
+        contentRect.anchoredPosition = position;
     }
 
     void InitButtonsColor()
@@ -207,29 +255,35 @@ public class Recipe : MenuBase
 
     public void UpdateMenuButtons()
     {
-        // すでにボタンが追加されていたら処理しない
-        if (content.childCount == (menuButtons.Length - 1)) return;
+        // Content内のレシピボタンだけを取得
+        Button[] recipeButtons =
+            content.GetComponentsInChildren<Button>(true)
+            .Where(button =>
+                button.TryGetComponent<MakeButtoon>(out _))
+            .ToArray();
 
-        // content 内の全ボタンを取得
-        contentArry = content.GetComponentsInChildren<UnityEngine.UI.Button>();
+        // menuButtonsの最後はResumeボタンとする
+        Button resumeButton =
+            menuButtons[menuButtons.Length - 1];
 
-        UnityEngine.UI.Button recipeLastButton = menuButtons[menuButtons.Length - 1];
+        // レシピボタン + Resumeボタンで配列を作り直す
+        Button[] newMenuButtons =
+            new Button[recipeButtons.Length + 1];
 
-        // 新しい配列を作成し、サイズを1つ増やす
-        UnityEngine.UI.Button[] newMenuButtons = new UnityEngine.UI.Button[menuButtons.Length + 1];
-
-        // 既存の要素を新しい配列にコピー
-        for (int i = 0; i < menuButtons.Length - 1; i++)
+        for (int i = 0; i < recipeButtons.Length; i++)
         {
-            newMenuButtons[i] = menuButtons[i];
+            newMenuButtons[i] = recipeButtons[i];
         }
-        // 最後から１つ前（さいごはresumeボタン）に取得したレシピを追加
-        newMenuButtons[newMenuButtons.Length - 2] = contentArry[contentArry.Length - 1];
 
-        // 最後の要素として recipeLastButton を追加
-        newMenuButtons[newMenuButtons.Length - 1] = recipeLastButton;
+        newMenuButtons[newMenuButtons.Length - 1] =
+            resumeButton;
 
-        // menuButtons を新しい配列に置き換え
         menuButtons = newMenuButtons;
+
+        // 選択位置が配列の範囲外なら調整
+        if (selectedButtonIndex >= menuButtons.Length)
+        {
+            selectedButtonIndex = menuButtons.Length - 1;
+        }
     }
 }
