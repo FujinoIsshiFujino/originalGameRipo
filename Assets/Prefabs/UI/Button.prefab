@@ -271,4 +271,4 @@ MonoBehaviour:
   type: 0
   itemDataArray:
   - itemType: 0
-    consumeItemNumber: 1
+    consumeItemNumber: 3
