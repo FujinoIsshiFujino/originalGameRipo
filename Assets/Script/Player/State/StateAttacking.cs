@@ -40,10 +40,16 @@ public partial class PlayerControl
     }
 
     //攻撃コリジョンにあたったらインスペクター上から呼ばれる
+    //プレイヤーの攻撃ときに呼ばれる。敵のはOnHitAttack
     public void HitAttack(Collider collider)
     {
-        var targetMob = collider.GetComponent<MobStatus>();
-        if (null == targetMob) return;
+
+        // var targetMob = collider.GetComponent<MobStatus>();
+        var targetMob = collider.GetComponentInParent<MobStatus>();
+        if (null == targetMob)
+        {
+            return;
+        }
 
         targetMob.Damage(1);
     }

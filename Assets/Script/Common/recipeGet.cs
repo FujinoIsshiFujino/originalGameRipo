@@ -55,7 +55,6 @@ public class recipeGet : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("プレイヤーがレシピに接触しました！");
             GetRecipe();
         }
     }

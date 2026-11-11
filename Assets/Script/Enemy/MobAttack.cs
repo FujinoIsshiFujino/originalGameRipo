@@ -33,10 +33,16 @@ public class MobAttack : MonoBehaviour
         attackCollider.enabled = true;
     }
 
+    //　敵の攻撃ときに呼ばれる
     public void OnHitAttack(Collider collider)
     {
         var targetMob = collider.GetComponent<MobStatus>();
-        if (null == targetMob) return;
+        // var targetMob = collider.GetComponentInParent<MobStatus>();
+
+        if (targetMob == null)
+        {
+            return;
+        }
 
         targetMob.Damage(1);
     }

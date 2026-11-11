@@ -9,6 +9,7 @@ public class CollisionDetector : MonoBehaviour
 
     [SerializeField] private TriggerEvent onTriggerStayEvent = new TriggerEvent();
     [SerializeField] private TriggerEvent onTriggerEnterEvent = new TriggerEvent();
+    [SerializeField] private TriggerEvent onTriggerExitEvent = new TriggerEvent();
     private void OnTriggerStay(Collider other)
     {
         onTriggerStayEvent.Invoke(other);
@@ -17,6 +18,11 @@ public class CollisionDetector : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         onTriggerEnterEvent.Invoke(other);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        onTriggerExitEvent.Invoke(other);
     }
 
     [Serializable]
