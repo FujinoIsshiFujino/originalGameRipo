@@ -57,7 +57,17 @@ public class MobStatus : MonoBehaviour
             if (_state == StateEnum.Die) return;
 
             _life -= damage;
-            _animator.SetTrigger("Damage");
+
+            // AnimatorにDamageというTriggerが存在する場合だけ実行
+            foreach (AnimatorControllerParameter param in _animator.parameters)
+            {
+                if (param.name == "Damage" &&
+                    param.type == AnimatorControllerParameterType.Trigger)
+                {
+                    _animator.SetTrigger("Damage");
+                    break;
+                }
+            }
             invincible();
             if (_life > 0) return;
 

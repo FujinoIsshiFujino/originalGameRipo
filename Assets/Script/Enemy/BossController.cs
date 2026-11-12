@@ -87,12 +87,12 @@ public class BossController : MonoBehaviour
         }
 
         //　怒りモード
-        if (_status.Life <= _status.Life % 2)
-        {
-            EnterRageMode();
-            _animator.SetTrigger("Scream");
-            return;
-        }
+        // if (_status.Life <= _status.Life % 2)
+        // {
+        //     EnterRageMode();
+        //     _animator.SetTrigger("Scream");
+        //     return;
+        // }
 
         if (_currentState != null)
         {
