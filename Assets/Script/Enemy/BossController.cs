@@ -55,6 +55,9 @@ public class BossController : MonoBehaviour
     [SerializeField] public float screamSecond = 4;
     public bool isScreaming;
 
+    [Header("Fire Breath")]
+    [SerializeField] private ParticleSystem fireParticle;
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -224,6 +227,21 @@ public class BossController : MonoBehaviour
         _currentState.OnEnter(this, previousState);
     }
 
+    // 炎を出す
+    public void StartFire()
+    {
+        fireParticle.Play();
+    }
+
+    // 炎を止める
+    public void StopFire()
+    {
+        fireParticle.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmitting
+        );
+    }
+
     // 怒りモードに移行したいタイミングで呼ぶ
     public void EnterRageMode()
     {
@@ -257,9 +275,14 @@ public class BossController : MonoBehaviour
     }
 
     // 攻撃アニメーションから呼ばれる
-    public void AttackCollisionAppear()
+    public void BasicAttackCollisionAppear()
     {
         BasicAttackCollider.enabled = true;
+    }
+
+    public void FlameAttackCollisionAppear()
+    {
+        FlameAttackCollider.enabled = true;
     }
 
     // 攻撃コリジョン突入時に呼ばれる
@@ -274,6 +297,8 @@ public class BossController : MonoBehaviour
     public void OnAttackFinished()
     {
         BasicAttackCollider.enabled = false;
+        FlameAttackCollider.enabled = false;
+
         ChangeState(new BossIdleState());
 
         StartCoroutine(CoolDownCoroutine());
