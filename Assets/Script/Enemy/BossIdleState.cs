@@ -11,6 +11,8 @@ public class BossIdleState : BossStateBase
 
     public override void OnUpdate(BossController owner)
     {
+        if (owner.isScreaming)
+            return;
         if (owner.Target != null)
         {
             owner.ChangeState(new BossChaseState());

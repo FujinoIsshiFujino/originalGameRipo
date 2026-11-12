@@ -52,6 +52,8 @@ public class BossController : MonoBehaviour
     [SerializeField] float attackCoolDown = 0.5f;
     public bool attackFinished;//　クールダウンと攻撃判定可能か用のbool値
     [SerializeField] public float rotationSpeed = 180;
+    [SerializeField] public float screamSecond = 4;
+    public bool isScreaming;
 
     private void Awake()
     {
@@ -78,6 +80,11 @@ public class BossController : MonoBehaviour
     {
         Debug.Log("_currentState" + _currentState + " : " + _target);
 
+        //　叫びモーション途中はアイドルステートにする
+        if (isScreaming == true)
+        {
+            ChangeState(new BossIdleState());
+        }
         //死亡
         if (_status.Life <= 0)
         {
@@ -86,13 +93,22 @@ public class BossController : MonoBehaviour
             return;
         }
 
-        //　怒りモード
-        // if (_status.Life <= _status.Life % 2)
-        // {
-        //     EnterRageMode();
-        //     _animator.SetTrigger("Scream");
-        //     return;
-        // }
+        // 怒りモード
+        if (_status.Life <= _status.LifeMax / 2
+            && currentMode == BossMode.Normal)
+        {
+            EnterRageMode();
+
+            isScreaming = true;
+            attackFinished = false;
+
+            StopMovement();
+
+            _animator.SetTrigger("Scream");
+            StartCoroutine(ScreamCoroutine());
+
+            return;
+        }
 
         if (_currentState != null)
         {
@@ -267,5 +283,12 @@ public class BossController : MonoBehaviour
     {
         yield return new WaitForSeconds(attackCoolDown);
         attackFinished = true;
+    }
+    public IEnumerator ScreamCoroutine()
+    {
+        yield return new WaitForSeconds(screamSecond);
+        isScreaming = false;
+        attackFinished = true;
+
     }
 }

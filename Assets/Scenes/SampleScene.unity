@@ -14545,7 +14545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c845081e686a2b4bbb0d4e7ec84f035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeMax: 2
+  lifeMax: 4
   damageble: 0
   HPPanel: {fileID: 1098088386}
   HPverActiveDistance: 20
@@ -14609,6 +14609,8 @@ MonoBehaviour:
   attackCoolDown: 2
   attackFinished: 0
   rotationSpeed: 180
+  screamSecond: 4
+  isScreaming: 0
 --- !u!114 &1535685706
 MonoBehaviour:
   m_ObjectHideFlags: 0
