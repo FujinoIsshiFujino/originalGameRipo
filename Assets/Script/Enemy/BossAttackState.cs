@@ -16,6 +16,21 @@ public class BossAttackState : BossStateBase
     {
         float distance = owner.DistanceToTarget;
 
+        // 攻撃の際にプレイヤーの方により向くように調整
+        Vector3 direction = owner.Target.position - owner.transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            owner.transform.rotation = Quaternion.RotateTowards(
+                owner.transform.rotation,
+                targetRotation,
+                owner.rotationSpeed * Time.deltaTime
+            );
+        }
+
         // attackFinishedが攻撃制御boolなので、安全装置としてつけておく
         if (owner.Target != null && owner.attackFinished == true)
         {

@@ -10187,6 +10187,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onTriggerStayEvent:
     m_PersistentCalls:
+      m_Calls: []
+  onTriggerEnterEvent:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1535685705}
         m_TargetAssemblyTypeName: BossController, Assembly-CSharp
@@ -10200,9 +10203,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerEnterEvent:
-    m_PersistentCalls:
-      m_Calls: []
   onTriggerExitEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -14533,18 +14533,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 454130, guid: 59c100dd669d88f46b60555886d4dae7, type: 3}
   m_PrefabInstance: {fileID: 1793684917}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1535685702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535685696}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33e01634363754ef691b4b693947c5e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1535685703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14620,6 +14608,7 @@ MonoBehaviour:
   CollisionDetecterBossLost: {fileID: 1047721117}
   attackCoolDown: 2
   attackFinished: 0
+  rotationSpeed: 180
 --- !u!114 &1535685706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18162,9 +18151,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 101568, guid: 59c100dd669d88f46b60555886d4dae7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1535685703}
-    - targetCorrespondingSourceObject: {fileID: 101568, guid: 59c100dd669d88f46b60555886d4dae7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1535685702}
     - targetCorrespondingSourceObject: {fileID: 101568, guid: 59c100dd669d88f46b60555886d4dae7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1535685705}

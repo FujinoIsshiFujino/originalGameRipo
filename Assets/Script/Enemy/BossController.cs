@@ -51,6 +51,7 @@ public class BossController : MonoBehaviour
     public SphereCollider CollisionDetecterBossLost;
     [SerializeField] float attackCoolDown = 0.5f;
     public bool attackFinished;//　クールダウンと攻撃判定可能か用のbool値
+    [SerializeField] public float rotationSpeed = 180;
 
     private void Awake()
     {
@@ -103,19 +104,26 @@ public class BossController : MonoBehaviour
     public void OnDetectObject(Collider collider)
     {
         if (collider == null)
+        {
             return;
+        }
 
         if (!collider.CompareTag("Player"))
         {
-
             return;
+        }
+        else if (collider.CompareTag("Player"))
+        {
+            _target = collider.transform;
         }
 
         if (_status.Life <= 0)
             return;
 
         if (!CanUseAgent())
+        {
             return;
+        }
 
         Vector3 diff = collider.transform.position - transform.position;
         float distance = diff.magnitude;
@@ -128,19 +136,6 @@ public class BossController : MonoBehaviour
         }
 
         Vector3 direction = diff.normalized;
-
-        // プレイヤーまでの間に障害物があるか確認
-        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, distance, raycastLayerMask, QueryTriggerInteraction.Ignore))
-        {
-            if (!hit.collider.CompareTag("Player"))
-            {
-                StopMovement();
-                ReturnToIdle();
-                return;
-            }
-        }
-
-        _target = collider.transform;
 
         ChangeState(new BossChaseState());
     }
